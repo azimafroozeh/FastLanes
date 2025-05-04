@@ -90,6 +90,7 @@ option(FLS_BUILD_BENCHMARKING "Enable Benchmark Build" OFF)
 option(FLS_BUILD_EXAMPLES "Build Examples" OFF)
 option(FLS_BUILD_GPU "Build GPU" OFF)
 option(FLS_BUILD_GTEST "Build GTEST" OFF)
+option(FLS_BUILD_PYTHON "Build Python extension" OFF)
 option(FLS_ENABLE_CLANG_TIDY "Enable clang_tidy on all targets" ON)
 option(FLS_ENABLE_IWYU "Enable include-what-you-use tool" OFF)
 option(FLS_ENABLE_DOC "Enable Doc build" OFF)
@@ -292,4 +293,29 @@ if (FLS_BUILD_GPU)
     message("---------------------------------------------------------------------------------------------------------")
     message("- GPU:")
     add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/gpu)
+endif ()
+
+# Python : -------------------------------------------------------------------------------------------------------------
+if (FLS_BUILD_PYTHON)
+    message("---------------------------------------------------------------------------------------------------------")
+    message("- FLS: Building FastLanes Python Extension")
+    # --- top-level CMakeLists.txt -----------------------------
+    if (FLS_BUILD_PYTHON)
+        # Try system package first
+        find_package(pybind11 CONFIG QUIET)
+
+        # If not found, fetch v2.12.0 (or whatever tag you prefer)
+        if (NOT pybind11_FOUND)
+            message(STATUS "pybind11 not found – fetching from GitHub")
+            include(FetchContent)
+            FetchContent_Declare(
+                    pybind11
+                    GIT_REPOSITORY https://github.com/pybind/pybind11.git
+                    GIT_TAG v2.12.0
+            )
+            FetchContent_MakeAvailable(pybind11)
+        endif ()
+    endif ()
+
+    add_subdirectory(python)
 endif ()
