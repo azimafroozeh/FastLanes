@@ -22,13 +22,16 @@ jobs:
         with:
           python-version: "3.12"
 
-      - name: Install build dependencies
+      - name: Set up virtual environment
         run: |
+          python -m venv .venv
+          source .venv/bin/activate
           python -m pip install --upgrade pip
           pip install scikit-build-core build wheel
 
       - name: Build & Test via Makefile
         run: |
+          source .venv/bin/activate
           make rebuild_python_release
           make test_python
 
