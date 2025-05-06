@@ -8,7 +8,7 @@ on:
 
 jobs:
   # ------------------------------------------------------------
-  # 1. Build & test the Python bindings
+  # 1. Build and Test Python bindings using Makefile
   # ------------------------------------------------------------
   build-test-python:
     runs-on: ubuntu-latest
@@ -22,12 +22,12 @@ jobs:
         with:
           python-version: "3.12"
 
-      - name: Set up virtual environment
+      - name: Set up virtual environment and install dependencies
         run: |
           python -m venv .venv
           source .venv/bin/activate
           python -m pip install --upgrade pip
-          pip install scikit-build-core build wheel
+          pip install scikit-build-core build wheel pytest
 
       - name: Build & Test via Makefile
         run: |
@@ -36,7 +36,7 @@ jobs:
           make test_python
 
   # ------------------------------------------------------------
-  # 2. Build the wheel if tests passed
+  # 2. Build the wheel and upload it as an artifact
   # ------------------------------------------------------------
   build-wheel:
     runs-on: ubuntu-latest
@@ -67,7 +67,7 @@ jobs:
           path: dist/*.whl
 
   # ------------------------------------------------------------
-  # 3. Publish to PyPI on push to main (token required)
+  # 3. Publish the wheel to PyPI (only on push to main)
   # ------------------------------------------------------------
   publish-wheel:
     runs-on: ubuntu-latest
@@ -86,4 +86,4 @@ jobs:
         with:
           password: ${{ secrets.PYPI_TOKEN }}
           packages-dir: dist
-          skip-existing: true   # don’t fail if the version is already on PyPI
+          skip-existing: true
