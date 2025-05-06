@@ -1,37 +1,26 @@
-name: Test Publish to TestPyPI
+name: Manual TestPyPI Publish
 
 on:
-  push: # Run on push to any branch
-    branches: [ "**" ]
+  workflow_dispatch:
 
 jobs:
-  # build-test-python:
-  #   runs-on: ubuntu-latest
-  #   steps:
-  #     - name: Skipped
-  #       run: echo "Build & test skipped for publishing test"
-
-  # build-wheel:
-  #   runs-on: ubuntu-latest
-  #   needs: build-test-python
-  #   steps:
-  #     - name: Skipped
-  #       run: echo "Wheel build skipped for publishing test"
-
-  publish-wheel:
+  publish:
     runs-on: ubuntu-latest
-    # needs: build-wheel  # Skipped for isolated test
-    if: github.event_name == 'push'
 
     steps:
-      - name: Checkout repo (required for artifact path)
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
-      - name: Download wheel artifact
-        uses: actions/download-artifact@v4
+      - uses: actions/setup-python@v5
         with:
-          name: fastlanes-wheel
-          path: dist
+          python-version: "3.12"
+
+      - name: Install build tools
+        run: |
+          pip install --upgrade pip
+          pip install scikit-build-core build
+
+      - name: Build wheel
+        run: python -m build --wheel --outdir dist
 
       - name: Publish to TestPyPI
         uses: pypa/gh-action-pypi-publish@release/v1
@@ -39,4 +28,3 @@ jobs:
           repository-url: https://test.pypi.org/legacy/
           password: ${{ secrets.TEST_PYPI_TOKEN }}
           packages-dir: dist
-          skip-existing: true
