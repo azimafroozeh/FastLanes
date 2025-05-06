@@ -25,9 +25,9 @@ jobs:
       - name: Install build dependencies
         run: |
           python -m pip install --upgrade pip
-          pip install scikit-build-core build
+          pip install scikit-build-core build wheel
 
-      - name: Build & run tests (Makefile)
+      - name: Build & Test via Makefile
         run: |
           make rebuild_python_release
           make test_python
@@ -57,7 +57,7 @@ jobs:
         run: |
           python -m build --wheel --outdir dist
 
-      - name: Upload wheel artifact
+      - name: Upload wheel as artifact
         uses: actions/upload-artifact@v4
         with:
           name: fastlanes-wheel
