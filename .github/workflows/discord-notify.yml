@@ -1,8 +1,8 @@
 name: Discord Notify
 
 on:
-  push:                    # runs build+validate on every branch
-  pull_request_target: # runs full workflow when a PR to `dev` is closed
+  push:                       # validate on every commit
+  pull_request_target: # full flow when a PR to dev is closed
     types: [ closed ]
     branches: [ dev ]
 
@@ -17,56 +17,57 @@ jobs:
 
       - name: Build message JSON
         id: build
+        shell: bash
         run: |
           if [[ "${{ github.event_name }}" == "pull_request_target" && "${{ github.event.action }}" == "closed" ]]; then
-            # Metadata for a merged PR
-            MERGER=$(jq -r .pull_request.merged_by.login   < "$GITHUB_EVENT_PATH")
-            PR_NUMBER=$(jq -r .pull_request.number          < "$GITHUB_EVENT_PATH")
-            PR_TITLE=$(jq -r .pull_request.title            < "$GITHUB_EVENT_PATH")
-            PR_URL=$(jq -r .pull_request.html_url           < "$GITHUB_EVENT_PATH")
-            BASE_REF=$(jq -r .pull_request.base.ref         < "$GITHUB_EVENT_PATH")
+            # ---- Metadata for a merged PR ----
+            MERGER=$(jq -r .pull_request.merged_by.login < "$GITHUB_EVENT_PATH")
+            PR_NUMBER=$(jq -r .pull_request.number       < "$GITHUB_EVENT_PATH")
+            PR_TITLE=$(jq -r .pull_request.title         < "$GITHUB_EVENT_PATH")
+            PR_URL=$(jq -r .pull_request.html_url        < "$GITHUB_EVENT_PATH")
+            BASE_REF=$(jq -r .pull_request.base.ref      < "$GITHUB_EVENT_PATH")
 
             MSG=$(cat <<EOF
-  📦 PR #${PR_NUMBER} merged into **${BASE_REF}** by **${MERGER}**
-  **${ PR_TITLE }**
-  ${PR_URL}
-  EOF
-  )
-  else
-  # Metadata for a push
-  SHORT_SHA=${GITHUB_SHA::7}
-  AUTHOR=$(git show -s --format='%an' $GITHUB_SHA)
-  REF_NAME=${GITHUB_REF#refs/heads/}
-  COMMIT_URL="https://github.com/${{ github.repository }}/commit/${GITHUB_SHA}"
-  
-  MSG=$(cat <<EOF
-  ✏️ Commit **${SHORT_SHA}** pushed to **${REF_NAME}** by **${AUTHOR}**
-  ${COMMIT_URL}
-  EOF
-  )
-  fi
-  
-  # Wrap in valid JSON and expose as an output
-  json=$(jq -n -c --arg content "$MSG" '{"content":$content}')
-  echo "json=$json" >> "$GITHUB_OUTPUT"
+            📦 PR #\${PR_NUMBER} merged into **\${BASE_REF}** by **\${MERGER}**
+            **\${PR_TITLE}**
+            \${PR_URL}
+            EOF
+            )
+          else
+            # ---- Metadata for a direct push ----
+            SHORT_SHA=\${GITHUB_SHA::7}
+            AUTHOR=\$(git show -s --format='%an' "\$GITHUB_SHA")
+            REF_NAME=\${GITHUB_REF#refs/heads/}
+            COMMIT_URL="https://github.com/${{ github.repository }}/commit/\${GITHUB_SHA}"
 
-  - name: Validate JSON
-    run: |
-      echo "${{ steps.build.outputs.json }}" | jq -e '.'
+            MSG=$(cat <<EOF
+            ✏️ Commit **\${SHORT_SHA}** pushed to **\${REF_NAME}** by **\${AUTHOR}**
+            \${COMMIT_URL}
+            EOF
+            )
+          fi
 
-notify-discord:
-  needs: build-json
-  if: >-
-    github.event_name == 'pull_request_target' &&
-    github.event.action == 'closed' &&
-    github.event.pull_request.merged == true &&
-    github.ref == 'refs/heads/dev'
-  runs-on: ubuntu-latest
+          # ---- Wrap message in one-line JSON and expose it ----
+          json=\$(jq -n -c --arg content "\$MSG" '{content:$content}')
+          echo "json=\$json" >> "\$GITHUB_OUTPUT"
 
-  steps:
-    - name: Send Discord notification
-      run: |
-        curl -X POST \
-          -H "Content-Type: application/json" \
-          -d "${{ needs.build-json.outputs.json }}" \
-          "${{ secrets.DISCORD_WEBHOOK_URL }}"
+      - name: Validate JSON
+        run: |
+          echo "${{ steps.build.outputs.json }}" | jq -e '.'
+
+  notify-discord:
+    needs: build-json
+    if: >-
+      github.event_name == 'pull_request_target' &&
+      github.event.action == 'closed' &&
+      github.event.pull_request.merged == true &&
+      github.ref == 'refs/heads/dev'
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Send Discord notification
+        run: |
+          curl -X POST \
+               -H "Content-Type: application/json" \
+               -d '${{ needs.build-json.outputs.json }}' \
+               '${{ secrets.DISCORD_WEBHOOK_URL }}'
