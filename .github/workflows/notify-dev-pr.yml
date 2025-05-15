@@ -1,31 +1,50 @@
-name: Notify Discord on PR Merge to Dev
+name: Discord Notification & JSON Test
 
 on:
+  # --- 1️⃣ CI-style test: fire on every push, any branch -------------
+  push:
+    branches: ["**"]       # all branches
+
+  # --- 2️⃣ Real notification: fire when a PR into dev is merged -----
   pull_request_target:
-    types: [ closed ]
-    branches: [ dev ]
+    types: [closed]
+    branches: [dev]
 
 jobs:
-  notify:
-    if: github.event.pull_request.merged == true
+  build-json:
+    # Runs for BOTH triggers
     runs-on: ubuntu-latest
+    env:
+      PR_NUM:   ${{ github.event.pull_request.number || github.run_number }}
+      PR_TITLE: ${{ github.event.pull_request.title         || github.event.head_commit.message }}
+      AUTHOR:   ${{ github.event.pull_request.merged_by.login || github.actor }}
+      PR_URL:   ${{ github.event.pull_request.html_url       || github.event.head_commit.url }}
+      PR_BODY:  ${{ github.event.pull_request.body           || github.event.head_commit.message }}
     steps:
-      - name: Build JSON payload
+      - name: Build compact JSON payload
         id: build
-        env:
-          PR_NUM: ${{ github.event.pull_request.number }}
-          PR_TITLE: ${{ github.event.pull_request.title }}
-          AUTHOR: ${{ github.event.pull_request.merged_by.login }}
-          PR_URL: ${{ github.event.pull_request.html_url }}
-          PR_BODY: ${{ github.event.pull_request.body }}
         run: |
-          msg="🔔 FastLanes update:\n**PR #${PR_NUM} – ${PR_TITLE}** was merged into dev by ${AUTHOR}.\n🔗 ${PR_URL}\n\n**PR description:**\n${PR_BODY}"
-          payload=$(jq -Rn -c --arg content "$msg" '{content:$content}')
-          echo "json=$payload" >> "$GITHUB_OUTPUT"
+          msg="🔔 FastLanes update:
+  **PR/Commit – ${PR_TITLE}** by ${AUTHOR}.
+  🔗 ${PR_URL}
+  
+  ${PR_BODY}"
+  payload=$(jq -Rn -c --arg content "$msg" '{content:$content}')
+  echo "json=$payload" >> "$GITHUB_OUTPUT"
 
-      - name: Notify Discord
-        run: |
-          curl -H "Content-Type: application/json" \
-               -X POST \
-               -d "${{ steps.build.outputs.json }}" \
-               "${{ secrets.DISCORD_WEBHOOK_URL }}"
+- name: Validate JSON payload
+  run: |
+    echo '${{ steps.build.outputs.json }}' | jq -e '.' >/dev/null
+
+notify-discord:
+  # Only run on the PR-merge trigger
+  needs: build-json
+  if: github.event_name == 'pull_request_target' && github.event.pull_request.merged == true
+  runs-on: ubuntu-latest
+  steps:
+    - name: Send message to Discord
+      run: |
+        curl -H "Content-Type: application/json" \
+             -X POST \
+             -d "${{ needs.build-json.outputs.json }}" \
+             "${{ secrets.DISCORD_WEBHOOK_URL }}"
