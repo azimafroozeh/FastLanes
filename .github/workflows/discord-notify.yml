@@ -1,8 +1,8 @@
 name: Discord Notify
 
 on:
-  push:                     # validate JSON on every commit
-  pull_request_target: # full workflow when a PR to dev is closed
+  push:                     # run JSON build/validate on every commit
+  pull_request_target: # full flow when a PR to dev is closed
     types: [ closed ]
     branches: [ dev ]
 
@@ -22,20 +22,19 @@ jobs:
           set -eo pipefail
 
           if [[ "${{ github.event_name }}" == "pull_request_target" && "${{ github.event.action }}" == "closed" ]]; then
-            # ----------  metadata for a merged PR ----------
+            # ----- metadata for a merged PR -----
             MERGER=$(jq -r '.pull_request.merged_by.login' < "$GITHUB_EVENT_PATH")
             PR_NUMBER=$(jq -r '.pull_request.number'       < "$GITHUB_EVENT_PATH")
             PR_TITLE=$(jq -r '.pull_request.title'         < "$GITHUB_EVENT_PATH")
             PR_URL=$(jq -r '.pull_request.html_url'        < "$GITHUB_EVENT_PATH")
             BASE_REF=$(jq -r '.pull_request.base.ref'      < "$GITHUB_EVENT_PATH")
 
-            # build a multi-line Discord message (no heredoc needed)
             printf -v MSG '%s\n%s\n%s' \
               "📦 PR #${PR_NUMBER} merged into **${BASE_REF}** by **${MERGER}**" \
               "**${PR_TITLE}**" \
               "${PR_URL}"
           else
-            # ----------  metadata for a direct push ----------
+            # ----- metadata for a direct push -----
             SHORT_SHA=${GITHUB_SHA::7}
             AUTHOR=$(git show -s --format='%an' "$GITHUB_SHA")
             REF_NAME=${GITHUB_REF#refs/heads/}
@@ -46,12 +45,15 @@ jobs:
               "${COMMIT_URL}"
           fi
 
-          # wrap in compact JSON and expose as job output
+          # compact JSON for Discord and expose as output
           JSON=$(jq -n -c --arg content "$MSG" '{content:$content}')
           echo "json=$JSON" >> "$GITHUB_OUTPUT"
 
       - name: Validate JSON
-        run: echo "${{ steps.build.outputs.json }}" | jq -e '.'
+        env:
+          JSON: ${{ steps.build.outputs.json }}
+        run: |
+          echo "$JSON" | jq -e '.'
 
   notify-discord:
     needs: build-json
@@ -64,8 +66,10 @@ jobs:
 
     steps:
       - name: Send Discord notification
+        env:
+          PAYLOAD: ${{ needs.build-json.outputs.json }}
         run: |
           curl -s -X POST \
                -H "Content-Type: application/json" \
-               -d '${{ needs.build-json.outputs.json }}' \
-               '${{ secrets.DISCORD_WEBHOOK_URL }}'
+               -d "$PAYLOAD" \
+               "${{ secrets.DISCORD_WEBHOOK_URL }}"
