@@ -2,17 +2,14 @@ name: Notify Discord on PR Merge to Dev
 
 on:
   pull_request_target:
-    types:
-      - closed          # fires when PR is closed
-    branches:
-      - dev             # …and its base branch is dev
+    types: [ closed ]
+    branches: [ dev ]
 
 jobs:
   notify:
     if: github.event.pull_request.merged == true
     runs-on: ubuntu-latest
     steps:
-      # 1️⃣ Build JSON safely
       - name: Build JSON payload
         id: build
         env:
@@ -23,10 +20,9 @@ jobs:
           PR_BODY: ${{ github.event.pull_request.body }}
         run: |
           msg="🔔 FastLanes update:\n**PR #${PR_NUM} – ${PR_TITLE}** was merged into dev by ${AUTHOR}.\n🔗 ${PR_URL}\n\n**PR description:**\n${PR_BODY}"
-          payload=$(jq -Rn --arg content "$msg" '{content:$content}')
+          payload=$(jq -Rn -c --arg content "$msg" '{content:$content}')
           echo "json=$payload" >> "$GITHUB_OUTPUT"
 
-      # 2️⃣ Post to Discord
       - name: Notify Discord
         run: |
           curl -H "Content-Type: application/json" \
