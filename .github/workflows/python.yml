@@ -1,4 +1,4 @@
-name: Build & Check Python package
+name: Python
 run-name: >-
   ${{ github.workflow }} on ${{ github.ref_name }} (#${{ github.run_number }})
   — ${{ github.event.pull_request.title || github.event.head_commit.message }}
