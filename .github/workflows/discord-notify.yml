@@ -1,0 +1,71 @@
+name: Discord Notifications
+
+on:
+  push:
+  pull_request_target:
+    types: [closed]
+    branches:
+      - dev
+
+jobs:
+  build-json:
+    runs-on: ubuntu-latest
+    outputs:
+      payload: ${{ steps.build.outputs.payload }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Build message JSON
+        id: build
+        run: |
+          if [[ "${{ github.event_name }}" == "pull_request_target" && "${{ github.event.action }}" == "closed" && "${{ github.event.pull_request.merged }}" == "true" ]]; then
+            # Metadata for merged PR
+            MERGER=$(jq -r .pull_request.merged_by.login < "$GITHUB_EVENT_PATH")
+            PR_NUMBER=$(jq -r .pull_request.number      < "$GITHUB_EVENT_PATH")
+            PR_TITLE=$(jq -r .pull_request.title       < "$GITHUB_EVENT_PATH")
+            PR_URL=$(jq -r .pull_request.html_url      < "$GITHUB_EVENT_PATH")
+            BASE_REF=$(jq -r .pull_request.base.ref    < "$GITHUB_EVENT_PATH")
+
+            MSG=$(cat <<EOF
+  📦 PR #${PR_NUMBER} merged into **${BASE_REF}** by **${MERGER}**
+  **${PR_TITLE}**
+  ${PR_URL}
+  EOF
+  )
+  else
+  # Metadata for a push
+  SHORT_SHA=${GITHUB_SHA::7}
+  AUTHOR=$(git show -s --format='%an' $GITHUB_SHA)
+  REF_NAME=${GITHUB_REF#refs/heads/}
+  COMMIT_URL="https://github.com/${{ github.repository }}/commit/${GITHUB_SHA}"
+  
+  MSG=$(cat <<EOF
+  🔨 Commit **${SHORT_SHA}** pushed to **${REF_NAME}** by **${AUTHOR}**
+  ${COMMIT_URL}
+  EOF
+  )
+  fi
+
+# Wrap in JSON
+PAYLOAD=$(jq -Rn -c --arg content "$MSG" '{content: $content}')
+  echo "payload=$PAYLOAD" >> $GITHUB_OUTPUT
+
+- name: Validate JSON
+  run: |
+    echo "${{ steps.build.outputs.payload }}" | jq -e .
+
+notify-discord:
+  needs: build-json
+  if: |
+    github.event_name == 'pull_request_target' && \
+    github.event.action == 'closed' && \
+    github.event.pull_request.merged == true && \
+    github.event.pull_request.base.ref == 'dev'
+  runs-on: ubuntu-latest
+  steps:
+    - name: Send notification to Discord
+      run: |
+        curl -H "Content-Type: application/json" \
+             -d "${{ needs.build-json.outputs.payload }}" \
+             "${{ secrets.DISCORD_WEBHOOK_URL }}"
