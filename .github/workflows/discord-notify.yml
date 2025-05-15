@@ -1,8 +1,8 @@
 name: Discord Notify
 
 on:
-  push:                       # validate on every commit
-  pull_request_target: # full flow when a PR to dev is closed
+  push:                     # validate JSON on every commit
+  pull_request_target: # full workflow when a PR to dev is closed
     types: [ closed ]
     branches: [ dev ]
 
@@ -19,41 +19,39 @@ jobs:
         id: build
         shell: bash
         run: |
+          set -eo pipefail
+
           if [[ "${{ github.event_name }}" == "pull_request_target" && "${{ github.event.action }}" == "closed" ]]; then
-            # ---- Metadata for a merged PR ----
-            MERGER=$(jq -r .pull_request.merged_by.login < "$GITHUB_EVENT_PATH")
-            PR_NUMBER=$(jq -r .pull_request.number       < "$GITHUB_EVENT_PATH")
-            PR_TITLE=$(jq -r .pull_request.title         < "$GITHUB_EVENT_PATH")
-            PR_URL=$(jq -r .pull_request.html_url        < "$GITHUB_EVENT_PATH")
-            BASE_REF=$(jq -r .pull_request.base.ref      < "$GITHUB_EVENT_PATH")
+            # ----------  metadata for a merged PR ----------
+            MERGER=$(jq -r '.pull_request.merged_by.login' < "$GITHUB_EVENT_PATH")
+            PR_NUMBER=$(jq -r '.pull_request.number'       < "$GITHUB_EVENT_PATH")
+            PR_TITLE=$(jq -r '.pull_request.title'         < "$GITHUB_EVENT_PATH")
+            PR_URL=$(jq -r '.pull_request.html_url'        < "$GITHUB_EVENT_PATH")
+            BASE_REF=$(jq -r '.pull_request.base.ref'      < "$GITHUB_EVENT_PATH")
 
-            MSG=$(cat <<EOF
-            📦 PR #\${PR_NUMBER} merged into **\${BASE_REF}** by **\${MERGER}**
-            **\${PR_TITLE}**
-            \${PR_URL}
-            EOF
-            )
+            # build a multi-line Discord message (no heredoc needed)
+            printf -v MSG '%s\n%s\n%s' \
+              "📦 PR #${PR_NUMBER} merged into **${BASE_REF}** by **${MERGER}**" \
+              "**${PR_TITLE}**" \
+              "${PR_URL}"
           else
-            # ---- Metadata for a direct push ----
-            SHORT_SHA=\${GITHUB_SHA::7}
-            AUTHOR=\$(git show -s --format='%an' "\$GITHUB_SHA")
-            REF_NAME=\${GITHUB_REF#refs/heads/}
-            COMMIT_URL="https://github.com/${{ github.repository }}/commit/\${GITHUB_SHA}"
+            # ----------  metadata for a direct push ----------
+            SHORT_SHA=${GITHUB_SHA::7}
+            AUTHOR=$(git show -s --format='%an' "$GITHUB_SHA")
+            REF_NAME=${GITHUB_REF#refs/heads/}
+            COMMIT_URL="https://github.com/${{ github.repository }}/commit/${GITHUB_SHA}"
 
-            MSG=$(cat <<EOF
-            ✏️ Commit **\${SHORT_SHA}** pushed to **\${REF_NAME}** by **\${AUTHOR}**
-            \${COMMIT_URL}
-            EOF
-            )
+            printf -v MSG '%s\n%s' \
+              "✏️ Commit **${SHORT_SHA}** pushed to **${REF_NAME}** by **${AUTHOR}**" \
+              "${COMMIT_URL}"
           fi
 
-          # ---- Wrap message in one-line JSON and expose it ----
-          json=\$(jq -n -c --arg content "\$MSG" '{content:$content}')
-          echo "json=\$json" >> "\$GITHUB_OUTPUT"
+          # wrap in compact JSON and expose as job output
+          JSON=$(jq -n -c --arg content "$MSG" '{content:$content}')
+          echo "json=$JSON" >> "$GITHUB_OUTPUT"
 
       - name: Validate JSON
-        run: |
-          echo "${{ steps.build.outputs.json }}" | jq -e '.'
+        run: echo "${{ steps.build.outputs.json }}" | jq -e '.'
 
   notify-discord:
     needs: build-json
@@ -67,7 +65,7 @@ jobs:
     steps:
       - name: Send Discord notification
         run: |
-          curl -X POST \
+          curl -s -X POST \
                -H "Content-Type: application/json" \
                -d '${{ needs.build-json.outputs.json }}' \
                '${{ secrets.DISCORD_WEBHOOK_URL }}'
