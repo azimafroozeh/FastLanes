@@ -1,3 +1,7 @@
+<p align="center">
+  <img src="assets/logo.svg" alt="FastLanes Logo" width="180" />
+</p>
+
 # FastLanes: A Next-Generation Columnar File Format
 
 FastLanes is like Parquet with **40% better compression** and **40× faster decoding**, making it the ideal choice for
