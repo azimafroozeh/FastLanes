@@ -23,7 +23,7 @@ jobs:
         uses: ./.github/actions/install-llvm
 
       - name: Configure & build fetch_content_example
-        working-directory: fetch_content_example
+        working-directory: examples/fetch_content_example
         run: |
           mkdir -p build
           cd build
