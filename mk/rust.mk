@@ -47,7 +47,7 @@ C_ENV       := \
 .PHONY: build-rust install-rust run-rust-example publish-rust dry-run-rust clean-rust clean
 
 # Build Rust *after* C++ is installed
-build-rust: install-cpp
+build-rust:
 	@echo "Building Rust crate (release, $(NUM_JOBS) jobs)…"
 	CXXFLAGS="-I$(PREFIX)/include" \
 	C_INCLUDE_PATH="$(PREFIX)/include" \
@@ -58,7 +58,7 @@ build-rust: install-cpp
 	@echo "Rust build complete."
 
 # Install Rust *after* C++ is installed
-install-rust: install-cpp
+install-rust:
 	$(call echo_start,Installing Rust crate …)
 	$(C_ENV) \
 	$(CARGO) install --path $(CRATE_ROOT) \
@@ -67,7 +67,7 @@ install-rust: install-cpp
 	$(call echo_done,Rust install complete.)
 
 # Publish Rust crate to crates.io
-publish-rust: install-cpp
+publish-rust:
 	$(call echo_start,Publishing Rust crate to crates.io…)
 	$(C_ENV) \
 	RUSTFLAGS="-L$(PREFIX)/lib" \
@@ -75,7 +75,7 @@ publish-rust: install-cpp
 	$(call echo_done,Rust publish complete.)
 
 # Dry-run publish Rust crate to crates.io without uploading
-dry-run-rust: install-cpp
+dry-run-rust:
 	$(call echo_start,Performing dry run of publishing Rust crate…)
 	$(C_ENV) \
 	RUSTFLAGS="-L$(PREFIX)/lib" \
