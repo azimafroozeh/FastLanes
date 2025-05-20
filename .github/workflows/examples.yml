@@ -24,9 +24,10 @@ jobs:
       - name: Configure & build fetch_content_example
         working-directory: examples/fetch_content_example
         run: |
-          mkdir -p build
-          cd build
-          cmake .. -DCMAKE_BUILD_TYPE=Debug
+          mkdir -p build && cd build
+          cmake .. \
+            -DCMAKE_BUILD_TYPE=Release \
+            -DFASTLANES_TAG=${{ github.event.pull_request.head.sha || github.sha }} 
           cmake --build . --parallel
 
       - name: Run C++ example
