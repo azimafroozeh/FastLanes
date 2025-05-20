@@ -47,6 +47,10 @@ jobs:
         with:
           python-version: "3.x"
 
+      - name: Install pyfastlanes
+        # Install your package so `import pyfastlanes` works
+        run: pip install .
+
       - name: Run Python example
         working-directory: examples
         run: python python_example.py
