@@ -8,7 +8,7 @@ int main() {
 		auto       con1             = connect();
 		const path example_dir_path = string("data");
 		const path fls_file_path    = path {"."} / "data.fls";
-		const path csv_file_path    = path{"."} / "decoded_by_fastlanes.csv";
+		const path csv_file_path    = path {"."} / "decoded_by_fastlanes.csv";
 
 		// Step 1: Read the CSV file from the specified directory path
 		con1->set_n_vectors_per_rowgroup(64).read_csv(example_dir_path);
@@ -27,7 +27,5 @@ int main() {
 		fls_reader->to_csv(csv_file_path);
 
 		exit(EXIT_SUCCESS);
-	} catch (std::exception& ex) {
-		return EXIT_FAILURE;
-	}
+	} catch (std::exception& ex) { return EXIT_FAILURE; }
 }

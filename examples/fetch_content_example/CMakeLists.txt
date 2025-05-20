@@ -14,5 +14,5 @@ FetchContent_Declare(
 FetchContent_MakeAvailable(fastlanes)
 
 # … rest of your targets …
-add_executable(example main.cpp)
+add_executable(example example.cpp)
 target_link_libraries(example PRIVATE fastlanes)
