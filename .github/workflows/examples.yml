@@ -1,0 +1,67 @@
+name: examples
+run-name: >-
+  ${{ github.workflow }} on ${{ github.ref_name }} (#${{ github.run_number }})
+  — ${{ github.event.pull_request.title || github.event.head_commit.message }}
+
+# ────────────────────────────────────────────────────────
+# Triggers
+# ────────────────────────────────────────────────────────
+on:
+  push:
+  pull_request:
+    branches: [ main, dev ]
+
+jobs:
+  fetch-content:
+    name: 💎 CMake / FetchContent example
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Install LLVM
+        uses: ./.github/actions/install-llvm
+
+      - name: Configure & build fetch_content_example
+        working-directory: fetch_content_example
+        run: |
+          mkdir -p build
+          cd build
+          cmake .. -DCMAKE_BUILD_TYPE=Debug
+          cmake --build . --parallel
+
+      - name: Run C++ example
+        working-directory: fetch_content_example/build
+        run: ./example
+
+  python:
+    name: 🐍 Python example
+    runs-on: ubuntu-latest
+    needs: fetch-content
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.x"
+
+      - name: Run Python example
+        run: python python_example.py
+
+  rust:
+    name: 🦀 Rust example
+    runs-on: ubuntu-latest
+    needs: fetch-content
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up Rust
+        uses: actions/setup-rust@v1
+        with:
+          rust-version: stable
+
+      - name: Run Rust tests
+        run: cargo test --verbose
