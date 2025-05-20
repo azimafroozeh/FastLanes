@@ -15,7 +15,6 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
         with:
-          # fetch full history so FetchContent can checkout arbitrary SHAs
           fetch-depth: 0
 
       - name: Install LLVM
@@ -27,7 +26,9 @@ jobs:
           mkdir -p build && cd build
           cmake .. \
             -DCMAKE_BUILD_TYPE=Release \
-            -DFASTLANES_TAG=${{ github.event.pull_request.head.sha || github.sha }} 
+            -DCMAKE_C_COMPILER=clang \
+            -DCMAKE_CXX_COMPILER=clang++ \
+            -DFASTLANES_TAG=${{ github.event.pull_request.head.sha || github.sha }}
           cmake --build . --parallel
 
       - name: Run C++ example
