@@ -1,15 +1,11 @@
-name: examples
-run-name: >-
-  ${{ github.workflow }} on ${{ github.ref_name }} (#${{ github.run_number }})
-  — ${{ github.event.pull_request.title || github.event.head_commit.message }}
+name: CI
 
-# ────────────────────────────────────────────────────────
-# Triggers
-# ────────────────────────────────────────────────────────
 on:
   push:
   pull_request:
-    branches: [ main, dev ]
+    branches:
+      - main
+      - dev
 
 jobs:
   fetch-content:
@@ -19,6 +15,7 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
         with:
+          # fetch full history so FetchContent can checkout arbitrary SHAs
           fetch-depth: 0
 
       - name: Install LLVM
