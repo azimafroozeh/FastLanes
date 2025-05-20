@@ -48,6 +48,7 @@ jobs:
           python-version: "3.x"
 
       - name: Run Python example
+        working-directory: examples
         run: python python_example.py
 
   rust:
