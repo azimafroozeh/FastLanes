@@ -81,6 +81,7 @@ clean-rust:
 run-rust-example: build-rust
 	@echo "Running Rust example ‘rust_example’…"
 	cd $(CRATE_ROOT) && \
+	CC="$(CC)" CXX="$(CXX)" \
 	C_INCLUDE_PATH="$(PREFIX)/include" \
 	LIBRARY_PATH="$(PREFIX)/lib" \
 	cargo run --example rust_example
