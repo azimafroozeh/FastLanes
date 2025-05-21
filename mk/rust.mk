@@ -50,7 +50,7 @@ $(CRATE_ROOT)/fastlanes-src.tar.gz:
 # ----------------------------------------------------------------
 # Build / install / publish
 # ----------------------------------------------------------------
-.PHONY: build-rust install-rust publish-rust dry-run-rust clean-rust
+.PHONY: build-rust install-rust publish-rust dry-run-rust clean-rust rust-format
 
 build-rust: package-fastlanes
 	@echo "Building Rust crate (release, $(NUM_JOBS) jobs)…"
@@ -81,5 +81,9 @@ clean-rust:
 	$(CARGO) clean --manifest-path $(CRATE_ROOT)/Cargo.toml
 	@rm -f $(CRATE_ROOT)/fastlanes-src.tar.gz
 	@echo "Rust clean complete."
+
+rust-format:
+	@echo "Formatting Rust code…"
+	@$(CARGO) fmt --manifest-path $(CRATE_ROOT)/Cargo.toml
 
 endif   # RUST_MK_INCLUDED
