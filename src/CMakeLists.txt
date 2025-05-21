@@ -27,6 +27,15 @@ add_library(FastLanes
         connection.cpp
         ${FASTLANES_OBJECT_FILES})
 
+
+target_include_directories(FastLanes
+        PUBLIC
+        $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
+        $<INSTALL_INTERFACE:include>
+)
+
+add_library(FastLanes::core ALIAS FastLanes)
+
 if (FLS_ENABLE_IWYU)
     set_property(TARGET FastLanes PROPERTY CXX_INCLUDE_WHAT_YOU_USE ${iwyu_path})
 endif ()
