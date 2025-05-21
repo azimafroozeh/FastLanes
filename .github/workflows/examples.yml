@@ -1,15 +1,24 @@
 name: CI
+run-name: >-
+  ${{ github.workflow }} on ${{ github.ref_name }} (#${{ github.run_number }})
+  — ${{ github.event.pull_request.title || github.event.head_commit.message }}
 
 on:
   push:
+    branches:
+      - main
+      - dev
   pull_request:
     branches:
       - main
       - dev
 
 jobs:
+  # ────────────────────────────────────────────────────────
+  # 1) CMake / FetchContent example
+  # ────────────────────────────────────────────────────────
   fetch-content:
-    name: 💎 CMake / FetchContent example
+    name: CMake / FetchContent example
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
@@ -35,8 +44,11 @@ jobs:
         working-directory: examples/fetch_content_example/build
         run: ./example
 
+  # ────────────────────────────────────────────────────────
+  # 2) Python example
+  # ────────────────────────────────────────────────────────
   python:
-    name: 🐍 Python example
+    name: Python example
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
@@ -48,15 +60,17 @@ jobs:
           python-version: "3.x"
 
       - name: Install pyfastlanes
-        # Install your package so `import pyfastlanes` works
         run: pip install .
 
       - name: Run Python example
         working-directory: examples
         run: python python_example.py
 
+  # ────────────────────────────────────────────────────────
+  # 3) Rust example
+  # ────────────────────────────────────────────────────────
   rust:
-    name: 🦀 Rust example
+    name: Rust example
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
@@ -67,5 +81,8 @@ jobs:
         with:
           rust-version: stable
 
-      - name: Run Rust tests
-        run: cargo test --verbose
+      - name: Build Rust example
+        run: cargo build --bin rust_example --verbose
+
+      - name: Run Rust example
+        run: cargo run --bin rust_example --verbose
