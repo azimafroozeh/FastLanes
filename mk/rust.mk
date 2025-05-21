@@ -1,10 +1,10 @@
 # ─────────────────────────────────────────────────────────────
-# Build and install Rust bindings after C++ is installed
+# Build and install Rust bindings (self-contained, gzip edition)
 # This file is auto-included by the root Makefile:
 #   no need to invoke with “-f mk/rust.mk”
 # Usage:
-#   make build-rust            # build Rust crate (release) after C++ install
-#   make install-rust          # install Rust crate after C++ install
+#   make build-rust            # build Rust crate (release)
+#   make install-rust          # install Rust crate
 #   make run-rust-example      # build + run the “rust_example”
 #   make publish-rust          # publish Rust crate to crates.io
 #   make dry-run-rust          # dry run publish to test before actual upload
@@ -42,61 +42,76 @@ C_ENV       := \
   CXXFLAGS=-I$(PREFIX)/include
 
 # ─────────────────────────────────────────────────────────────
+# Vendored gzip tarball inside the crate
+# ─────────────────────────────────────────────────────────────
+FASTLANES_TARBALL := $(CRATE_ROOT)/fastlanes-src.tar.gz
+
+# Produce/refresh the tarball—always run from the project root
+$(FASTLANES_TARBALL):
+	@echo "Packaging FastLanes sources → $@"
+	@tar \
+	  --directory=$(PROJECT_DIR) \
+	  --create \
+	  --gzip \
+	  --file=$@ \
+	  CMakeLists.txt \
+	  include \
+	  src
+
+# ─────────────────────────────────────────────────────────────
 # Targets
 # ─────────────────────────────────────────────────────────────
-.PHONY: build-rust install-rust run-rust-example publish-rust dry-run-rust clean-rust clean
+.PHONY: build-rust install-rust run-rust-example publish-rust dry-run-rust clean-rust clean package-fastlanes
 
-# Build Rust *after* C++ is installed
-build-rust:
+# Build Rust crate (release)
+build-rust: $(FASTLANES_TARBALL)
 	@echo "Building Rust crate (release, $(NUM_JOBS) jobs)…"
-	CXXFLAGS="-I$(PREFIX)/include" \
-	C_INCLUDE_PATH="$(PREFIX)/include" \
-	LIBRARY_PATH="$(PREFIX)/lib" \
 	$(CARGO) build --release \
 	  --manifest-path $(CRATE_ROOT)/Cargo.toml \
 	  --jobs $(NUM_JOBS)
 	@echo "Rust build complete."
 
-# Install Rust *after* C++ is installed
-install-rust:
+# Install Rust crate
+install-rust: $(FASTLANES_TARBALL)
 	$(call echo_start,Installing Rust crate …)
-	$(C_ENV) \
-	$(CARGO) install --path $(CRATE_ROOT) \
+	$(C_ENV) $(CARGO) install --path $(CRATE_ROOT) \
 	  --root $(PREFIX) \
 	  --jobs $(NUM_JOBS)
 	$(call echo_done,Rust install complete.)
 
 # Publish Rust crate to crates.io
-publish-rust:
+publish-rust: $(FASTLANES_TARBALL)
 	$(call echo_start,Publishing Rust crate to crates.io…)
-	$(C_ENV) \
-	RUSTFLAGS="-L$(PREFIX)/lib" \
-	$(CARGO) publish --manifest-path $(CRATE_ROOT)/Cargo.toml
+	$(C_ENV) RUSTFLAGS="-L$(PREFIX)/lib" \
+	  $(CARGO) publish --manifest-path $(CRATE_ROOT)/Cargo.toml
 	$(call echo_done,Rust publish complete.)
 
 # Dry-run publish Rust crate to crates.io without uploading
-dry-run-rust:
+dry-run-rust: $(FASTLANES_TARBALL)
 	$(call echo_start,Performing dry run of publishing Rust crate…)
-	$(C_ENV) \
-	RUSTFLAGS="-L$(PREFIX)/lib" \
-	$(CARGO) publish --manifest-path $(CRATE_ROOT)/Cargo.toml --dry-run
+	$(C_ENV) RUSTFLAGS="-L$(PREFIX)/lib" \
+	  $(CARGO) publish --manifest-path $(CRATE_ROOT)/Cargo.toml --dry-run
 	$(call echo_done,Dry run complete.)
 
 # Build then run the “rust_example” in your crate
 run-rust-example: build-rust
 	@echo "Running Rust example ‘rust_example’…"
 	cd $(CRATE_ROOT) && \
-	C_INCLUDE_PATH="$(PREFIX)/include" \
-	LIBRARY_PATH="$(PREFIX)/lib" \
-	cargo run --example rust_example
+	  C_INCLUDE_PATH="$(PREFIX)/include" \
+	  LIBRARY_PATH="$(PREFIX)/lib" \
+	  cargo run --example rust_example
 
 # Clean Rust only (no C++)
 clean-rust:
 	$(call echo_start,Cleaning Rust build…)
 	$(CARGO) clean --manifest-path $(CRATE_ROOT)/Cargo.toml
+	rm -f $(FASTLANES_TARBALL)
 	$(call echo_done,Rust clean complete.)
 
 # Top-level clean kills *both* C++ and Rust
 clean: clean-cpp clean-rust
+
+# Convenience target: just (re)make the tarball
+package-fastlanes: $(FASTLANES_TARBALL)
 
 endif  # RUST_MK_INCLUDED

@@ -12,6 +12,7 @@ readme = "README.md"
 keywords = ["FastLanes", "FileFormat", "Compression"]
 categories = ["database", "compression"]
 exclude = ["/build/*"]
+include = ["src/**", "build.rs", "fastlanes-src.tar.gz", "Cargo.toml"]
 
 [badges]
 [badges.docsrs]
@@ -26,5 +27,8 @@ cxx = "1.0"
 anyhow = "1.0"
 
 [build-dependencies]
-cxx-build = "1.0"
 cmake = "0.1"
+cxx-build = "1"
+flate2 = "1"
+tar = "0.4"
+
