@@ -1,3 +1,5 @@
+# src/CMakeLists.txt
+
 add_subdirectory(c_api)
 add_subdirectory(cfg)
 add_subdirectory(common)
@@ -30,8 +32,8 @@ add_library(FastLanes
 
 target_include_directories(FastLanes
         PUBLIC
-        $<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/include>  # real headers
-        $<INSTALL_INTERFACE:include>                   # becomes <prefix>/include
+        $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/../include>
+        $<INSTALL_INTERFACE:include>
 )
 
 add_library(FastLanes::core ALIAS FastLanes)
