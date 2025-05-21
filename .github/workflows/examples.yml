@@ -69,6 +69,8 @@ jobs:
   rust:
     name: Rust example
     runs-on: ubuntu-latest
+    env:
+      CMAKE_INSTALL_MESSAGE: NEVER
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
@@ -83,4 +85,5 @@ jobs:
       - name: Run Rust example
         working-directory: examples/rust_example
         run: cargo run --bin rust_example --verbose
+
 
