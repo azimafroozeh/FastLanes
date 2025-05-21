@@ -1,5 +1,5 @@
 # ────────────────────────────────────────────────────────────────
-# Rust bindings ­– build, install, publish
+# Rust bindings – build, install, publish
 # (auto-included from the root Makefile)
 # ────────────────────────────────────────────────────────────────
 
@@ -11,15 +11,19 @@ include $(abspath $(dir $(lastword $(MAKEFILE_LIST))))/preamble.mk
 # ----------------------------------------------------------------
 # Paths
 # ----------------------------------------------------------------
-MK_DIR      := $(abspath $(dir $(lastword $(MAKEFILE_LIST))))
-PROJECT_DIR := $(abspath $(MK_DIR)/..)
-CRATE_ROOT  := $(PROJECT_DIR)/rust
-PREFIX      := $(PROJECT_DIR)/build/install
+MK_DIR       := $(abspath $(dir $(lastword $(MAKEFILE_LIST))))
+PROJECT_DIR  := $(abspath $(MK_DIR)/..)
+CRATE_ROOT   := $(PROJECT_DIR)/rust
+PREFIX       := $(PROJECT_DIR)/build/install
 
-NUM_JOBS    ?= $(shell sysctl -n hw.ncpu 2>/dev/null || echo 8)
+# Output directory for generated artifacts (ignored by git)
+OUT_DIR      := $(CRATE_ROOT)/target
+FASTLANES_TAR := $(OUT_DIR)/fastlanes-src.tar.gz
 
-CARGO       ?= cargo
-C_ENV       := \
+NUM_JOBS     ?= $(shell sysctl -n hw.ncpu 2>/dev/null || echo 8)
+
+CARGO        ?= cargo
+C_ENV        := \
   C_INCLUDE_PATH=$(PREFIX)/include \
   LIBRARY_PATH=$(PREFIX)/lib \
   CXXFLAGS=-I$(PREFIX)/include
@@ -29,23 +33,15 @@ C_ENV       := \
 ###############################################################################
 .PHONY: package-fastlanes
 package-fastlanes:
-	@echo "Packaging FastLanes sources → $(CRATE_ROOT)/fastlanes-src.tar.gz"
+	@echo "Packaging FastLanes sources → $(FASTLANES_TAR)"
+	@mkdir -p $(OUT_DIR)
 
 	# tar the minimal C++ tree (no tests, docs, data)
 	git -C $(PROJECT_DIR) archive --format=tar HEAD \
 	    CMakeLists.txt include src alp primitives \
-	    | gzip -9n > $(CRATE_ROOT)/fastlanes-src.tar.gz.tmp
-
-	mv $(CRATE_ROOT)/fastlanes-src.tar.gz.tmp $(CRATE_ROOT)/fastlanes-src.tar.gz
-	@ls -lh $(CRATE_ROOT)/fastlanes-src.tar.gz
-
-
-
-$(CRATE_ROOT)/fastlanes-src.tar.gz:
-	@echo "Packaging FastLanes sources → $@"
-	@rm -f $@.tmp
-	git -C $(PROJECT_DIR) archive --format=tar HEAD | gzip -n > $@.tmp
-	mv $@.tmp $@
+	    | gzip -9n > $(FASTLANES_TAR).tmp
+	mv $(FASTLANES_TAR).tmp $(FASTLANES_TAR)
+	@ls -lh $(FASTLANES_TAR)
 
 # ----------------------------------------------------------------
 # Build / install / publish
@@ -79,7 +75,7 @@ dry-run-rust: package-fastlanes
 clean-rust:
 	@echo "Cleaning Rust build…"
 	$(CARGO) clean --manifest-path $(CRATE_ROOT)/Cargo.toml
-	@rm -f $(CRATE_ROOT)/fastlanes-src.tar.gz
+	@rm -rf $(FASTLANES_TAR)
 	@echo "Rust clean complete."
 
 run-rust-example: build-rust
@@ -88,5 +84,5 @@ run-rust-example: build-rust
 	C_INCLUDE_PATH="$(PREFIX)/include" \
 	LIBRARY_PATH="$(PREFIX)/lib" \
 	cargo run --example rust_example
-	
+
 endif   # RUST_MK_INCLUDED
