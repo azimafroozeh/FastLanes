@@ -1,3 +1,5 @@
+// rs_example.rs
+
 //! ```cargo
 //! [dependencies]
 //! anyhow = "1"
@@ -14,9 +16,9 @@ fn main() -> anyhow::Result<()> {
         .parent()
         .expect("rust/Cargo.toml must live one level down from repo root");
 
-    let csv_path = repo_root.join("data/generated/issues/issue_000");
-    let fls_path = repo_root.join("data/fls/written_by_rust.fls");
-    let decoded_csv_path = repo_root.join("data/fls/decoded_by_fastlanes_rs.csv");
+    let csv_path = repo_root.join("../data/generated/issues/issue_000");
+    let fls_path = repo_root.join("written_by_rust.fls");
+    let decoded_csv_path = repo_root.join("decoded_by_fastlanes_rs.csv");
 
     let mut conn = connect();
     let mut pin = conn.pin_mut();
