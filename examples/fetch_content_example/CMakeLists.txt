@@ -16,3 +16,6 @@ FetchContent_MakeAvailable(fastlanes)
 # … rest of your targets …
 add_executable(example example.cpp)
 target_link_libraries(example PRIVATE fastlanes)
+target_include_directories(example PRIVATE
+        ${fastlanes_SOURCE_DIR}/include  # Or whatever directory contains fastlanes.hpp
+)
