@@ -73,13 +73,14 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
-      - name: Set up Rust
-        uses: actions/setup-rust@v1
-        with:
-          rust-version: stable
+      - name: Set up Rust toolchain
+        uses: actions-rust-lang/setup-rust-toolchain@v1
 
       - name: Build Rust example
+        working-directory: examples/rust_example
         run: cargo build --bin rust_example --verbose
 
       - name: Run Rust example
+        working-directory: examples/rust_example
         run: cargo run --bin rust_example --verbose
+
