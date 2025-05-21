@@ -82,8 +82,11 @@ clean-rust:
 	@rm -f $(CRATE_ROOT)/fastlanes-src.tar.gz
 	@echo "Rust clean complete."
 
-rust-format:
-	@echo "Formatting Rust code…"
-	@$(CARGO) fmt --manifest-path $(CRATE_ROOT)/Cargo.toml
-
+run-rust-example: build-rust
+	@echo "Running Rust example ‘rust_example’…"
+	cd $(CRATE_ROOT) && \
+	C_INCLUDE_PATH="$(PREFIX)/include" \
+	LIBRARY_PATH="$(PREFIX)/lib" \
+	cargo run --example rust_example
+	
 endif   # RUST_MK_INCLUDED

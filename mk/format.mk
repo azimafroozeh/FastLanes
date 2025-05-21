@@ -30,13 +30,3 @@ format-check:
 	           $(FMT_CMD)"
 	$(call echo_done,Formatting check complete.)
 
-
-rust-format-check:
-	$(call echo_start,Checking Rust formatting in rust/…)
-	@cd ../rust && cargo fmt -- --check
-	$(call echo_done,Rust formatting check complete.)
-
-rust-format:
-	$(call echo_start,Formatting Rust code in rust/…)
-	@cd ../rust && cargo fmt
-	$(call echo_done,Rust formatting complete.)
