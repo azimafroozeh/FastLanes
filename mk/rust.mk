@@ -24,10 +24,22 @@ C_ENV       := \
   LIBRARY_PATH=$(PREFIX)/lib \
   CXXFLAGS=-I$(PREFIX)/include
 
-# ----------------------------------------------------------------
-# Helper – create a *clean* FastLanes source tar-ball
-# ----------------------------------------------------------------
-package-fastlanes: $(CRATE_ROOT)/fastlanes-src.tar.gz
+###############################################################################
+# rust/mk/rust.mk  – only the package-fastlanes target shown
+###############################################################################
+.PHONY: package-fastlanes
+package-fastlanes:
+	@echo "Packaging FastLanes sources → $(CRATE_ROOT)/fastlanes-src.tar.gz"
+
+	# tar the minimal C++ tree (no tests, docs, data)
+	git -C $(PROJECT_DIR) archive --format=tar HEAD \
+	    CMakeLists.txt include src alp primitives \
+	    | gzip -9n > $(CRATE_ROOT)/fastlanes-src.tar.gz.tmp
+
+	mv $(CRATE_ROOT)/fastlanes-src.tar.gz.tmp $(CRATE_ROOT)/fastlanes-src.tar.gz
+	@ls -lh $(CRATE_ROOT)/fastlanes-src.tar.gz
+
+
 
 $(CRATE_ROOT)/fastlanes-src.tar.gz:
 	@echo "Packaging FastLanes sources → $@"
