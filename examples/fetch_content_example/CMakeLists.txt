@@ -13,5 +13,8 @@ FetchContent_Declare(
 )
 FetchContent_MakeAvailable(fastlanes)
 
+
+add_compile_definitions(EXAMPLE_CMAKE_SOURCE_DIR="${CMAKE_CURRENT_SOURCE_DIR}")
+
 add_executable(example example.cpp)
 target_link_libraries(example PRIVATE FastLanes)

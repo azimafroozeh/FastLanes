@@ -1,31 +1,31 @@
 #include "fastlanes.hpp"
-
-using namespace fastlanes; // NOLINT
+#include <iostream>
 
 int main() {
-
 	try {
-		auto       con1             = connect();
-		const path example_dir_path = string("data");
-		const path fls_file_path    = path {"."} / "data.fls";
-		const path csv_file_path    = path {"."} / "decoded_by_fastlanes.csv";
+		// Define input and output file paths using 
+		const std::filesystem::path data_dir   = EXAMPLE_CMAKE_SOURCE_DIR "/data";
+		const std::filesystem::path fls_file   = EXAMPLE_CMAKE_SOURCE_DIR "/data.fls";
+		const std::filesystem::path output_csv = EXAMPLE_CMAKE_SOURCE_DIR "/decoded_by_fastlanes.csv";
 
-		// Step 1: Read the CSV file from the specified directory path
-		con1->set_n_vectors_per_rowgroup(64).read_csv(example_dir_path);
+		// Establish connection to FastLanes
+		const auto connection = fastlanes::connect();
 
-		// Step 2: Write the data to the FastLanes file format in the specified directory
-		con1->to_fls(fls_file_path);
+		// STEP 1: Read the CSV from the specified directory
+		connection->inline_footer().read_csv(data_dir);
 
-		// Step 3: Get a FastLanes reader for the previously stored data
-		Connection con2;
-		const auto fls_reader = con2.reset().read_fls(fls_file_path);
+		// STEP 2: Write data to the FastLanes .fls file
+		connection->to_fls(fls_file);
 
-		// Step 4: Write data to CSV
-		if (exists(csv_file_path)) {
-			std::filesystem::remove(csv_file_path);
-		}
-		fls_reader->to_csv(csv_file_path);
+		// STEP 3: read the .fls file
+		const auto fls_reader = connection->read_fls(fls_file);
 
-		exit(EXIT_SUCCESS);
-	} catch (std::exception& ex) { return EXIT_FAILURE; }
+		// STEP 4: Export the decoded .fls data back to CSV format
+		fls_reader->to_csv(output_csv);
+
+		return EXIT_SUCCESS;
+	} catch (const std::exception& ex) {
+		std::cerr << "Error: " << ex.what() << std::endl;
+		return EXIT_FAILURE;
+	}
 }
