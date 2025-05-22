@@ -24,7 +24,7 @@ add_compile_definitions(NOMINMAX)
 
 # Project : ------------------------------------------------------------------------------------------------------------
 project(FastLanes)
-list(APPEND CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake")
+list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_LIST_DIR}/cmake")
 
 
 set(CMAKE_CXX_STANDARD 20)
