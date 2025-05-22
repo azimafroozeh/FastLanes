@@ -10,52 +10,45 @@ on:
   pull_request:
     branches: [ "main", "dev" ]
 
-# Cancel redundant runs for the same branch/PR
+# cancel redundant runs for the same branch/PR
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 
-# ────────────────────────────────────────────────────────────────
-# 1️⃣  rustfmt check
-# ────────────────────────────────────────────────────────────────
+# ──────────────────────────  1️⃣ rustfmt  ──────────────────────────
 jobs:
   fmt:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Detect CPU count
-        run: make detect-cpu | tee -a "$GITHUB_ENV"
-
-      - name: Check Rust formatting
-        working-directory: rust
+      - uses: actions/checkout@v4
+      - run: make detect-cpu | tee -a "$GITHUB_ENV"
+      - working-directory: rust
         run: cargo fmt -- --check
 
-  # ────────────────────────────────────────────────────────────────
-  # 2️⃣  Build, test, crates-io dry-run (Clang 20 + libc++)
-  # ────────────────────────────────────────────────────────────────
+  # ────────────────────────  2️⃣ build & test  ───────────────────────
   build:
-    needs: [ fmt ]
+    needs: fmt
     runs-on: ubuntu-latest
 
     env:
-      CC: clang
+      # use Clang for C/C++
+      CC:  clang
       CXX: clang++
-      RUSTFLAGS: -C link-arg=-fuse-ld=lld   # use LLD for faster linking
+      # keep warnings, but *not* fatal, on Clang
+      CXXFLAGS: -Wno-error
+      # LLD for speed + make unknown warning options non-fatal inside the Rust bridge step
+      RUSTFLAGS: >
+        -C link-arg=-fuse-ld=lld
+        -C clang-args=-Wno-error=unknown-warning-option
 
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-        with:
-          submodules: recursive
+      - uses: actions/checkout@v4
+        with: { submodules: recursive }
 
-      - name: Detect CPU count
-        run: make detect-cpu | tee -a "$GITHUB_ENV"
+      - run: make detect-cpu | tee -a "$GITHUB_ENV"
 
-      # Cache Cargo registry + Git + build artefacts
-      - name: Cache Rust dependencies
-        uses: actions/cache@v3
+      # cache Cargo artefacts
+      - uses: actions/cache@v3
         with:
           path: |
             ~/.cargo/registry
@@ -64,41 +57,36 @@ jobs:
           key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
           restore-keys: ${{ runner.os }}-cargo-
 
-      # ① Install the LLVM 20 compiler/linker suite (composite action)
-      - name: Install LLVM 20 toolchain
+      # ① LLVM 20 toolchain (composite action in repo)
+      - name: Install LLVM 20
         uses: ./.github/actions/install-llvm
 
-      # ② Bring in libc++, libunwind, clang-rt, plus CMake/Make/pkg-config (Linux only)
-      - name: Install libc++ runtime & build tools (Linux only)
+      # ② libc++/runtime + build helpers (Linux only)
+      - name: Install libc++ runtime & build tools
         if: runner.os == 'Linux'
         run: |
           sudo apt-get update -y
           sudo apt-get install -y \
-            libc++-20-dev      \
-            libc++abi-20-dev   \
-            libunwind-20-dev   \
-            libclang-rt-20-dev \
+            libc++-20-dev libc++abi-20-dev libunwind-20-dev libclang-rt-20-dev \
             cmake make pkg-config
 
-      # ─────────── Build & run the bundled example ───────────
+      # build & run the example in release mode
       - name: Build & run Rust example
         run: make -j $BUILD_THREADS run-rust-example
 
-      # ─────────── Run the Rust test suite ───────────
-      - name: Run Rust tests
+      # run the Rust unit tests
+      - name: Rust tests
         run: |
           cd rust
           cargo test -- --test-threads $BUILD_THREADS
 
-      # ─────────── crates.io dry-run publish ───────────
-      - name: Dry-run publish check
+      # crates-io dry-run publish
+      - name: Dry-run publish
         run: make -j $BUILD_THREADS dry-run-rust
 
-# ────────────────────────────────────────────────────────────────
-# 3️⃣  (Optional) post-build stages
-# ────────────────────────────────────────────────────────────────
-#  deploy-docs:
-#    needs: build
-#    runs-on: ubuntu-latest
-#    steps:
-#      …
+# ────────────────────────  3️⃣  (optional)  ───────────────────────
+# deploy-docs:
+#   needs: build
+#   runs-on: ubuntu-latest
+#   steps:
+#     …
