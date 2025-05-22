@@ -54,18 +54,18 @@ struct encoder {
 	                                            uint8_t&                                        factor,
 	                                            uint8_t&                                        exponent);
 
-	static void encode_simdized(const PT*   data_p,
-	                            PT*         exceptions,
-	                            exp_p_t*    exceptions_positions,
-	                            ST*         encoded_integers,
-	                            state<PT>&  st,
+	static void encode_simdized(const PT*      data_p,
+	                            PT*            exceptions,
+	                            exp_p_t*       exceptions_positions,
+	                            ST*            encoded_integers,
+	                            state<PT>&     st,
 	                            const uint8_t* null_map);
 
-	static void encode(const PT*   input_vector,
-	                   PT*         exceptions,
-	                   uint16_t*   exceptions_positions,
-	                   ST*         encoded_integers,
-	                   state<PT>&  stt,
+	static void encode(const PT*      input_vector,
+	                   PT*            exceptions,
+	                   uint16_t*      exceptions_positions,
+	                   ST*            encoded_integers,
+	                   state<PT>&     stt,
 	                   const uint8_t* null_map);
 
 	static void init(const PT* rowgroup_data_p, uint64_t rowgroup_size, PT* sample_arr, state<PT>& stt);

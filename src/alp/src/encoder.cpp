@@ -1,8 +1,8 @@
 #include "alp/encoder.hpp"
-#include "fls/common/assert.hpp" // fix me
 #include "alp/constants.hpp"
 #include "alp/decoder.hpp"
 #include "alp/sampler.hpp"
+#include "fls/common/assert.hpp" // fix me
 #include "fls/ffor_util.hpp"
 #include <algorithm>
 

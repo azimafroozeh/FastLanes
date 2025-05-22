@@ -3,7 +3,8 @@
 #include "fls_gen/macros.hpp"
 #include "fls_gen/pack/pack.hpp"
 namespace generated { namespace pack::fallback { namespace scalar {
-void static pack_0bit_8ow(const uint8_t* __restrict in, uint8_t* __restrict out) {}
+void static pack_0bit_8ow(const uint8_t* __restrict in, uint8_t* __restrict out) {
+}
 void static pack_1bit_8ow(const uint8_t* __restrict in, uint8_t* __restrict out) {
 	uint8_t tmp = 0U;
 	uint8_t src;
@@ -356,7 +357,8 @@ void static pack_8bit_8ow(const uint8_t* __restrict in, uint8_t* __restrict out)
 		out -= 896;
 	}
 }
-void static pack_0bit_16ow(const uint16_t* __restrict in, uint16_t* __restrict out) {}
+void static pack_0bit_16ow(const uint16_t* __restrict in, uint16_t* __restrict out) {
+}
 void static pack_1bit_16ow(const uint16_t* __restrict in, uint16_t* __restrict out) {
 	uint16_t tmp = 0U;
 	uint16_t src;
@@ -1741,7 +1743,8 @@ void static pack_16bit_16ow(const uint16_t* __restrict in, uint16_t* __restrict 
 		out -= 960;
 	}
 }
-void static pack_0bit_32ow(const uint32_t* __restrict in, uint32_t* __restrict out) {}
+void static pack_0bit_32ow(const uint32_t* __restrict in, uint32_t* __restrict out) {
+}
 void static pack_1bit_32ow(const uint32_t* __restrict in, uint32_t* __restrict out) {
 	uint32_t tmp = 0U;
 	uint32_t src;
@@ -7278,7 +7281,8 @@ void static pack_32bit_32ow(const uint32_t* __restrict in, uint32_t* __restrict 
 		out -= 992;
 	}
 }
-void static pack_0bit_64ow(const uint64_t* __restrict in, uint64_t* __restrict out) {}
+void static pack_0bit_64ow(const uint64_t* __restrict in, uint64_t* __restrict out) {
+}
 void static pack_1bit_64ow(const uint64_t* __restrict in, uint64_t* __restrict out) {
 	uint64_t tmp = 0U;
 	uint64_t src;

@@ -14,7 +14,8 @@ uint8_t count_bits(PT max, PT min) {
 	using UT       = std::conditional_t<std::is_signed_v<PT>, std::make_unsigned_t<PT>, PT>;
 	const UT delta = static_cast<UT>(max) - static_cast<UT>(min);
 
-	if (delta == 0) return 0;
+	if (delta == 0)
+		return 0;
 
 	if constexpr (std::is_same_v<UT, uint64_t>) {
 		return static_cast<uint8_t>(64 - __builtin_clzll(delta));

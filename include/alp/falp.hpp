@@ -17,7 +17,7 @@ inline void falp(const int64_t* __restrict in,
                  uint8_t bw,
                  const int64_t* __restrict base,
                  const uint8_t factor,
-                 uint8_t exponent) {
+                 uint8_t       exponent) {
 	const auto* in_p   = reinterpret_cast<const uint64_t*>(in);
 	const auto* base_p = reinterpret_cast<const uint64_t*>(base);
 	falp(in_p, out, bw, base_p, factor, exponent);

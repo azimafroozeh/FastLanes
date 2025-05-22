@@ -43,7 +43,9 @@ void unrsum(const uint8_t* a_in_p, uint8_t* a_out_p) {
 		out[(i * 1) + (0 * 128) + 896] = tmp_0;
 	}
 }
-void unrsum_inplace(uint8_t* a_in_p) { unrsum(const_cast<const uint8_t*>(a_in_p), a_in_p); }
+void unrsum_inplace(uint8_t* a_in_p) {
+	unrsum(const_cast<const uint8_t*>(a_in_p), a_in_p);
+}
 void unrsum(const uint16_t* a_in_p, uint16_t* a_out_p) {
 	[[maybe_unused]] auto       out = reinterpret_cast<uint16_t*>(a_out_p);
 	[[maybe_unused]] const auto in  = reinterpret_cast<const uint16_t*>(a_in_p);
@@ -116,7 +118,9 @@ void unrsum(const uint16_t* a_in_p, uint16_t* a_out_p) {
 		a_out_p[64 + (128 * 7) + i]   = tmp_0;
 	}
 }
-void unrsum_inplace(uint16_t* a_in_p) { unrsum(const_cast<const uint16_t*>(a_in_p), a_in_p); }
+void unrsum_inplace(uint16_t* a_in_p) {
+	unrsum(const_cast<const uint16_t*>(a_in_p), a_in_p);
+}
 void unrsum(const uint32_t* a_in_p, uint32_t* a_out_p) {
 	[[maybe_unused]] auto       out = reinterpret_cast<uint32_t*>(a_out_p);
 	[[maybe_unused]] const auto in  = reinterpret_cast<const uint32_t*>(a_in_p);
@@ -253,7 +257,9 @@ void unrsum(const uint32_t* a_in_p, uint32_t* a_out_p) {
 		a_out_p[96 + (128 * 7) + i]   = tmp_0;
 	}
 }
-void unrsum_inplace(uint32_t* a_in_p) { unrsum(const_cast<const uint32_t*>(a_in_p), a_in_p); }
+void unrsum_inplace(uint32_t* a_in_p) {
+	unrsum(const_cast<const uint32_t*>(a_in_p), a_in_p);
+}
 void unrsum(const uint64_t* a_in_p, uint64_t* a_out_p) {
 	[[maybe_unused]] auto       out = reinterpret_cast<uint64_t*>(a_out_p);
 	[[maybe_unused]] const auto in  = reinterpret_cast<const uint64_t*>(a_in_p);
@@ -518,6 +524,8 @@ void unrsum(const uint64_t* a_in_p, uint64_t* a_out_p) {
 		a_out_p[112 + (128 * 7) + i]  = tmp_0;
 	}
 }
-void unrsum_inplace(uint64_t* a_in_p) { unrsum(const_cast<const uint64_t*>(a_in_p), a_in_p); }
+void unrsum_inplace(uint64_t* a_in_p) {
+	unrsum(const_cast<const uint64_t*>(a_in_p), a_in_p);
+}
 }}} // namespace generated::unrsum::fallback::scalar
 // NOLINTEND
