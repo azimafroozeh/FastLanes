@@ -1,89 +1,86 @@
 //! Self-contained FastLanes builder
-
 use std::{
     env, fs,
     io::Cursor,
     path::{Path, PathBuf},
 };
 
+// ────────────────────────────────────────────────────────────────
+// Embed the C++ tarball.  In a dev/CI checkout this lives in
+// rust/target/, while on crates.io it sits next to build.rs.
+// ----------------------------------------------------------------
 const FLS_TARBALL: &[u8] = include_bytes!(concat!(
-    env!("CARGO_MANIFEST_DIR"),
-    "/target/fastlanes-src.tar.gz"
+env!("CARGO_MANIFEST_DIR"),
+"/target/fastlanes-src.tar.gz"
 ));
 
 fn main() {
-    // --- figure out where the CMakeLists.txt lives ----------------------------
-    let crate_dir = PathBuf::from(env::var("CARGO_MANIFEST_DIR").unwrap());
-    let out_dir = PathBuf::from(env::var("OUT_DIR").unwrap());
-    let unpack_dst = out_dir.join("fastlanes-src");
+    // ── Locate sources ───────────────────────────────────────────
+    let crate_dir   = PathBuf::from(env::var("CARGO_MANIFEST_DIR").unwrap());
+    let out_dir     = PathBuf::from(env::var("OUT_DIR").unwrap());
+    let unpack_dst  = out_dir.join("fastlanes-src");
 
-    let repo_root = crate_dir.parent().expect("rust/ has a parent");
+    let repo_root   = crate_dir.parent().expect("rust/ has a parent");
     let src_dir: PathBuf = if repo_root.join("CMakeLists.txt").exists() {
-        repo_root.into() // dev/CI build
+        repo_root.into()               // dev/CI build – use workspace sources
     } else {
-        ensure_unpacked(&unpack_dst); // crates.io build
-        dive_one_level(&unpack_dst) // inside git-archive top dir
+        ensure_unpacked(&unpack_dst);  // crates.io build – unpack tarball
+        dive_one_level(&unpack_dst)    // git-archive wrapper dir
     };
 
-    // --- CMake build + install -----------------------------------------------
-    println!(
-        "cargo:warning=--- Running CMake build+install in {:?} ---",
-        src_dir
-    );
+    // ── CMake build & install ────────────────────────────────────
+    println!("cargo:warning=--- Running CMake in {:?} ---", src_dir);
 
     let install_prefix = cmake::Config::new(&src_dir)
         .define("CMAKE_VERBOSE_MAKEFILE", "ON")
         .profile("Release")
-        .build_target("install")
+        .build_target("install")   // “make install” into an internal prefix
         .build();
 
-    println!(
-        "cargo:warning=--- CMake done, install prefix is {:?} ---",
-        install_prefix
-    );
-
     let include_dir = install_prefix.join("include");
-    let lib_dir = install_prefix.join("lib");
+    let lib_dir     = install_prefix.join("lib");
 
-    // --- CXX bridge -----------------------------------------------------------
-    cxx_build::bridge("src/lib.rs")
+    // ── Generate & build the CXX bridge file ─────────────────────
+    let mut bridge = cxx_build::bridge("src/lib.rs");
+    bridge
         .include(&include_dir)
         .include(&crate_dir)
         .file("bridge_shim.cpp")
         .flag_if_supported("-std=c++20")
-        .compile("fastlanes_version");
+        // GCC ≥13 supports this flag; Clang does not.
+        .flag_if_supported("-Wno-changes-meaning")
+        // Make unknown warning options non-fatal under -Werror on Clang.
+        .flag("-Wno-error=unknown-warning-option")
+        .compile("fastlanes_rs");
 
-    // --- Linkage --------------------------------------------------------------
+    // ── Link against the freshly-built FastLanes static lib ──────
     println!("cargo:rustc-link-search=native={}", lib_dir.display());
     println!("cargo:rustc-link-lib=static=FastLanes");
-    println!("cargo:rustc-link-lib=c++");
+    println!("cargo:rustc-link-lib=c++");   // use libstdc++ on Linux
 
-    // --- Re-run triggers ------------------------------------------------------
+    // ── Re-run triggers ──────────────────────────────────────────
     println!("cargo:rerun-if-changed=fastlanes-src.tar.gz");
     println!("cargo:rerun-if-changed=src/lib.rs");
     println!("cargo:rerun-if-changed=bridge_shim.cpp");
 }
 
-/// unpack the embedded tar-ball once
+/// Unpack the embedded tarball once per build directory.
 fn ensure_unpacked(dst: &Path) {
     if dst.exists() {
         return;
     }
-    println!(
-        "cargo:warning=Unpacking embedded FastLanes sources to {:?}",
-        dst
-    );
+    println!("cargo:warning=Unpacking FastLanes sources to {:?}", dst);
 
     fs::create_dir_all(dst).expect("create unpack dir");
-    let gz = flate2::read::GzDecoder::new(Cursor::new(FLS_TARBALL));
+    let gz  = flate2::read::GzDecoder::new(Cursor::new(FLS_TARBALL));
     let mut ar = tar::Archive::new(gz);
     ar.unpack(dst).expect("untar FastLanes");
 }
 
-/// git-generated tar-balls contain a single top-level directory: `FastLanes-<hash>/`
+/// Git-generated tarballs have a single top-level dir (`FastLanes-<hash>`).
 fn dive_one_level(dir: &Path) -> PathBuf {
     let mut it = fs::read_dir(dir).expect("read_dir").flatten();
-    let first = it.next().expect("tar has at least one entry");
+    let first  = it.next().expect("tar has at least one entry");
     if it.next().is_none() && first.file_type().unwrap().is_dir() {
         first.path()
     } else {

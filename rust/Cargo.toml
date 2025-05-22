@@ -12,7 +12,7 @@ readme        = "README.md"
 keywords      = ["FastLanes", "FileFormat", "Compression"]
 categories    = ["database", "compression"]
 
-# Ship *only* what the crate needs – no exclude list => no Cargo warning
+# Ship only what the crate needs
 include = [
     "src/**",
     "bridge_shim.cpp",
@@ -32,11 +32,11 @@ repository = "cwida/FastLanes"
 workflow   = "rust"
 
 [dependencies]
-cxx    = "1"     # Rust/C++ bridge
-anyhow = "1"     # lightweight error handling
+cxx    = "1"
+anyhow = "1"
 
 [build-dependencies]
-cmake     = "0.1"   # drive CMake
+cmake     = "0.1"
 cxx-build = "1"
 flate2    = "1"
 tar       = "0.4"
