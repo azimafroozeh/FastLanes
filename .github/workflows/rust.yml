@@ -1,5 +1,7 @@
+# .github/workflows/rust.yml
+# ────────────────────────────────────────────────────────────────
 name: Rust
-run-name: >-
+run-name: >
   ${{ github.workflow }} on ${{ github.ref_name }} (#${{ github.run_number }})
   — ${{ github.event.pull_request.title || github.event.head_commit.message }}
 
@@ -13,10 +15,10 @@ concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 
+# ────────────────────────────────────────────────────────────────
+# 1️⃣  Rust format check
+# ────────────────────────────────────────────────────────────────
 jobs:
-  # ──────────────────────────────────────────────────────────────
-  # 1️⃣  Format‐check
-  # ──────────────────────────────────────────────────────────────
   fmt:
     runs-on: ubuntu-latest
     steps:
@@ -30,12 +32,20 @@ jobs:
         working-directory: rust
         run: cargo fmt -- --check
 
-  # ──────────────────────────────────────────────────────────────
-  # 3️⃣  Build & test (with Clang → libstdc++)
-  # ──────────────────────────────────────────────────────────────
+  # ────────────────────────────────────────────────────────────────
+  # 2️⃣  Build, test, dry-run publish (Clang 20 + libc++)
+  # ────────────────────────────────────────────────────────────────
   build:
     needs: [ fmt ]
     runs-on: ubuntu-latest
+
+    # All steps inherit these
+    env:
+      CC: clang
+      CXX: clang++
+      # use LLD for faster links; cargo picks this up via RUSTFLAGS
+      RUSTFLAGS: -C link-arg=-fuse-ld=lld
+
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -45,6 +55,7 @@ jobs:
       - name: Detect CPU count
         run: make detect-cpu | tee -a "$GITHUB_ENV"
 
+      # Cache Cargo registry + Git + build artefacts
       - name: Cache Rust dependencies
         uses: actions/cache@v3
         with:
@@ -55,40 +66,38 @@ jobs:
           key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
           restore-keys: ${{ runner.os }}-cargo-
 
-      - name: Install LLVM
+      # ① Install the LLVM 20 compiler/linker suite (composite action)
+      - name: Install LLVM 20 toolchain
         uses: ./.github/actions/install-llvm
 
-      - name: Install C++ deps
+      # ② Bring in libc++, libunwind, compiler-rt, CMake, Make, pkg-config  (Linux only)
+      - name: Install libc++ runtime & build tools (Linux only)
+        if: runner.os == 'Linux'
         run: |
-          sudo apt-get update
-          sudo apt-get install -y cmake build-essential pkg-config \
-                                 libc++-dev libc++abi-dev
+          sudo apt-get update -y
+          sudo apt-get install -y \
+            libc++-dev libc++abi-dev libunwind-dev compiler-rt-dev \
+            cmake make pkg-config
 
+      # ─────────── Build & run the bundled example ───────────
       - name: Build & run Rust example
-        env:
-          CC: clang
-          CXX: clang++
         run: make -j $BUILD_THREADS run-rust-example
 
+      # ─────────── Run the Rust test suite ───────────
       - name: Run Rust tests
-        env:
-          CC: clang
-          CXX: clang++
         run: |
           cd rust
           cargo test -- --test-threads $BUILD_THREADS
 
+      # ─────────── crates.io dry-run publish ───────────
       - name: Dry-run publish check
-        env:
-          CC: clang
-          CXX: clang++
         run: make -j $BUILD_THREADS dry-run-rust
 
-  # ──────────────────────────────────────────────────────────────
-  # 4️⃣  (Optional) Publish docs or other post‐build steps…
-  # ──────────────────────────────────────────────────────────────
-  # deploy-docs:
-  #   needs: build
-  #   runs-on: ubuntu-latest
-  #   steps:
-  #     …
+# ────────────────────────────────────────────────────────────────
+# 3️⃣  (Optional) Post-build stages go here, e.g. docs deployment
+# ────────────────────────────────────────────────────────────────
+#  deploy-docs:
+#    needs: build
+#    runs-on: ubuntu-latest
+#    steps:
+#      …
