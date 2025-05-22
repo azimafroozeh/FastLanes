@@ -2,7 +2,8 @@ IMAGE             := ghcr.io/azimafroozeh/clang-format-python/clang-format-pytho
 UBUNTU_IMAGE      := ubuntu:22.04
 DIRS              := examples include src benchmark test data/include python
 EXCLUDES          := --exclude include/fls/json/nlohmann \
-                     --exclude include/flatbuffers
+                     --exclude include/flatbuffers \
+                     --exclude src/primitives
 
 # shared docker‐run prefix
 DOCKER := docker run --rm -v "$$(pwd)":/app -w /app
