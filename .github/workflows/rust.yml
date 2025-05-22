@@ -10,7 +10,7 @@ on:
   pull_request:
     branches: [ "main", "dev" ]
 
-# cancel redundant runs for the same branch/PR
+# Cancel redundant runs for the same branch/PR
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
@@ -31,15 +31,14 @@ jobs:
     runs-on: ubuntu-latest
 
     env:
-      # use Clang for C/C++
-      CC:  clang
+      # compile C/C++ with Clang
+      CC: clang
       CXX: clang++
-      # keep warnings, but *not* fatal, on Clang
-      CXXFLAGS: -Wno-error
-      # LLD for speed + make unknown warning options non-fatal inside the Rust bridge step
-      RUSTFLAGS: >
-        -C link-arg=-fuse-ld=lld
-        -C clang-args=-Wno-error=unknown-warning-option
+      #  ⇢ keep warnings but *not* fatal on Clang
+      #  ⇢ downgrade any future unknown-option warnings as well
+      CXXFLAGS: -Wno-error -Wno-error=unknown-warning-option
+      # link Rust with LLD (stable flag only)
+      RUSTFLAGS: -C link-arg=-fuse-ld=lld
 
     steps:
       - uses: actions/checkout@v4
@@ -57,11 +56,11 @@ jobs:
           key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
           restore-keys: ${{ runner.os }}-cargo-
 
-      # ① LLVM 20 toolchain (composite action in repo)
+      # ① LLVM 20 toolchain (local composite action)
       - name: Install LLVM 20
         uses: ./.github/actions/install-llvm
 
-      # ② libc++/runtime + build helpers (Linux only)
+      # ② libc++ runtime + build helpers (Linux only)
       - name: Install libc++ runtime & build tools
         if: runner.os == 'Linux'
         run: |
@@ -70,11 +69,11 @@ jobs:
             libc++-20-dev libc++abi-20-dev libunwind-20-dev libclang-rt-20-dev \
             cmake make pkg-config
 
-      # build & run the example in release mode
+      # Build & run the bundled Rust example
       - name: Build & run Rust example
         run: make -j $BUILD_THREADS run-rust-example
 
-      # run the Rust unit tests
+      # Run the Rust unit tests
       - name: Rust tests
         run: |
           cd rust
