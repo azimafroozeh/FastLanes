@@ -10,22 +10,22 @@ use std::{
 // rust/target/, while on crates.io it sits next to build.rs.
 // ----------------------------------------------------------------
 const FLS_TARBALL: &[u8] = include_bytes!(concat!(
-env!("CARGO_MANIFEST_DIR"),
-"/target/fastlanes-src.tar.gz"
+    env!("CARGO_MANIFEST_DIR"),
+    "/target/fastlanes-src.tar.gz"
 ));
 
 fn main() {
     // ── Locate sources ───────────────────────────────────────────
-    let crate_dir   = PathBuf::from(env::var("CARGO_MANIFEST_DIR").unwrap());
-    let out_dir     = PathBuf::from(env::var("OUT_DIR").unwrap());
-    let unpack_dst  = out_dir.join("fastlanes-src");
+    let crate_dir = PathBuf::from(env::var("CARGO_MANIFEST_DIR").unwrap());
+    let out_dir = PathBuf::from(env::var("OUT_DIR").unwrap());
+    let unpack_dst = out_dir.join("fastlanes-src");
 
-    let repo_root   = crate_dir.parent().expect("rust/ has a parent");
+    let repo_root = crate_dir.parent().expect("rust/ has a parent");
     let src_dir: PathBuf = if repo_root.join("CMakeLists.txt").exists() {
-        repo_root.into()               // dev/CI build – use workspace sources
+        repo_root.into() // dev/CI build – use workspace sources
     } else {
-        ensure_unpacked(&unpack_dst);  // crates.io build – unpack tarball
-        dive_one_level(&unpack_dst)    // git-archive wrapper dir
+        ensure_unpacked(&unpack_dst); // crates.io build – unpack tarball
+        dive_one_level(&unpack_dst) // git-archive wrapper dir
     };
 
     // ── CMake build & install ────────────────────────────────────
@@ -34,11 +34,11 @@ fn main() {
     let install_prefix = cmake::Config::new(&src_dir)
         .define("CMAKE_VERBOSE_MAKEFILE", "ON")
         .profile("Release")
-        .build_target("install")   // “make install” into an internal prefix
+        .build_target("install") // “make install” into an internal prefix
         .build();
 
     let include_dir = install_prefix.join("include");
-    let lib_dir     = install_prefix.join("lib");
+    let lib_dir = install_prefix.join("lib");
 
     // ── Generate & build the CXX bridge file ─────────────────────
     let mut bridge = cxx_build::bridge("src/lib.rs");
@@ -56,7 +56,7 @@ fn main() {
     // ── Link against the freshly-built FastLanes static lib ──────
     println!("cargo:rustc-link-search=native={}", lib_dir.display());
     println!("cargo:rustc-link-lib=static=FastLanes");
-    println!("cargo:rustc-link-lib=c++");   // use libstdc++ on Linux
+    println!("cargo:rustc-link-lib=c++"); // use libstdc++ on Linux
 
     // ── Re-run triggers ──────────────────────────────────────────
     println!("cargo:rerun-if-changed=fastlanes-src.tar.gz");
@@ -72,7 +72,7 @@ fn ensure_unpacked(dst: &Path) {
     println!("cargo:warning=Unpacking FastLanes sources to {:?}", dst);
 
     fs::create_dir_all(dst).expect("create unpack dir");
-    let gz  = flate2::read::GzDecoder::new(Cursor::new(FLS_TARBALL));
+    let gz = flate2::read::GzDecoder::new(Cursor::new(FLS_TARBALL));
     let mut ar = tar::Archive::new(gz);
     ar.unpack(dst).expect("untar FastLanes");
 }
@@ -80,7 +80,7 @@ fn ensure_unpacked(dst: &Path) {
 /// Git-generated tarballs have a single top-level dir (`FastLanes-<hash>`).
 fn dive_one_level(dir: &Path) -> PathBuf {
     let mut it = fs::read_dir(dir).expect("read_dir").flatten();
-    let first  = it.next().expect("tar has at least one entry");
+    let first = it.next().expect("tar has at least one entry");
     if it.next().is_none() && first.file_type().unwrap().is_dir() {
         first.path()
     } else {
