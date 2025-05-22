@@ -17,3 +17,8 @@ set(FASTLANES_OBJECT_FILES
 
 
 target_compile_options(fls_fsst_prm PRIVATE -Wno-macro-redefined)
+
+target_link_libraries(fls_fsst_prm
+        PUBLIC
+        FastLanes::headers
+)

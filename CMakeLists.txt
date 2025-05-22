@@ -162,17 +162,12 @@ if (true)
     message("-- FLS: Building ALP Lib.")
     add_compile_definitions(ALP_N_VECTORS_PER_ROWGROUP=64)
     set(ALP_ENABLE_ADAPTIVE_MODE OFF CACHE BOOL "Enable adaptive mode" FORCE)
-    add_subdirectory(alp)
-    include_directories(${CMAKE_CURRENT_SOURCE_DIR}/alp/src/include)
 endif ()
 
 
 if (true)
     message("---------------------------------------------------------------------------------------------------------")
     message("-- FLS: Building FastLanes Lib.")
-
-    # Primitives: ------------------------------------------------------------------------------------------------------
-    add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/primitives)
 
     # Source: ----------------------------------------------------------------------------------------------------------
     add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/src)
@@ -207,19 +202,26 @@ if (FLS_BUILD_TESTING OR FLS_BUILD_BENCHMARKING OR FLS_BUILD_EXAMPLES OR FLS_ENA
     message("---------------------------------------------------------------------------------------------------------")
     message("-- FLS: Enabling Data.")
 
+
+    # If the user has set FASTLANES_DATA_DIR in their environment, use that:
+    if (DEFINED ENV{FASTLANES_DATA_DIR})
+        set(data_SOURCE_DIR "$ENV{FASTLANES_DATA_DIR}")
+        message("-- FLS : Using FASTLANES_DATA_DIR from environment: ${data_SOURCE_DIR}")
+    else ()
+        include(FetchContent)
+        FetchContent_Declare(
+                data
+                GIT_REPOSITORY https://github.com/cwida/FastLanes_Data.git
+                GIT_TAG main
+        )
+        FetchContent_MakeAvailable(data)
+        set(data_SOURCE_DIR "${data_SOURCE_DIR}")  # from FetchContent
+        message("-- FLS : Fetched FastLanes_Data into: ${data_SOURCE_DIR}")
+    endif ()
+
     include_directories(${CMAKE_CURRENT_SOURCE_DIR}/data/include)
-
-    FetchContent_Declare(
-            data
-            GIT_REPOSITORY https://github.com/cwida/FastLanes_Data.git
-            GIT_TAG main
-    )
-
-    FetchContent_MakeAvailable(data)
-
     add_compile_definitions(FASTLANES_DATA_DIR="${data_SOURCE_DIR}")
     cmake_print_variables(data_SOURCE_DIR)
-
 endif ()
 
 if (FLS_ENABLE_CLANG_TIDY)

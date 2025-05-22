@@ -21,3 +21,9 @@ set(FASTLANES_OBJECT_FILES
 if (FLS_ENABLE_IWYU)
     set_property(TARGET fls_common PROPERTY CXX_INCLUDE_WHAT_YOU_USE ${iwyu_path})
 endif ()
+
+
+target_link_libraries(fls_common
+        PUBLIC
+        FastLanes::headers
+)

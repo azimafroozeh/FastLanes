@@ -13,3 +13,8 @@ if (FLS_ENABLE_IWYU)
 endif ()
 
 target_compile_options(fls_detail PRIVATE -Wno-macro-redefined)
+
+target_link_libraries(fls_detail
+        PUBLIC
+        FastLanes::headers
+)

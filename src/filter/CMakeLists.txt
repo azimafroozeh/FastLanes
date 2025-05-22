@@ -11,3 +11,8 @@ endif ()
 set(FASTLANES_OBJECT_FILES
         ${FASTLANES_OBJECT_FILES} $<TARGET_OBJECTS:fls_filter>
         PARENT_SCOPE)
+
+target_link_libraries(fls_filter
+        PUBLIC
+        FastLanes::headers
+)

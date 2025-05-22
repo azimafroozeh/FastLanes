@@ -10,3 +10,8 @@ endif ()
 set(FASTLANES_OBJECT_FILES
         ${FASTLANES_OBJECT_FILES} $<TARGET_OBJECTS:fls_json>
         PARENT_SCOPE)
+
+target_link_libraries(fls_json
+        PUBLIC
+        FastLanes::headers
+)

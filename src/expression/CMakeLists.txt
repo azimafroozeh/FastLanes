@@ -37,3 +37,8 @@ set(FASTLANES_OBJECT_FILES
 
 
 target_compile_options(fls_expression PRIVATE -Wno-macro-redefined)
+
+target_link_libraries(fls_expression
+        PUBLIC
+        FastLanes::headers
+)
