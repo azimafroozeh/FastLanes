@@ -65,6 +65,9 @@ add_library(FastLanes STATIC
         ${FASTLANES_OBJECT_FILES}
 )
 
+target_compile_features(FastLanes PUBLIC cxx_std_20)
+
+
 # Public usage requirements
 # ‑ Anyone linking to FastLanes gets include path *and* dependent libs
 # ‑ We link the header interface so *this* target can see its own headers
@@ -80,7 +83,7 @@ add_library(FastLanes::core ALIAS FastLanes)
 # Optional Include‑What‑You‑Use support --------------------------------------------------------------
 if (FLS_ENABLE_IWYU)
     set_property(TARGET FastLanes PROPERTY CXX_INCLUDE_WHAT_YOU_USE ${iwyu_path})
-endif()
+endif ()
 
 #######################################################################
 # 4. Installation
@@ -88,7 +91,7 @@ endif()
 
 install(
         TARGETS FastLanes fls_headers
-        EXPORT  FLSTargets           # add the two libs to the export set
+        EXPORT FLSTargets           # add the two libs to the export set
         LIBRARY DESTINATION lib      # for shared libs (none in this snippet)
         ARCHIVE DESTINATION lib      # static libs (.a)
         RUNTIME DESTINATION bin      # executables, if any
