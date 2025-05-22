@@ -3,7 +3,7 @@
 
 int main() {
 	try {
-		// Define input and output file paths using 
+		// Define input and output file paths using
 		const std::filesystem::path data_dir   = EXAMPLE_CMAKE_SOURCE_DIR "/data";
 		const std::filesystem::path fls_file   = EXAMPLE_CMAKE_SOURCE_DIR "/data.fls";
 		const std::filesystem::path output_csv = EXAMPLE_CMAKE_SOURCE_DIR "/decoded_by_fastlanes.csv";
