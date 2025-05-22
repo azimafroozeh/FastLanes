@@ -10,13 +10,13 @@ on:
   pull_request:
     branches: [ "main", "dev" ]
 
-# cancel redundant runs for the same branch/PR
+# Cancel redundant runs for the same branch/PR
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 
 # ────────────────────────────────────────────────────────────────
-# 1️⃣  Rust format check
+# 1️⃣  rustfmt check
 # ────────────────────────────────────────────────────────────────
 jobs:
   fmt:
@@ -33,18 +33,16 @@ jobs:
         run: cargo fmt -- --check
 
   # ────────────────────────────────────────────────────────────────
-  # 2️⃣  Build, test, dry-run publish (Clang 20 + libc++)
+  # 2️⃣  Build, test, crates-io dry-run (Clang 20 + libc++)
   # ────────────────────────────────────────────────────────────────
   build:
     needs: [ fmt ]
     runs-on: ubuntu-latest
 
-    # All steps inherit these
     env:
       CC: clang
       CXX: clang++
-      # use LLD for faster links; cargo picks this up via RUSTFLAGS
-      RUSTFLAGS: -C link-arg=-fuse-ld=lld
+      RUSTFLAGS: -C link-arg=-fuse-ld=lld   # use LLD for faster linking
 
     steps:
       - name: Checkout
@@ -70,17 +68,17 @@ jobs:
       - name: Install LLVM 20 toolchain
         uses: ./.github/actions/install-llvm
 
-      # ② Bring in libc++, libunwind, compiler-rt, CMake, Make, pkg-config  (Linux only)
+      # ② Bring in libc++, libunwind, clang-rt, plus CMake/Make/pkg-config (Linux only)
       - name: Install libc++ runtime & build tools (Linux only)
         if: runner.os == 'Linux'
         run: |
           sudo apt-get update -y
           sudo apt-get install -y \
-              libc++-20-dev      \
-              libc++abi-20-dev   \
-              libunwind-20-dev   \
-              libclang-rt-20-dev \
-              cmake make pkg-config
+            libc++-20-dev      \
+            libc++abi-20-dev   \
+            libunwind-20-dev   \
+            libclang-rt-20-dev \
+            cmake make pkg-config
 
       # ─────────── Build & run the bundled example ───────────
       - name: Build & run Rust example
@@ -97,7 +95,7 @@ jobs:
         run: make -j $BUILD_THREADS dry-run-rust
 
 # ────────────────────────────────────────────────────────────────
-# 3️⃣  (Optional) Post-build stages go here, e.g. docs deployment
+# 3️⃣  (Optional) post-build stages
 # ────────────────────────────────────────────────────────────────
 #  deploy-docs:
 #    needs: build

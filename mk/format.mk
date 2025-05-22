@@ -3,7 +3,10 @@ UBUNTU_IMAGE      := ubuntu:22.04
 DIRS              := examples include src benchmark test data/include python
 EXCLUDES          := --exclude include/fls/json/nlohmann \
                      --exclude include/flatbuffers \
-                     --exclude src/primitives
+                     --exclude src/primitives \
+                     --exclude examples/rust_example
+
+
 
 # shared docker‐run prefix
 DOCKER := docker run --rm -v "$$(pwd)":/app -w /app
