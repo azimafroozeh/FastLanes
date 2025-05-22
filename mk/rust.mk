@@ -38,7 +38,7 @@ package-fastlanes:
 
 	# tar the minimal C++ tree (no tests, docs, data)
 	git -C $(PROJECT_DIR) archive --format=tar HEAD \
-	    CMakeLists.txt include src alp primitives \
+	    CMakeLists.txt include src \
 	    | gzip -9n > $(FASTLANES_TAR).tmp
 	mv $(FASTLANES_TAR).tmp $(FASTLANES_TAR)
 	@ls -lh $(FASTLANES_TAR)
