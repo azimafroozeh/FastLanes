@@ -6,10 +6,10 @@ use std::{
     path::{Path, PathBuf},
 };
 
-
-const FLS_TARBALL: &[u8] = include_bytes!(
-    concat!(env!("CARGO_MANIFEST_DIR"), "/target/fastlanes-src.tar.gz")
-);
+const FLS_TARBALL: &[u8] = include_bytes!(concat!(
+    env!("CARGO_MANIFEST_DIR"),
+    "/target/fastlanes-src.tar.gz"
+));
 
 fn main() {
     // --- figure out where the CMakeLists.txt lives ----------------------------

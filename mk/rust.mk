@@ -87,4 +87,13 @@ run-rust-example: build-rust
 	LIBRARY_PATH="$(PREFIX)/lib" \
 	cargo run --example rust_example
 
+# ----------------------------------------------------------------
+# Format Rust source
+# ----------------------------------------------------------------
+.PHONY: rust-format
+rust-format:
+	@echo "Formatting Rust sources…"
+	$(CARGO) fmt --manifest-path $(CRATE_ROOT)/Cargo.toml
+	@echo "Rust formatting complete."
+
 endif   # RUST_MK_INCLUDED
