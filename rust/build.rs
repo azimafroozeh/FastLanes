@@ -1,31 +1,41 @@
-//! Self-contained FastLanes builder
+//! Self-contained FastLanes builder + Git-tag version emitter
+
 use std::{
     env, fs,
     io::Cursor,
     path::{Path, PathBuf},
 };
 
-/// Embed the C++ tarball. During crates.io builds, this file must be
-/// included next to build.rs via Cargo.toml `include = ["fastlanes-src.tar.gz"]`.
+use flate2::read::GzDecoder;
+use tar::Archive;
+use vergen::{vergen, Config}; // ①
+
 const FLS_TARBALL: &[u8] = include_bytes!("fastlanes-src.tar.gz");
 
 fn main() {
-    // ── Locate sources ───────────────────────────────────────────
+    // ── 1) Emit Git tag version into VERGEN_GIT_SEMVER  ─────────────
+    // Re-run if HEAD or tags change
+    println!("cargo:rerun-if-changed=.git/HEAD");
+    println!("cargo:rerun-if-changed=.git/refs/tags");
+    let mut cfg = Config::default();
+    *cfg.git_mut().semver_mut() = true; // enable semver from annotated tag
+    vergen(cfg).expect("Unable to emit version info");
+
+    // ── 2) Unpack & build the C++ sources ───────────────────────────
     let crate_dir = PathBuf::from(env::var("CARGO_MANIFEST_DIR").unwrap());
     let out_dir = PathBuf::from(env::var("OUT_DIR").unwrap());
     let unpack_dst = out_dir.join("fastlanes-src");
 
     let repo_root = crate_dir.parent().expect("rust/ has a parent");
     let src_dir: PathBuf = if repo_root.join("CMakeLists.txt").exists() {
-        // dev/CI build – use workspace sources
+        // dev build: build from workspace checkout
         repo_root.into()
     } else {
-        // crates.io build – unpack embedded tarball
+        // crates.io build: unpack the embedded archive
         ensure_unpacked(&unpack_dst);
         dive_one_level(&unpack_dst)
     };
 
-    // ── CMake build & install ────────────────────────────────────
     println!("cargo:warning=--- Running CMake in {:?} ---", src_dir);
 
     let install_prefix = cmake::Config::new(&src_dir)
@@ -37,7 +47,7 @@ fn main() {
     let include_dir = install_prefix.join("include");
     let lib_dir = install_prefix.join("lib");
 
-    // ── Generate & build the CXX bridge file ─────────────────────
+    // ── 3) Generate & compile the CXX bridge ───────────────────────
     let mut bridge = cxx_build::bridge("src/lib.rs");
     bridge
         .include(&include_dir)
@@ -48,18 +58,17 @@ fn main() {
         .flag_if_supported("-Wno-error=unknown-warning-option")
         .compile("fastlanes_rs");
 
-    // ── Link against the freshly-built FastLanes static lib ──────
+    // ── 4) Link the static C++ library ──────────────────────────────
     println!("cargo:rustc-link-search=native={}", lib_dir.display());
     println!("cargo:rustc-link-lib=static=FastLanes");
     println!("cargo:rustc-link-lib=c++");
 
-    // ── Re-run triggers ──────────────────────────────────────────
+    // ── 5) Re-run triggers ──────────────────────────────────────────
     println!("cargo:rerun-if-changed=fastlanes-src.tar.gz");
     println!("cargo:rerun-if-changed=src/lib.rs");
     println!("cargo:rerun-if-changed=bridge_shim.cpp");
 }
 
-/// Unpack the embedded tarball once per build directory.
 fn ensure_unpacked(dst: &Path) {
     if dst.exists() {
         return;
@@ -67,16 +76,15 @@ fn ensure_unpacked(dst: &Path) {
     println!("cargo:warning=Unpacking FastLanes sources to {:?}", dst);
 
     fs::create_dir_all(dst).expect("create unpack dir");
-    let gz = flate2::read::GzDecoder::new(Cursor::new(FLS_TARBALL));
-    let mut ar = tar::Archive::new(gz);
+    let gz = GzDecoder::new(Cursor::new(FLS_TARBALL));
+    let mut ar = Archive::new(gz);
     ar.unpack(dst).expect("untar FastLanes");
 }
 
-/// Git-generated tarballs have a single top-level dir (`FastLanes-<hash>`).
 fn dive_one_level(dir: &Path) -> PathBuf {
-    let mut it = fs::read_dir(dir).expect("read_dir").flatten();
-    let first = it.next().expect("tar has at least one entry");
-    if it.next().is_none() && first.file_type().unwrap().is_dir() {
+    let mut entries = fs::read_dir(dir).expect("read_dir").flatten();
+    let first = entries.next().expect("tar has at least one entry");
+    if entries.next().is_none() && first.file_type().unwrap().is_dir() {
         first.path()
     } else {
         dir.to_owned()
