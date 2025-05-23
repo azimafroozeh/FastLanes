@@ -50,6 +50,7 @@ package-fastlanes:
 
 build-rust: package-fastlanes
 	@echo "Building Rust crate (release, $(NUM_JOBS) jobs)…"
+	CMAKE_BUILD_PARALLEL_LEVEL=$(NUM_JOBS) \
 	$(CARGO) build --release \
 	  --manifest-path $(CRATE_ROOT)/Cargo.toml \
 	  --jobs $(NUM_JOBS)
@@ -82,7 +83,6 @@ run-rust-example: build-rust
 	@echo "Running Rust example ‘rust_example’…"
 	cd $(CRATE_ROOT) && \
 	CC="$(CC)" CXX="$(CXX)" \
-	CXXFLAGS="-Wno-error -Wno-changes-meaning" \
 	C_INCLUDE_PATH="$(PREFIX)/include" \
 	LIBRARY_PATH="$(PREFIX)/lib" \
 	cargo run --jobs $(NUM_JOBS) --example rust_example
