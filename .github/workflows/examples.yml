@@ -6,9 +6,7 @@ run-name: >-
 on:
   push:
   pull_request:
-    branches:
-      - main
-      - dev
+    branches: [ main, dev ]
 
 jobs:
   # ────────────────────────────────────────────────────────
@@ -18,8 +16,7 @@ jobs:
     name: CMake / FetchContent example
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
+      - uses: actions/checkout@v3
         with:
           fetch-depth: 0
 
@@ -49,8 +46,7 @@ jobs:
     name: Python example
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
+      - uses: actions/checkout@v3
 
       - name: Set up Python
         uses: actions/setup-python@v4
@@ -73,11 +69,18 @@ jobs:
     env:
       CMAKE_INSTALL_MESSAGE: NEVER
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
+      - uses: actions/checkout@v3
 
-      - name: Set up Rust toolchain
-        uses: actions-rust-lang/setup-rust-toolchain@v1
+      - uses: actions-rust-lang/setup-rust-toolchain@v1
+
+      # --------------------------- NEW ---------------------------
+      # libc++ and libc++abi provide the -lc++ & -lc++abi libraries
+      # that fls-rs’s build script links against.
+      - name: Install libc++ runtime
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libc++-dev libc++abi-dev
+      # -----------------------------------------------------------
 
       - name: Build Rust example
         working-directory: examples/rust_example
@@ -86,5 +89,3 @@ jobs:
       - name: Run Rust example
         working-directory: examples/rust_example
         run: cargo run --bin rust_example --verbose
-
-
