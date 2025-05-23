@@ -5,15 +5,6 @@ use std::{
     path::{Path, PathBuf},
 };
 
-// ────────────────────────────────────────────────────────────────
-// Embed the C++ tarball.  In a dev/CI checkout this lives in
-// rust/target/, while on crates.io it sits next to build.rs.
-// ----------------------------------------------------------------
-const FLS_TARBALL: &[u8] = include_bytes!(concat!(
-    env!("CARGO_MANIFEST_DIR"),
-    "/target/fastlanes-src.tar.gz"
-));
-
 fn main() {
     // ── Locate sources ───────────────────────────────────────────
     let crate_dir = PathBuf::from(env::var("CARGO_MANIFEST_DIR").unwrap());
@@ -22,10 +13,13 @@ fn main() {
 
     let repo_root = crate_dir.parent().expect("rust/ has a parent");
     let src_dir: PathBuf = if repo_root.join("CMakeLists.txt").exists() {
-        repo_root.into() // dev/CI build – use workspace sources
+        // dev/CI build – use workspace sources
+        repo_root.into()
     } else {
-        ensure_unpacked(&unpack_dst); // crates.io build – unpack tarball
-        dive_one_level(&unpack_dst) // git-archive wrapper dir
+        // crates.io build – unpack tarball
+        ensure_unpacked(&unpack_dst);
+        // git-archive wrapper dir
+        dive_one_level(&unpack_dst)
     };
 
     // ── CMake build & install ────────────────────────────────────
@@ -46,10 +40,16 @@ fn main() {
         .include(&include_dir)
         .include(&crate_dir)
         .file("bridge_shim.cpp")
-        .flag_if_supported("-std=c++20")
-        // GCC ≥13 supports this flag; Clang does not.
-        .flag_if_supported("-Wno-changes-meaning")
-        // Make unknown warning options non-fatal under -Werror on Clang.
+        .flag_if_supported("-std=c++20");
+
+    // Only add -Wno-changes-meaning for GNU-like compilers
+    let compiler = bridge.get_compiler();
+    if compiler.is_like_gnu() {
+        bridge.flag("-Wno-changes-meaning");
+    }
+
+    // Make unknown warning options non-fatal under -Werror on Clang
+    bridge
         .flag("-Wno-error=unknown-warning-option")
         .compile("fastlanes_rs");
 
@@ -87,3 +87,12 @@ fn dive_one_level(dir: &Path) -> PathBuf {
         dir.to_owned()
     }
 }
+
+// ────────────────────────────────────────────────────────────────
+// Embed the C++ tarball.  In a dev/CI checkout this lives in
+// rust/target/, while on crates.io it sits next to build.rs.
+// ----------------------------------------------------------------
+const FLS_TARBALL: &[u8] = include_bytes!(concat!(
+env!("CARGO_MANIFEST_DIR"),
+"/target/fastlanes-src.tar.gz"
+));
