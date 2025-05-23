@@ -85,7 +85,7 @@ run-rust-example: build-rust
 	CXXFLAGS="-Wno-error -Wno-changes-meaning" \
 	C_INCLUDE_PATH="$(PREFIX)/include" \
 	LIBRARY_PATH="$(PREFIX)/lib" \
-	cargo run --example rust_example
+	cargo run --jobs $(NUM_JOBS) --example rust_example
 
 # ----------------------------------------------------------------
 # Format Rust source
