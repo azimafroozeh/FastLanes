@@ -5,6 +5,10 @@ use std::{
     path::{Path, PathBuf},
 };
 
+/// Embed the C++ tarball. During crates.io builds, this file must be
+/// included next to build.rs via Cargo.toml `include = ["fastlanes-src.tar.gz"]`.
+const FLS_TARBALL: &[u8] = include_bytes!("fastlanes-src.tar.gz");
+
 fn main() {
     // ── Locate sources ───────────────────────────────────────────
     let crate_dir = PathBuf::from(env::var("CARGO_MANIFEST_DIR").unwrap());
@@ -16,9 +20,8 @@ fn main() {
         // dev/CI build – use workspace sources
         repo_root.into()
     } else {
-        // crates.io build – unpack tarball
+        // crates.io build – unpack embedded tarball
         ensure_unpacked(&unpack_dst);
-        // git-archive wrapper dir
         dive_one_level(&unpack_dst)
     };
 
@@ -28,7 +31,9 @@ fn main() {
     let install_prefix = cmake::Config::new(&src_dir)
         .define("CMAKE_VERBOSE_MAKEFILE", "ON")
         .profile("Release")
-        .build_target("install") // “make install” into an internal prefix
+        // Pass parallel build level from environment if set
+        .build_arg(format!("-- -j{}", env::var("NUM_JOBS").unwrap_or_else(|_| "1".into())))
+        .build_target("install")
         .build();
 
     let include_dir = install_prefix.join("include");
@@ -40,18 +45,15 @@ fn main() {
         .include(&include_dir)
         .include(&crate_dir)
         .file("bridge_shim.cpp")
-        // C++20 mode
         .flag_if_supported("-std=c++20")
-        // suppress this warning if supported
         .flag_if_supported("-Wno-changes-meaning")
-        // make unknown-warning-option non-fatal if supported
         .flag_if_supported("-Wno-error=unknown-warning-option")
         .compile("fastlanes_rs");
 
     // ── Link against the freshly-built FastLanes static lib ──────
     println!("cargo:rustc-link-search=native={}", lib_dir.display());
     println!("cargo:rustc-link-lib=static=FastLanes");
-    println!("cargo:rustc-link-lib=c++"); // use libstdc++ on Linux
+    println!("cargo:rustc-link-lib=c++");
 
     // ── Re-run triggers ──────────────────────────────────────────
     println!("cargo:rerun-if-changed=fastlanes-src.tar.gz");
@@ -82,12 +84,3 @@ fn dive_one_level(dir: &Path) -> PathBuf {
         dir.to_owned()
     }
 }
-
-// ────────────────────────────────────────────────────────────────
-// Embed the C++ tarball.  In a dev/CI checkout this lives in
-// rust/target/, while on crates.io it sits next to build.rs.
-// ----------------------------------------------------------------
-const FLS_TARBALL: &[u8] = include_bytes!(concat!(
-    env!("CARGO_MANIFEST_DIR"),
-    "/target/fastlanes-src.tar.gz"
-));
