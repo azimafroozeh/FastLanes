@@ -1,6 +1,6 @@
 # ────────────────────────────────────────────────────────────────
 # Rust bindings – build, install, publish
-# (auto-included from the root Makefile)
+# (auto-included from the project-root Makefile)
 # ────────────────────────────────────────────────────────────────
 
 ifndef RUST_MK_INCLUDED
@@ -16,47 +16,55 @@ PROJECT_DIR  := $(abspath $(MK_DIR)/..)
 CRATE_ROOT   := $(PROJECT_DIR)/rust
 PREFIX       := $(PROJECT_DIR)/build/install
 
-# Output directory for generated artifacts (ignored by git)
+# Output directory for generated artifacts (ignored by Git)
 OUT_DIR      := $(CRATE_ROOT)/target
+
+# The tarball kept under version control inside the crate
+CRATE_TAR    := $(CRATE_ROOT)/fastlanes-src.tar.gz
+
+# The same tarball built into the build cache (never checked in)
 FASTLANES_TAR := $(OUT_DIR)/fastlanes-src.tar.gz
 
-NUM_JOBS     ?= $(shell sysctl -n hw.ncpu 2>/dev/null || echo 8)
+NUM_JOBS ?= $(shell sysctl -n hw.ncpu 2>/dev/null || echo 8)
 
-CARGO        ?= cargo
-C_ENV        := \
-  C_INCLUDE_PATH=$(PREFIX)/include \
-  LIBRARY_PATH=$(PREFIX)/lib \
-  CXXFLAGS=-I$(PREFIX)/include
+CARGO  ?= cargo
+C_ENV   := C_INCLUDE_PATH=$(PREFIX)/include \
+           LIBRARY_PATH=$(PREFIX)/lib \
+           CXXFLAGS=-I$(PREFIX)/include
 
-###############################################################################
-# rust/mk/rust.mk  – revised package-fastlanes target (Git ≥ 1.8 compatible)
-###############################################################################
+# ----------------------------------------------------------------
+# Produce fastlanes-src.tar.gz reproducibly
+# ----------------------------------------------------------------
 .PHONY: package-fastlanes
 package-fastlanes:
 	@echo "Packaging FastLanes sources → $(FASTLANES_TAR)"
 	@mkdir -p $(OUT_DIR)
 
-	# --- 1. figure out whether our Git supports --mtime (≥ 2.35) ----------
-	$(eval GIT_MTIME_OPT := $(shell git -C $(PROJECT_DIR) archive --help 2>&1 \
-	                               | grep -q -- '--mtime' && echo "--mtime=@0" || echo ""))
+	# Determine whether this Git supports --mtime (needs ≥ 2.35)
+	$(eval GIT_MTIME_OPT := $(shell git -C $(PROJECT_DIR) archive --help 2>&1 | \
+	                               grep -q -- '--mtime' && echo '--mtime=@0' || echo ''))
 
-	# --- 2. create a temporary archive ------------------------------------
+	# Create deterministic archive in a temporary file
 	@tmp=$(FASTLANES_TAR).tmp && \
 	    git -C $(PROJECT_DIR) archive --format=tar $(GIT_MTIME_OPT) -o $$tmp \
 	        HEAD CMakeLists.txt include src && \
 	    gzip -9n $$tmp && mv $$tmp.gz $$tmp
 
-	# --- 3. install it if the content is different ------------------------
-	@if ! test -f $(FASTLANES_TAR) || ! cmp -s $(FASTLANES_TAR).tmp $(FASTLANES_TAR); then \
-	    mv $(FASTLANES_TAR).tmp $(FASTLANES_TAR); \
-	    cp $(FASTLANES_TAR) $(CRATE_ROOT)/fastlanes-src.tar.gz; \
-	    echo "  ↪ updated tarball"; \
+	# Refresh build-cache copy; copy into crate only if bytes differ
+	@mv $(FASTLANES_TAR).tmp $(FASTLANES_TAR)
+	@if ! test -f $(CRATE_TAR) || ! cmp -s $(FASTLANES_TAR) $(CRATE_TAR); then \
+	    cp $(FASTLANES_TAR) $(CRATE_TAR); \
+	    echo "  ↪ updated committed tarball"; \
 	else \
-	    rm $(FASTLANES_TAR).tmp; \
-	    echo "  ↪ tarball already up-to-date"; \
+	    echo "  ↪ committed tarball already up-to-date"; \
 	fi
 
-
+# Helper: regenerate the tarball and commit it (run after editing C/C++)
+.PHONY: update-fastlanes-src
+update-fastlanes-src: package-fastlanes
+	@git add $(CRATE_TAR)
+	@git commit -m "Update embedded FastLanes source blob" \
+	  || echo "Tarball unchanged — nothing to commit."
 
 # ----------------------------------------------------------------
 # Build / install / publish
@@ -82,12 +90,17 @@ publish-rust: package-fastlanes
 	RUSTFLAGS="-L$(PREFIX)/lib" \
 	$(CARGO) publish --manifest-path $(CRATE_ROOT)/Cargo.toml
 
-dry-run-rust: package-fastlanes
+# Dry-run publish without regenerating the tarball
+.PHONY: dry-run-rust
+dry-run-rust:
 	@echo "Dry-run publishing Rust crate…"
 	$(C_ENV) \
 	RUSTFLAGS="-L$(PREFIX)/lib" \
 	$(CARGO) publish --manifest-path $(CRATE_ROOT)/Cargo.toml --dry-run
 
+# ----------------------------------------------------------------
+# Clean & misc
+# ----------------------------------------------------------------
 clean-rust:
 	@echo "Cleaning Rust build…"
 	$(CARGO) clean --manifest-path $(CRATE_ROOT)/Cargo.toml
@@ -102,10 +115,6 @@ run-rust-example: build-rust
 	LIBRARY_PATH="$(PREFIX)/lib" \
 	cargo run --jobs $(NUM_JOBS) --example rust_example
 
-# ----------------------------------------------------------------
-# Format Rust source
-# ----------------------------------------------------------------
-.PHONY: rust-format
 rust-format:
 	@echo "Formatting Rust sources…"
 	$(CARGO) fmt --manifest-path $(CRATE_ROOT)/Cargo.toml
