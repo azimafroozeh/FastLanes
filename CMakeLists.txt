@@ -94,22 +94,6 @@ endif ()
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Werror -Winconsistent-missing-override -Wshadow -Wconversion -Wnon-virtual-dtor -Wunused -Wpedantic -Woverloaded-virtual -Wshorten-64-to-32")
 set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wall -Werror -Wshadow -Wconversion")
 
-# ────────────────────────────────────────────────────────────────
-# GCC 13+ understands -Wno-changes-meaning; Clang does not.
-# Probe the compiler, add the flag only when it is supported,
-# and prevent Clang from turning an unknown option into a hard error.
-# ────────────────────────────────────────────────────────────────
-check_cxx_compiler_flag("-Wno-changes-meaning"
-        HAS_WNO_CHANGES_MEANING)
-
-if (HAS_WNO_CHANGES_MEANING)
-    # GCC ≥13: keep the warning under control
-    add_compile_options(-Wno-changes-meaning)
-elseif (CMAKE_CXX_COMPILER_ID MATCHES "Clang")
-    # Any flavour / version of Clang: allow unknown-option warnings
-    add_compile_options(-Wno-error=unknown-warning-option)
-endif ()
-
 if (CMAKE_BUILD_TYPE STREQUAL "Debug")
     message("---------------------------------------------------------------------------------------------------------")
     message("-- FLS: Debug mode enabled. Adding -g and -O0.")
