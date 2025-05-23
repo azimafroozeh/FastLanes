@@ -31,11 +31,6 @@ fn main() {
     let install_prefix = cmake::Config::new(&src_dir)
         .define("CMAKE_VERBOSE_MAKEFILE", "ON")
         .profile("Release")
-        // Pass parallel build level from environment if set
-        .build_arg(format!(
-            "-- -j{}",
-            env::var("NUM_JOBS").unwrap_or_else(|_| "1".into())
-        ))
         .build_target("install")
         .build();
 
