@@ -29,23 +29,33 @@ C_ENV        := \
   CXXFLAGS=-I$(PREFIX)/include
 
 ###############################################################################
-# rust/mk/rust.mk  – only the package-fastlanes target shown
+# rust/mk/rust.mk  – revised package-fastlanes target (Git ≥ 1.8 compatible)
 ###############################################################################
 .PHONY: package-fastlanes
 package-fastlanes:
 	@echo "Packaging FastLanes sources → $(FASTLANES_TAR)"
 	@mkdir -p $(OUT_DIR)
 
-	# tar the minimal C++ tree (no tests, docs, data)
-	git -C $(PROJECT_DIR) archive --format=tar HEAD \
-	    CMakeLists.txt include src \
-	    | gzip -9n > $(FASTLANES_TAR).tmp
-	mv $(FASTLANES_TAR).tmp $(FASTLANES_TAR)
+	# --- 1. figure out whether our Git supports --mtime (≥ 2.35) ----------
+	$(eval GIT_MTIME_OPT := $(shell git -C $(PROJECT_DIR) archive --help 2>&1 \
+	                               | grep -q -- '--mtime' && echo "--mtime=@0" || echo ""))
 
-	# NEW: copy the same blob next to build.rs so include_bytes! can find it
-	cp $(FASTLANES_TAR) $(CRATE_ROOT)/fastlanes-src.tar.gz
+	# --- 2. create a temporary archive ------------------------------------
+	@tmp=$(FASTLANES_TAR).tmp && \
+	    git -C $(PROJECT_DIR) archive --format=tar $(GIT_MTIME_OPT) -o $$tmp \
+	        HEAD CMakeLists.txt include src && \
+	    gzip -9n $$tmp && mv $$tmp.gz $$tmp
 
-	@ls -lh $(FASTLANES_TAR) $(CRATE_ROOT)/fastlanes-src.tar.gz
+	# --- 3. install it if the content is different ------------------------
+	@if ! test -f $(FASTLANES_TAR) || ! cmp -s $(FASTLANES_TAR).tmp $(FASTLANES_TAR); then \
+	    mv $(FASTLANES_TAR).tmp $(FASTLANES_TAR); \
+	    cp $(FASTLANES_TAR) $(CRATE_ROOT)/fastlanes-src.tar.gz; \
+	    echo "  ↪ updated tarball"; \
+	else \
+	    rm $(FASTLANES_TAR).tmp; \
+	    echo "  ↪ tarball already up-to-date"; \
+	fi
+
 
 
 # ----------------------------------------------------------------
