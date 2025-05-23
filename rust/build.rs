@@ -40,17 +40,12 @@ fn main() {
         .include(&include_dir)
         .include(&crate_dir)
         .file("bridge_shim.cpp")
-        .flag_if_supported("-std=c++20");
-
-    // Only add -Wno-changes-meaning for GNU-like compilers
-    let compiler = bridge.get_compiler();
-    if compiler.is_like_gnu() {
-        bridge.flag("-Wno-changes-meaning");
-    }
-
-    // Make unknown warning options non-fatal under -Werror on Clang
-    bridge
-        .flag("-Wno-error=unknown-warning-option")
+        // C++20 mode
+        .flag_if_supported("-std=c++20")
+        // suppress this warning if supported
+        .flag_if_supported("-Wno-changes-meaning")
+        // make unknown-warning-option non-fatal if supported
+        .flag_if_supported("-Wno-error=unknown-warning-option")
         .compile("fastlanes_rs");
 
     // ── Link against the freshly-built FastLanes static lib ──────
