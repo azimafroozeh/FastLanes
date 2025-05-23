@@ -7,7 +7,7 @@ use std::{
 
 use flate2::read::GzDecoder;
 use tar::Archive;
-use vergen::EmitBuilder;                       // vergen 9 API
+use vergen::EmitBuilder; // vergen 9 API
 
 const FLS_TARBALL: &[u8] = include_bytes!("fastlanes-src.tar.gz");
 
@@ -18,14 +18,14 @@ fn main() {
     println!("cargo:rerun-if-changed=.git/refs/tags");
 
     EmitBuilder::builder()
-        .git_semver(true)                      // sets VERGEN_GIT_SEMVER
+        .git_semver(true) // sets VERGEN_GIT_SEMVER
         .emit()
         .expect("vergen failed");
 
     // ── 2) Locate sources ───────────────────────────────────────────
-    let crate_dir   = PathBuf::from(env::var("CARGO_MANIFEST_DIR").unwrap());
-    let out_dir     = PathBuf::from(env::var("OUT_DIR").unwrap());
-    let unpack_dst  = out_dir.join("fastlanes-src");
+    let crate_dir = PathBuf::from(env::var("CARGO_MANIFEST_DIR").unwrap());
+    let out_dir = PathBuf::from(env::var("OUT_DIR").unwrap());
+    let unpack_dst = out_dir.join("fastlanes-src");
 
     let repo_root = crate_dir.parent().expect("rust/ has a parent");
     let src_dir: PathBuf = if repo_root.join("CMakeLists.txt").exists() {
@@ -46,7 +46,7 @@ fn main() {
         .build();
 
     let include_dir = install_prefix.join("include");
-    let lib_dir     = install_prefix.join("lib");
+    let lib_dir = install_prefix.join("lib");
 
     // ── 3) Build the CXX bridge ─────────────────────────────────────
     cxx_build::bridge("src/lib.rs")
