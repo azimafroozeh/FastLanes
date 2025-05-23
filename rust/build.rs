@@ -32,7 +32,10 @@ fn main() {
         .define("CMAKE_VERBOSE_MAKEFILE", "ON")
         .profile("Release")
         // Pass parallel build level from environment if set
-        .build_arg(format!("-- -j{}", env::var("NUM_JOBS").unwrap_or_else(|_| "1".into())))
+        .build_arg(format!(
+            "-- -j{}",
+            env::var("NUM_JOBS").unwrap_or_else(|_| "1".into())
+        ))
         .build_target("install")
         .build();
 
