@@ -41,7 +41,12 @@ package-fastlanes:
 	    CMakeLists.txt include src \
 	    | gzip -9n > $(FASTLANES_TAR).tmp
 	mv $(FASTLANES_TAR).tmp $(FASTLANES_TAR)
-	@ls -lh $(FASTLANES_TAR)
+
+	# NEW: copy the same blob next to build.rs so include_bytes! can find it
+	cp $(FASTLANES_TAR) $(CRATE_ROOT)/fastlanes-src.tar.gz
+
+	@ls -lh $(FASTLANES_TAR) $(CRATE_ROOT)/fastlanes-src.tar.gz
+
 
 # ----------------------------------------------------------------
 # Build / install / publish
