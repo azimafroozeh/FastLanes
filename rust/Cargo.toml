@@ -39,7 +39,7 @@ cxx = "1"
 anyhow = "1"
 
 [build-dependencies]
-vergen = { version = "8", default-features = false, features = ["git", "build"] }
+vergen = { version = "8.4", default-features = false, features = ["git", "build"] }
 cmake = "0.1"
 cxx-build = "1"
 flate2 = "1"
