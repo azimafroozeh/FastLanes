@@ -93,6 +93,6 @@ fn dive_one_level(dir: &Path) -> PathBuf {
 // rust/target/, while on crates.io it sits next to build.rs.
 // ----------------------------------------------------------------
 const FLS_TARBALL: &[u8] = include_bytes!(concat!(
-env!("CARGO_MANIFEST_DIR"),
-"/target/fastlanes-src.tar.gz"
+    env!("CARGO_MANIFEST_DIR"),
+    "/target/fastlanes-src.tar.gz"
 ));
