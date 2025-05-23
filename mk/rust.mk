@@ -84,7 +84,7 @@ install-rust: build-rust
 	$(C_ENV) \
 	$(CARGO) install --path $(CRATE_ROOT) --root $(PREFIX) --jobs $(NUM_JOBS)
 
-publish-rust: package-fastlanes
+publish-rust:
 	@echo "Publishing Rust crate to crates.io…"
 	$(C_ENV) \
 	RUSTFLAGS="-L$(PREFIX)/lib" \
