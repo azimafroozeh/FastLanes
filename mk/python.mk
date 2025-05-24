@@ -1,5 +1,11 @@
 # mk/python.mk
 
+# ──────────────────────────────────────────────────────────
+#  Python helper targets – build, test, publish wheels
+# ──────────────────────────────────────────────────────────
+ifndef PYTHON_MK_INCLUDED
+PYTHON_MK_INCLUDED := yes
+
 # ─────────────────────────────────────────────────────────────
 # Python bindings & packaging  (cwd‑agnostic)
 # ─────────────────────────────────────────────────────────────
@@ -163,3 +169,5 @@ build_sdist: check_python_deps $(ACTIVATE)
 	$(PIP) install --upgrade $(call quote_deps)
 	$(PYTHON) -m build --sdist --no-isolation --outdir $(DIST_DIR) $(PROJECT_ROOT)
 	$(call echo_done,Source distribution built.)
+
+endif   # PYTHON_MK_INCLUDED
