@@ -10,6 +10,9 @@ use fls_rs::{connect, inline_footer, read_csv, read_fls, to_csv, to_fls};
 use std::path::PathBuf;
 
 fn main() -> anyhow::Result<()> {
+    let version: String = fls_rs::get_version();
+    println!("fastlanes C++ bridge version: {}", version);
+
     // Get path to current crate (assumes this file lives in fastlanes root)
     let manifest_dir = PathBuf::from(env!("CARGO_MANIFEST_DIR"));
     let repo_root = manifest_dir
