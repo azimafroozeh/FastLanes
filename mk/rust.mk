@@ -15,6 +15,7 @@ PROJECT_DIR := $(abspath $(MK_DIR)/..)
 CRATE_ROOT  := $(PROJECT_DIR)/rust
 PREFIX      := $(PROJECT_DIR)/build/install
 OUT_DIR     := $(CRATE_ROOT)/target          # Cargo’s build dir
+VENDOR_DIR  := $(CRATE_ROOT)/vendor/fastlanes
 
 NUM_JOBS ?= $(shell sysctl -n hw.ncpu 2>/dev/null || echo 8)
 
@@ -27,13 +28,13 @@ C_ENV  := C_INCLUDE_PATH=$(PREFIX)/include \
 # Build / install / publish
 # ----------------------------------------------------------------
 .PHONY: build-rust install-rust publish-rust dry-run-rust \
-        clean-rust rust-format run-rust-example update-fastlanes-src
+        clean-rust clean-vendor rust-format run-rust-example \
+        update-fastlanes-src
 
 build-rust:
 	@echo "Building Rust crate (release, $(NUM_JOBS) jobs)…"
 	CMAKE_BUILD_PARALLEL_LEVEL=$(NUM_JOBS) \
-	$(CARGO) build \
-	  --release \
+	$(CARGO) build --release \
 	  --manifest-path $(CRATE_ROOT)/Cargo.toml \
 	  --jobs $(NUM_JOBS)
 	@echo "Rust build complete."
@@ -46,7 +47,7 @@ install-rust: build-rust
 	  --root $(PREFIX) \
 	  --jobs $(NUM_JOBS)
 
-# Always pull the latest upstream C++ sources before packaging
+# ── Publish helpers ─────────────────────────────────────────────
 publish-rust: update-fastlanes-src
 	@echo "Publishing Rust crate to crates.io…"
 	$(C_ENV) \
@@ -57,15 +58,18 @@ dry-run-rust: update-fastlanes-src
 	@echo "Dry-run publishing Rust crate…"
 	$(C_ENV) \
 	RUSTFLAGS="-L$(PREFIX)/lib" \
-	$(CARGO) publish \
-	  --manifest-path $(CRATE_ROOT)/Cargo.toml \
-	  --dry-run
+	$(CARGO) publish --manifest-path $(CRATE_ROOT)/Cargo.toml --dry-run
 
 # ----------------------------------------------------------------
 # Clean & misc
 # ----------------------------------------------------------------
-clean-rust:
-	@echo "Cleaning Rust build…"
+clean-vendor:
+	@echo "Removing vendored FastLanes sources …"
+	@rm -rf $(VENDOR_DIR)
+	@git rm -r --cached $(VENDOR_DIR) 2>/dev/null || true
+
+clean-rust: clean-vendor
+	@echo "Cleaning Rust build …"
 	$(CARGO) clean --manifest-path $(CRATE_ROOT)/Cargo.toml
 	@echo "Rust clean complete."
 
@@ -78,17 +82,43 @@ run-rust-example: build-rust
 	cargo run --jobs $(NUM_JOBS) --example rust_example
 
 rust-format:
-	@echo "Formatting Rust sources…"
+	@echo "Formatting Rust sources …"
 	$(CARGO) fmt --manifest-path $(CRATE_ROOT)/Cargo.toml
 	@echo "Rust formatting complete."
 
 # ----------------------------------------------------------------
 # Vendored-source maintenance helper
+#   • Re-create rust/vendor/fastlanes from the current workspace
+#     while skipping build artefacts.
 # ----------------------------------------------------------------
 update-fastlanes-src:
-	@git subtree pull \
-	    --prefix=rust/vendor/fastlanes \
-	    https://github.com/cwida/FastLanes.git \
-	    main --squash || true   # tolerate no-net environments
+	@echo "▶ Refreshing vendored FastLanes sources from workspace …"
+
+	# 1) Start from a clean slate
+	@rm -rf $(VENDOR_DIR)
+	@mkdir -p $(VENDOR_DIR)
+
+	# 2) Copy the source folders & top-level CMakeLists.txt
+	rsync -a --delete \
+	    --exclude='.git' \
+	    --exclude='build' \
+	    --exclude='CMakeFiles' \
+	    --exclude='*.o' --exclude='*.obj' --exclude='*.d' \
+	    --exclude='*.a' --exclude='*.so' --exclude='*.dylib' --exclude='*.dll' \
+	    --exclude='Makefile' \
+	    --exclude='*cmake_install.cmake' --exclude='*CTestTestfile.cmake' \
+	    --exclude='*.cmake' \
+	    $(PROJECT_DIR)/CMakeLists.txt \
+	    $(PROJECT_DIR)/include \
+	    $(PROJECT_DIR)/src \
+	    $(VENDOR_DIR)/
+
+	@echo "▶ Staging refreshed vendored sources …"
+	@git add $(VENDOR_DIR)
+
+	# 3) Commit only if something actually changed
+	@git diff --cached --quiet || \
+	  git commit -m "Refresh vendored FastLanes sources from workspace" || true
+
 
 endif  # RUST_MK_INCLUDED
