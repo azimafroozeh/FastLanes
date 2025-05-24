@@ -17,39 +17,32 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     Emitter::default().add_instructions(&git)?.emit()?;
 
     /* ── 2. Locate sources ────────────────────────────────────────── */
-    let crate_dir  = PathBuf::from(env::var("CARGO_MANIFEST_DIR")?);     // …/rust/fls-rs
-    let repo_root  = crate_dir.ancestors().nth(2).expect("repo root");   // …/FastLanes
-    let src_dir = if repo_root.join("CMakeLists.txt").exists() {
-        repo_root.to_path_buf()                  // workspace checkout
-    } else {
-        crate_dir.join("vendor/fastlanes")       // crates-io build
-    };
+    let crate_dir = PathBuf::from(env::var("CARGO_MANIFEST_DIR")?);
+    let src_dir = crate_dir.join("vendor/fastlanes");
 
-    println!("cargo:warning=--- Running CMake in {src_dir:?} ---");
+    println!("cargo:warning=--- FLS : Running CMake in {src_dir:?} ---");
 
     /* ── 3. Build C++ with CMake ──────────────────────────────────── */
-    let dst = cmake::Config::new(&src_dir)
+    let cmake_dir = cmake::Config::new(&src_dir)
         .define("CMAKE_VERBOSE_MAKEFILE", "ON")
         .profile("Release")
         .build();
 
-    let include_src    = src_dir.join("include").canonicalize()?;        // FastLanes headers
-    let include_dst    = dst.join("include").canonicalize()?;            // “make install” copy
-    let lib_dir        = dst.join("lib");                                // libfastlanes.a
+    let include_src = src_dir.join("include").canonicalize()?; // FastLanes headers
+    let lib_dir = cmake_dir.join("lib"); // libfastlanes.a
 
     /* ── 4. Build the CXX bridge ──────────────────────────────────── */
     cxx_build::bridge("src/lib.rs")
         .file("bridge_shim.cpp")
-        .include(&include_src)      // absolute → works everywhere
-        .include(&include_dst)
-        .include(&crate_dir)        // bridge_shim.hpp
+        .include(&include_src) // absolute → works everywhere
+        .include(&crate_dir) // bridge_shim.hpp
         .flag_if_supported("-std=c++20")
         .compile("fastlanes_rs");
 
     /* ── 5. Link the static library ───────────────────────────────── */
     println!("cargo:rustc-link-search=native={}", lib_dir.display());
     println!("cargo:rustc-link-lib=static=fastlanes");
-    println!("cargo:rustc-link-lib=c++");        // libc++ on clang
+    println!("cargo:rustc-link-lib=c++"); // libc++ on clang
 
     /* ── 6. Re-run triggers ───────────────────────────────────────── */
     println!("cargo:rerun-if-changed=vendor/fastlanes");
