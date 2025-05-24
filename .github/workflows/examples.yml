@@ -54,7 +54,7 @@ jobs:
           python-version: "3.x"
 
       - name: Install pyfastlanes
-        run: pip install .
+        run: pip install pyfastlanes==0.1.3.post3
 
       - name: Run Python example
         working-directory: examples
