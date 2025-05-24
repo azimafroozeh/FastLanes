@@ -16,7 +16,7 @@ template <typename PT>
 class TypedCol;
 class PhysicalExpr;
 /*--------------------------------------------------------------------------------------------------------------------*/
-using null_map_span = span<bool>;
+using null_map_span_t = span<bool>;
 using byte_span_t   = span<uint8_t>;
 using ofs_span_t    = span<ofs_t>;
 using length_span_t = span<len_t>;
@@ -24,7 +24,7 @@ using length_span_t = span<len_t>;
 /*--------------------------------------------------------------------------------------------------------------------*/
 class BaseVector {
 public:
-	null_map_span null_map_span;
+	null_map_span_t null_map_span;
 	bool          should_be_stored {false};
 };
 
