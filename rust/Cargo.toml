@@ -1,6 +1,6 @@
 [package]
 name = "fls-rs"
-version = "0.0.0"
+version = "0.1.3-alpha.4"
 edition = "2021"
 authors = ["Azim Afroozeh <afroozeh3@gmail.com>"]
 description = "FastLanes File Format"

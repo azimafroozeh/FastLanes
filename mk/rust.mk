@@ -48,13 +48,13 @@ install-rust: build-rust
 	  --jobs $(NUM_JOBS)
 
 # ── Publish helpers ─────────────────────────────────────────────
-publish-rust:
+publish-rust: version-bump-rust
 	@echo "Publishing Rust crate to crates.io…"
 	$(C_ENV) \
 	RUSTFLAGS="-L$(PREFIX)/lib" \
 	$(CARGO) publish --manifest-path $(CRATE_ROOT)/Cargo.toml
 
-dry-run-rust:
+dry-run-rust: version-bump-rust
 	@echo "Dry-run publishing Rust crate…"
 	$(C_ENV) \
 	RUSTFLAGS="-L$(PREFIX)/lib" \
@@ -119,6 +119,23 @@ update-fastlanes-src:
 	# 3) Commit only if something actually changed
 	@git diff --cached --quiet || \
 	  git commit -m "Refresh vendored FastLanes sources from workspace" || true
+
+
+# ── Version helpers ────────────────────────────────────────────────
+# Turn the last lightweight tag (e.g. v0.1.3-alpha.4) into 0.1.3-alpha.4
+GIT_TAG  := $(shell git describe --tags --abbrev=0 2>/dev/null)
+SEMVER   := $(patsubst v%,%,$(GIT_TAG))
+
+# Write that semver back into every Cargo.toml in the workspace
+.PHONY: version-bump-rust
+version-bump-rust:
+	@if [ -z "$(SEMVER)" ]; then \
+	    echo "✘ No git tag found. Create a tag like v0.1.0 first."; exit 1; \
+	 fi
+	@command -v cargo-set-version >/dev/null || cargo install cargo-edit -q
+	@echo "▶ Syncing Cargo.toml to version $(SEMVER)"
+	@$(CARGO) set-version $(SEMVER) --manifest-path $(CRATE_ROOT)/Cargo.toml --workspace
+
 
 
 endif  # RUST_MK_INCLUDED
