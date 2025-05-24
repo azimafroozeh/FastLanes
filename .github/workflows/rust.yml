@@ -12,7 +12,6 @@ on:
   pull_request:
     branches: [ "main", "dev" ]
 
-# Cancel redundant runs for the same branch/PR
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
@@ -24,8 +23,7 @@ jobs:
   fmt:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
       - name: Detect CPU count
         run: make detect-cpu | tee -a "$GITHUB_ENV"
@@ -41,8 +39,7 @@ jobs:
     needs: [ fmt ]
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
         with:
           fetch-depth: 0
           submodules: recursive
@@ -56,7 +53,7 @@ jobs:
           path: |
             ~/.cargo/registry
             ~/.cargo/git
-            target/debug/deps
+            rust/target/debug/deps
           key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
           restore-keys: ${{ runner.os }}-cargo-
 
@@ -83,7 +80,7 @@ jobs:
           cd rust
           cargo test -- --test-threads $BUILD_THREADS
 
-      - name: Dry-run publish check
+      - name: Dry‑run publish check
         env:
           CC: clang
           CXX: clang++
@@ -91,10 +88,10 @@ jobs:
 
       # ─────────────────────────────────────────────
       # 🔍 Extra diagnostics for linking issues
-      # Runs only when a previous step failed
       # ─────────────────────────────────────────────
-      - name: Re-build with verbose linker flags
+      - name: Re‑build with verbose linker flags
         if: ${{ failure() }}
+        working-directory: rust
         env:
           CC: clang
           CXX: clang++
@@ -106,8 +103,8 @@ jobs:
       - name: Locate any fastlanes artefacts
         if: ${{ failure() }}
         run: |
-          echo 'Searching target/ for fastlanes artefacts …'
-          find target -name 'libfastlanes.*' -or -name '*fastlanes*' | head || true
+          echo 'Searching for fastlanes artefacts …'
+          find rust/target -name 'libfastlanes.*' -or -name '*fastlanes*' | head || true
 
       - name: Upload fastlanes artefact (optional)
         if: failure()
@@ -115,7 +112,7 @@ jobs:
         with:
           name: fastlanes-build-dir
           path: |
-            target/**/build
+            rust/target/**/build
             !**/*.o
 
   # ──────────────────────────────────────────────────────────────
