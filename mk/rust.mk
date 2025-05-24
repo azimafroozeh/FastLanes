@@ -48,13 +48,13 @@ install-rust: build-rust
 	  --jobs $(NUM_JOBS)
 
 # ── Publish helpers ─────────────────────────────────────────────
-publish-rust: update-fastlanes-src
+publish-rust:
 	@echo "Publishing Rust crate to crates.io…"
 	$(C_ENV) \
 	RUSTFLAGS="-L$(PREFIX)/lib" \
 	$(CARGO) publish --manifest-path $(CRATE_ROOT)/Cargo.toml
 
-dry-run-rust: update-fastlanes-src
+dry-run-rust:
 	@echo "Dry-run publishing Rust crate…"
 	$(C_ENV) \
 	RUSTFLAGS="-L$(PREFIX)/lib" \
