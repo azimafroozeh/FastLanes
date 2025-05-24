@@ -107,7 +107,6 @@ update-fastlanes-src:
 	    --exclude='*.a' --exclude='*.so' --exclude='*.dylib' --exclude='*.dll' \
 	    --exclude='Makefile' \
 	    --exclude='*cmake_install.cmake' --exclude='*CTestTestfile.cmake' \
-	    --exclude='*.cmake' \
 	    $(PROJECT_DIR)/CMakeLists.txt \
 	    $(PROJECT_DIR)/include \
 	    $(PROJECT_DIR)/src \
