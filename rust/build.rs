@@ -7,7 +7,8 @@ use std::{
 
 use flate2::read::GzDecoder;
 use tar::Archive;
-use vergen::EmitBuilder; // vergen 9 API
+use vergen::Emitter; // v9 emitter
+use vergen_gix::GixBuilder; // Git metadata builder
 
 const FLS_TARBALL: &[u8] = include_bytes!("fastlanes-src.tar.gz");
 
@@ -17,10 +18,18 @@ fn main() {
     println!("cargo:rerun-if-changed=.git/HEAD");
     println!("cargo:rerun-if-changed=.git/refs/tags");
 
-    EmitBuilder::builder()
-        .git_semver(true) // sets VERGEN_GIT_SEMVER
+    // Build the instruction set for Git metadata (VERGEN_GIT_*)
+    let git_instr = GixBuilder::default()
+        .semver(true) // sets VERGEN_GIT_SEMVER
+        .build()
+        .expect("configure vergen-gix");
+
+    // Ask vergen to write the `cargo:` directives
+    Emitter::default()
+        .add_instructions(&git_instr)
+        .expect("attach git instructions")
         .emit()
-        .expect("vergen failed");
+        .expect("emit cargo directives");
 
     // ── 2) Locate sources ───────────────────────────────────────────
     let crate_dir = PathBuf::from(env::var("CARGO_MANIFEST_DIR").unwrap());
@@ -63,7 +72,7 @@ fn main() {
     println!("cargo:rustc-link-lib=static=FastLanes");
     println!("cargo:rustc-link-lib=c++");
 
-    // ── 5) Re-run triggers for local files ──────────────────────────
+    // ── 5) Re-run triggers for local files ─────────────────────────
     println!("cargo:rerun-if-changed=fastlanes-src.tar.gz");
     println!("cargo:rerun-if-changed=src/lib.rs");
     println!("cargo:rerun-if-changed=bridge_shim.cpp");
