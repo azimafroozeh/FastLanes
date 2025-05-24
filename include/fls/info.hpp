@@ -23,7 +23,8 @@ public:
 		        //
 		        FASTLANES_VERSION_01,
 		        FASTLANES_VERSION_0_1_3_POST2,
-		        FASTLANES_VERSION_0_1_3_POST3};
+		        FASTLANES_VERSION_0_1_3_POST3,
+		        FASTLANES_VERSION_0_1_3_ALPHA_4};
 	}
 
 	// ──────────────────────────────────────────────────────────────
@@ -71,8 +72,18 @@ public:
 	//
 	static constexpr uint64_t FASTLANES_VERSION_0_1_3_POST3 = 0x33502E332E312E30ULL;
 
+	// ──────────────────────────────────────────────────────────────
+	// VERSION TAG  (little-endian encoding of "0.1.3.A4")
+	//
+	// ASCII          :  0   .   1   .   3   .   A   4
+	// byte values    : 0x30 0x2E 0x31 0x2E 0x33 0x2E 0x41 0x34
+	// little-endian  : 0x34 0x41 0x2E 0x33 0x2E 0x31 0x2E 0x30
+	//                  = 0x34412E332E312E30
+	//
+	static constexpr uint64_t FASTLANES_VERSION_0_1_3_ALPHA_4 = 0x34412E332E312E30ULL;
+
 	static constexpr uint64_t get_version_bytes() {
-		return FASTLANES_VERSION_0_1_3_POST3;
+		return FASTLANES_VERSION_0_1_3_ALPHA_4;
 	}
 
 private:
