@@ -29,7 +29,7 @@ public:
 		S_PATCH_REC = 5,
 	};
 
-	class cfg {
+	class Cfg {
 	public:
 		inline static constexpr n_t    VERSION   = 1;    //
 		inline static constexpr double EXC_RATIO = 0.05; //

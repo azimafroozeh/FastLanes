@@ -16,9 +16,9 @@ class Page;
 
 /*--------------------------------------------------------------------------------------------------------------------*/
 
-class ep_arr {
+class EpArr {
 public:
-	explicit ep_arr(); //
+	explicit EpArr(); //
 public:
 	void InitDecompress(Page& page); //
 	void InitCompress(Page& page);   //

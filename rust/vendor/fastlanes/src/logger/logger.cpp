@@ -1,6 +1,7 @@
 #include "fls/logger/logger.hpp"
 #include "fls/printer/output.hpp"
 #include "fls/printer/output_factory.hpp"
+#include <fstream>
 
 namespace fastlanes {
 
@@ -19,37 +20,44 @@ std::string linkify(const std::string& link) {
 	return ss.str();
 }
 
-template <typename T>
-void log(const T& obj) {
-	std::string result_file_path = CMAKE_SOURCE_DIR + std::string("/log/log.csv");
+TerminalOutput& init(const std::string& pretty_function) {
+	const std::string result_file_path = FLS_CMAKE_SOURCE_DIR + std::string("/log/log.md");
 
 	static std::ofstream FILE {result_file_path};
-	static Logger        LOGGER {FILE};
-	LOGGER.Log(obj);
-}
-
-template <typename T>
-void show(const T& obj) {
-	static Logger LOGGER {std::cout};
-	LOGGER.Log(obj);
-}
-
-void Logger::log_table(const std::string& file_name,
-                       int                line,
-                       const std::string& pretty_function,
-                       const std::string& key,
-                       const std::string& val) {
-	const std::string result_file_path = CMAKE_SOURCE_DIR + std::string("/log/log.csv");
-
-	static std::ofstream FILE {result_file_path};
-	static auto          TABLE = OutputFactory::CreateCSV(FILE);
+	static auto          TABLE = OutputFactory::CreateMKD(FILE);
 
 	TABLE->Add(prettify_function_name(pretty_function));
-	TABLE->Add(key);
-	TABLE->Add(val);
+	return *TABLE;
+}
+
+void finish(const std::string& file_name, TerminalOutput& table) {
 	/* #L does not work in CLION*/
 	//	TXT_TAB.Add(linkify(file_name + "#L" + std::to_string(line)));
-	TABLE->Add(linkify(file_name));
-	TABLE->EndOfRow();
+	table.Add(linkify(file_name));
+	table.EndOfRow();
 }
+
+void Logger::log_key_value(const std::string& file_name,
+                           const std::string& pretty_function,
+                           const std::string& key,
+                           const std::string& val) {
+
+	auto& table = init(pretty_function);
+
+	table.Add(key);
+	table.Add(val);
+}
+
+void Logger::log_memory_read(const string& file_name, const string& pretty_function, const void* arr) {
+
+	auto& table = init(pretty_function);
+
+	const auto* data = reinterpret_cast<const uint64_t*>(arr);
+
+	table.Add(std::to_string(data[0]));
+	table.Add(std::to_string(data[1]));
+
+	finish(file_name, table);
+}
+
 } // namespace fastlanes

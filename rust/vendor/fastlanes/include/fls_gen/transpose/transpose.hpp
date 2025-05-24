@@ -5,16 +5,29 @@
 
 namespace generated { namespace transpose {
 namespace fallback { namespace scalar {
-void transpose_i(const double* __restrict in, double* __restrict out);
-void transpose_i(const uint64_t* __restrict in, uint64_t* __restrict out);
-void transpose_i(const uint32_t* __restrict in, uint32_t* __restrict out);
-void transpose_i(const uint16_t* __restrict in, uint16_t* __restrict out);
-void transpose_i(const uint8_t* __restrict in, uint8_t* __restrict out);
-void transpose_o(const double* __restrict in, double* __restrict out);
-void transpose_o(const uint64_t* __restrict in, uint64_t* __restrict out);
-void transpose_o(const uint32_t* __restrict in, uint32_t* __restrict out);
-void transpose_o(const uint16_t* __restrict in, uint16_t* __restrict out);
-void transpose_o(const uint8_t* __restrict in, uint8_t* __restrict out);
+void        transpose_i(const double* __restrict in, double* __restrict out);
+void        transpose_i(const uint64_t* __restrict in, uint64_t* __restrict out);
+void        transpose_i(const uint32_t* __restrict in, uint32_t* __restrict out);
+void        transpose_i(const uint16_t* __restrict in, uint16_t* __restrict out);
+void        transpose_i(const uint8_t* __restrict in, uint8_t* __restrict out);
+void        transpose_o(const double* __restrict in, double* __restrict out);
+void        transpose_o(const uint64_t* __restrict in, uint64_t* __restrict out);
+void        transpose_o(const uint32_t* __restrict in, uint32_t* __restrict out);
+void        transpose_o(const uint16_t* __restrict in, uint16_t* __restrict out);
+void        transpose_o(const uint8_t* __restrict in, uint8_t* __restrict out);
+inline void transpose_i(const int64_t* __restrict in, int64_t* __restrict out) {
+	transpose_i(reinterpret_cast<const uint64_t*>(in), reinterpret_cast<uint64_t*>(out));
+}
+inline void transpose_i(const int32_t* __restrict in, int32_t* __restrict out) {
+	transpose_i(reinterpret_cast<const uint32_t*>(in), reinterpret_cast<uint32_t*>(out));
+}
+inline void transpose_i(const int16_t* __restrict in, int16_t* __restrict out) {
+	transpose_i(reinterpret_cast<const uint16_t*>(in), reinterpret_cast<uint16_t*>(out));
+}
+inline void transpose_i(const int8_t* __restrict in, int8_t* __restrict out) {
+	transpose_i(reinterpret_cast<const uint8_t*>(in), reinterpret_cast<uint8_t*>(out));
+}
+
 }} // namespace fallback::scalar
 
 namespace helper { namespace scalar {

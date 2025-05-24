@@ -1,5 +1,5 @@
 #include "fls/cor/lyt/vec.hpp"
-#include "fls/common/str.hpp"
+#include "fls/common/string.hpp"
 #include "fls/cor/eng/analyzer.hpp"
 #include "fls/cor/eng/engine.hpp"
 #include "fls/cor/lyt/dic/dic.hpp"
@@ -7,7 +7,7 @@
 #include "fls/cor/prm/fsst/fsst_prm.hpp"
 #include "fls/cor/prm/fsst12/fsst12_prm.hpp"
 #include "fls/logger/logger.hpp"
-#include "fls/printer/to_str.hpp"
+#include "fls/utl/to_str.hpp"
 #include <type_traits>
 
 #pragma clang diagnostic ignored "-Wshorten-64-to-32"
@@ -18,7 +18,8 @@ static constexpr uint64_t VEC_SZ = 1024ULL * 1024;
 Vec::Vec()
     : buf_arr {Buf(VEC_SZ), Buf(VEC_SZ), Buf(VEC_SZ), Buf(VEC_SZ), Buf(VEC_SZ), Buf(VEC_SZ)}
     , arr_c {0}
-    , tup_c {0} {}
+    , tup_c {0} {
+}
 
 void Vec::Reset() {
 	for (auto& buff : buf_arr) {
@@ -48,7 +49,7 @@ void Vec::Init(const T* in_arr, EngineState& stt) {
 			Reset();
 			switch (exp_t) {
 			case ExpT::RLE: {
-				pos_t pos_val;
+				rle_idx_t pos_val;
 				for (n_t i {0}; i < vec_n_tup(); ++i) {
 					auto cur_val = in_arr[i];
 
@@ -56,7 +57,7 @@ void Vec::Init(const T* in_arr, EngineState& stt) {
 						cur_val = in_arr[0];
 						pos_val = 0;
 						buf_arr[0].UnsafeAppend(&cur_val, sizeof(T));
-						buf_arr[1].UnsafeAppend(&pos_val, sizeof(pos_t));
+						buf_arr[1].UnsafeAppend(&pos_val, sizeof(rle_idx_t));
 						continue;
 					}
 
@@ -64,7 +65,7 @@ void Vec::Init(const T* in_arr, EngineState& stt) {
 						buf_arr[0].UnsafeAppend(&cur_val, sizeof(T));
 						pos_val += 1;
 					}
-					buf_arr[1].UnsafeAppend(&pos_val, sizeof(pos_t));
+					buf_arr[1].UnsafeAppend(&pos_val, sizeof(rle_idx_t));
 				}
 
 				return;
@@ -73,8 +74,8 @@ void Vec::Init(const T* in_arr, EngineState& stt) {
 				auto idx_vec =
 				    stt.analyze_state_up->dic_up->get_idx_vec(nullptr, reinterpret_cast<const uint8_t*>(in_arr));
 
-				auto* idx_arr = reinterpret_cast<idx_t*>(idx_vec->data());
-				pos_t pos_val;
+				auto*     idx_arr = reinterpret_cast<idx_t*>(idx_vec->data());
+				rle_idx_t pos_val;
 				for (n_t i {0}; i < vec_n_tup(); ++i) {
 					int64_t cur_val = idx_arr[i];
 
@@ -82,7 +83,7 @@ void Vec::Init(const T* in_arr, EngineState& stt) {
 						cur_val = idx_arr[0];
 						pos_val = 0;
 						buf_arr[0].UnsafeAppend(&cur_val, sizeof(idx_t));
-						buf_arr[1].UnsafeAppend(&pos_val, sizeof(pos_t));
+						buf_arr[1].UnsafeAppend(&pos_val, sizeof(rle_idx_t));
 						continue;
 					}
 
@@ -90,7 +91,7 @@ void Vec::Init(const T* in_arr, EngineState& stt) {
 						buf_arr[0].UnsafeAppend(&cur_val, sizeof(idx_t));
 						pos_val += 1;
 					}
-					buf_arr[1].UnsafeAppend(&pos_val, sizeof(pos_t));
+					buf_arr[1].UnsafeAppend(&pos_val, sizeof(rle_idx_t));
 				}
 				arr_c += 1;
 			}
@@ -113,7 +114,7 @@ void Vec::Init(const T* in_arr, EngineState& stt) {
 				buf_arr[arr_c + 0].UnsafeAppend(in_arr, vec_bsz<T>());
 
 				arr_c += 1;
-				FLS_LOG_TABLE_KEY_VALUE("val_arr", ToStr::to_str<T>(val_arr));
+				FLS_PLOG_KEY_VALUE("val_arr", ToStr::to_str<T>(val_arr));
 				return;
 			}
 			case ExpT::TGT_EQUALITY:
@@ -165,7 +166,7 @@ void Vec::Init(const T* in_arr, EngineState& stt) {
 			auto* str_arr    = bytes.mutable_data();
 			auto* off_arr    = smart_offsets.mutable_data<ofs_t>();
 			auto  str_p_in   = Str::smart_offset_to_pointer(vec_sz(), off_arr, str_arr);
-			auto  str_len_in = fsst::offset_to_length(vec_sz(), off_arr);
+			auto  str_len_in = fsst_wrapper::offset_to_length(vec_sz(), off_arr);
 
 			auto* out_p   = buf_arr[arr_c + 0].mutable_data();
 			auto* len_out = reinterpret_cast<uint32_t*>(buf_arr[arr_c + 3].mutable_data());
@@ -201,16 +202,16 @@ void Vec::Init(const T* in_arr, EngineState& stt) {
 
 			arr_c += 2;
 
-			FLS_LOG_TABLE_KEY_VALUE("byte_arr", ToStr::to_str<uint8_t>(buf_arr[0].mutable_data()));
-			FLS_LOG_TABLE_KEY_VALUE("len_arr", ToStr::to_str<uint32_t>(buf_arr[1].mutable_data<uint32_t>()));
-			FLS_LOG_TABLE_KEY_VALUE("str_pointer", ToStr::to_str<uint64_t>(buf_arr[2].mutable_data<uint64_t>()));
+			FLS_PLOG_KEY_VALUE("byte_arr", ToStr::to_str<uint8_t>(buf_arr[0].mutable_data()));
+			FLS_PLOG_KEY_VALUE("len_arr", ToStr::to_str<uint32_t>(buf_arr[1].mutable_data<uint32_t>()));
+			FLS_PLOG_KEY_VALUE("str_pointer", ToStr::to_str<uint64_t>(buf_arr[2].mutable_data<uint64_t>()));
 		} break;
 		case ExpT::FSST12: {
 			auto* encoder    = reinterpret_cast<fsst12_encoder_t*>(stt.analyze_state_up->fsst12_encoder);
 			auto* str_arr    = bytes.mutable_data();
 			auto* off_arr    = smart_offsets.mutable_data<ofs_t>();
 			auto  str_p_in   = Str::smart_offset_to_pointer(vec_sz(), off_arr, str_arr);
-			auto  str_len_in = fsst::offset_to_length(vec_sz(), off_arr);
+			auto  str_len_in = fsst_wrapper::offset_to_length(vec_sz(), off_arr);
 
 			auto* out_p   = buf_arr[arr_c + 0].mutable_data();
 			auto* len_out = reinterpret_cast<uint32_t*>(buf_arr[arr_c + 3].mutable_data());
@@ -250,9 +251,9 @@ void Vec::Init(const T* in_arr, EngineState& stt) {
 
 			arr_c += 2;
 
-			FLS_LOG_TABLE_KEY_VALUE("byte_arr", ToStr::to_str<uint8_t>(buf_arr[0].mutable_data()));
-			FLS_LOG_TABLE_KEY_VALUE("len_arr", ToStr::to_str<uint32_t>(buf_arr[1].mutable_data<uint32_t>()));
-			FLS_LOG_TABLE_KEY_VALUE("str_pointer", ToStr::to_str<uint64_t>(buf_arr[2].mutable_data<uint64_t>()));
+			FLS_PLOG_KEY_VALUE("byte_arr", ToStr::to_str<uint8_t>(buf_arr[0].mutable_data()));
+			FLS_PLOG_KEY_VALUE("len_arr", ToStr::to_str<uint32_t>(buf_arr[1].mutable_data<uint32_t>()));
+			FLS_PLOG_KEY_VALUE("str_pointer", ToStr::to_str<uint64_t>(buf_arr[2].mutable_data<uint64_t>()));
 		} break;
 		case ExpT::DICT_VAL:
 		case ExpT::DICT_FRQ:
@@ -263,14 +264,14 @@ void Vec::Init(const T* in_arr, EngineState& stt) {
 
 			arr_c += 1;
 
-			FLS_LOG_TABLE_KEY_VALUE("idx_arr",
-			                        ToStr::to_str<uint32_t>(reinterpret_cast<uint32_t*>(buf_arr[0].mutable_data())));
+			FLS_PLOG_KEY_VALUE("idx_arr",
+			                   ToStr::to_str<uint32_t>(reinterpret_cast<uint32_t*>(buf_arr[0].mutable_data())));
 		} break;
 		case ExpT::DICT_RLE: {
 			auto idx_vec = stt.analyze_state_up->dic_up->get_idx_vec(smart_offsets.data<ofs_t>(), bytes.data());
 
-			auto* idx_arr = reinterpret_cast<idx_t*>(idx_vec->data());
-			pos_t pos_val;
+			auto*     idx_arr = reinterpret_cast<idx_t*>(idx_vec->data());
+			rle_idx_t pos_val;
 			for (n_t i {0}; i < vec_n_tup(); ++i) {
 				int64_t cur_val = idx_arr[i];
 
@@ -278,7 +279,7 @@ void Vec::Init(const T* in_arr, EngineState& stt) {
 					cur_val = idx_arr[0];
 					pos_val = 0;
 					buf_arr[0].UnsafeAppend(&cur_val, sizeof(idx_t));
-					buf_arr[1].UnsafeAppend(&pos_val, sizeof(pos_t));
+					buf_arr[1].UnsafeAppend(&pos_val, sizeof(rle_idx_t));
 					continue;
 				}
 
@@ -286,7 +287,7 @@ void Vec::Init(const T* in_arr, EngineState& stt) {
 					buf_arr[0].UnsafeAppend(&cur_val, sizeof(idx_t));
 					pos_val += 1;
 				}
-				buf_arr[1].UnsafeAppend(&pos_val, sizeof(pos_t));
+				buf_arr[1].UnsafeAppend(&pos_val, sizeof(rle_idx_t));
 			}
 			arr_c += 2;
 		} break;
@@ -295,8 +296,8 @@ void Vec::Init(const T* in_arr, EngineState& stt) {
 			buf_arr[arr_c + 1].Clone(smart_offsets);
 			arr_c += 2;
 
-			FLS_LOG_TABLE_KEY_VALUE("byte_arr", ToStr::to_str<uint8_t>(buf_arr[0].mutable_data()));
-			FLS_LOG_TABLE_KEY_VALUE("offset_arr", ToStr::to_str<uint32_t>(buf_arr[1].mutable_data<ofs_t>()));
+			FLS_PLOG_KEY_VALUE("byte_arr", ToStr::to_str<uint8_t>(buf_arr[0].mutable_data()));
+			FLS_PLOG_KEY_VALUE("offset_arr", ToStr::to_str<uint32_t>(buf_arr[1].mutable_data<ofs_t>()));
 		} break;
 		default:
 			FLS_ABORT("EXP IS NOT SUPPORTED!")
@@ -312,7 +313,9 @@ void Vec::Log() {
 	// FLS_PRINT_4MSG("tup_c: ", std::to_string(tup_c), "arr_c", std::to_string(arr_c))
 }
 
-VecParam Vec::vec_param() { return {buf_arr[0].mutable_data(), buf_arr[1].mutable_data(), buf_arr[2].mutable_data()}; }
+VecParam Vec::vec_param() {
+	return {buf_arr[0].mutable_data(), buf_arr[1].mutable_data(), buf_arr[2].mutable_data()};
+}
 
 template <typename T>
 void Vec::flatten_to(T* out_arr) {
@@ -321,14 +324,14 @@ void Vec::flatten_to(T* out_arr) {
 	FLS_ASSERT_NOT_NULL_POINTER(buf_arr[1].data())
 
 	auto* val_arr = reinterpret_cast<T*>(buf_arr[0].mutable_data());
-	auto* pos_arr = reinterpret_cast<pos_t*>(buf_arr[1].mutable_data());
+	auto* pos_arr = reinterpret_cast<rle_idx_t*>(buf_arr[1].mutable_data());
 
 	for (n_t i {0}; i < vec_n_tup(); ++i) {
 		out_arr[i] = val_arr[pos_arr[i]];
 	}
 
-	FLS_LOG_TABLE_KEY_VALUE("val_arr", ToStr::to_str<T>(val_arr));
-	FLS_LOG_TABLE_KEY_VALUE("pos_arr", ToStr::to_str<pos_t>(pos_arr));
+	FLS_PLOG_KEY_VALUE("val_arr", ToStr::to_str<T>(val_arr));
+	FLS_PLOG_KEY_VALUE("pos_arr", ToStr::to_str<rle_idx_t>(pos_arr));
 }
 
 Vec::~Vec() = default;

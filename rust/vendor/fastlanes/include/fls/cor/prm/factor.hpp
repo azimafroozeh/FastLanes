@@ -17,8 +17,12 @@ void Compress64(Vec& src_vec, Vec& des_vec, CompressState& compress_state);
 \---------------------------------------------------------------------------------------------------------------------*/
 template <typename T>
 cmpr_fun_t GetCompress() {
-	if (std::is_same<T, uint64_t>()) { return Compress64; }
-	if (std::is_same<T, int64_t>()) { return Compress64; }
+	if (std::is_same<T, uint64_t>()) {
+		return Compress64;
+	}
+	if (std::is_same<T, int64_t>()) {
+		return Compress64;
+	}
 
 	return nullptr;
 }

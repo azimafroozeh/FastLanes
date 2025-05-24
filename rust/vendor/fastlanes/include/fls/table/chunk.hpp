@@ -24,14 +24,14 @@ using length_span_t = span<len_t>;
 /*--------------------------------------------------------------------------------------------------------------------*/
 class BaseVector {
 public:
-	null_map_span null_map_span {};
+	null_map_span null_map_span;
 	bool          should_be_stored {false};
 };
 
 /*--------------------------------------------------------------------------------------------------------------------*/
 class VariableSizeVector : public BaseVector {
 public:
-	ofs_span_t ofs_span {};
+	ofs_span_t ofs_span;
 };
 
 /*--------------------------------------------------------------------------------------------------------------------*\
@@ -45,7 +45,9 @@ public:
 public:
 	void point_to(n_t vec_idx);
 	/// size in bytes
-	[[nodiscard]] static constexpr sz_t Size() { return sizeof(PT) * CFG::VEC_SZ; }
+	[[nodiscard]] static constexpr sz_t Size() {
+		return sizeof(PT) * CFG::VEC_SZ;
+	}
 
 public:
 	const PT* m_data;
@@ -123,7 +125,7 @@ using fls_chunk = vector<fls_vec>;
 \*--------------------------------------------------------------------------------------------------------------------*/
 class ListVector : public VariableSizeVector {
 public:
-	fls_vec child {};
+	fls_vec child;
 };
 
 /*--------------------------------------------------------------------------------------------------------------------*\
@@ -131,18 +133,7 @@ public:
 \*--------------------------------------------------------------------------------------------------------------------*/
 class StructVector : public BaseVector {
 public:
-	fls_chunk table {};
-};
-
-/*--------------------------------------------------------------------------------------------------------------------*\
- * struct vector
-\*--------------------------------------------------------------------------------------------------------------------*/
-class Chunk {
-public:
-	explicit Chunk(const vector<up<PhysicalExpr>>& expr);
-
-public:
-	vector<std::reference_wrapper<fls_vec>> vecs;
+	fls_chunk table;
 };
 
 } // namespace fastlanes

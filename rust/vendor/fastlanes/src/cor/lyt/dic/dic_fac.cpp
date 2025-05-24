@@ -70,7 +70,9 @@ up<TDic<PT>> dict_fac<PT>::adaptive_create(const PT* data_p, n_t n, AnalyzeState
 
 	const n_t vec_c {n / CFG::VEC_TUP_C};
 	n_t       analyzed_vec_c {0};
-	if (vec_c == 0) { return nullptr; }; /* No dict for tuple-c < 1024 */
+	if (vec_c == 0) {
+		return nullptr;
+	}; /* No dict for tuple-c < 1024 */
 
 	/* Init. */
 	//[fixme] move to stt
@@ -98,11 +100,15 @@ up<TDic<PT>> dict_fac<PT>::adaptive_create(const PT* data_p, n_t n, AnalyzeState
 	while (result < CFG::DIC::THRESHOLD) {
 		FLS_ASSERT_LE(analyzed_vec_c, vec_c)
 
-		if (analyzed_vec_c == vec_c) { break; }
+		if (analyzed_vec_c == vec_c) {
+			break;
+		}
 		next_dict = dict_fac::m_create_random(data_p, vec_c, is_processed, stt);
 
 		/* Check the dic_page limit. */
-		if (base_dict->size() + next_dict->size() > CFG::DIC::DIC_PAGE_SZ) { break; }
+		if (base_dict->size() + next_dict->size() > CFG::DIC::DIC_PAGE_SZ) {
+			break;
+		}
 
 		result = dict_fac::m_compare(base_dict->map, next_dict->map);
 		dict_fac::m_combine(base_dict->map, next_dict->map);
@@ -130,7 +136,9 @@ n_t dict_fac<PT>::m_compare(dic_t<PT>& r, dic_t<PT>& l) {
 		for (r_it = r.begin(); r_it != r.end(); r_it++) {
 			auto l_it = l.find(r_it->first);
 
-			if (l_it != l.end()) { total += l_it->second; }
+			if (l_it != l.end()) {
+				total += l_it->second;
+			}
 		}
 
 		return total;
@@ -143,7 +151,9 @@ n_t dict_fac<PT>::m_compare(dic_t<PT>& r, dic_t<PT>& l) {
 		for (r_it = r.begin(); r_it != r.end(); r_it++) {
 			auto l_it = l.find(r_it->first);
 
-			if (l_it != l.end()) { total += l_it->second; }
+			if (l_it != l.end()) {
+				total += l_it->second;
+			}
 		}
 
 		return total;
@@ -236,22 +246,22 @@ void dict_fac<PT>::m_combine(dic_t<PT>& left, dic_t<PT>& right) {
 }
 
 template <typename T>
-bool sort_val_ascending(std::pair<T, n_t> a, std::pair<T, n_t> b) {
+bool sort_val_ascending(std::pair<T, n_t>& a, std::pair<T, n_t>& b) {
 	return a.second < b.second;
 }
 
 template <typename T>
-bool sort_val_descending(std::pair<T, n_t> a, std::pair<T, n_t> b) {
+bool sort_val_descending(std::pair<T, n_t>& a, std::pair<T, n_t>& b) {
 	return a.second > b.second;
 }
 
 template <typename T>
-bool sort_key_ascending(std::pair<T, n_t> a, std::pair<T, n_t> b) {
+bool sort_key_ascending(std::pair<T, n_t>& a, std::pair<T, n_t>& b) {
 	return a.first < b.first;
 }
 
 template <typename T>
-bool sort_key_descending(std::pair<T, n_t> a, std::pair<T, n_t> b) {
+bool sort_key_descending(std::pair<T, n_t>& a, std::pair<T, n_t>& b) {
 	return a.first > b.first;
 }
 
@@ -268,7 +278,9 @@ up<TDic<PT>> dict_fac<PT>::perfect_create(const PT* data_p, n_t n, AnalyzeState&
 			auto idx = 0;
 			for (size_t i = 0; i < n; ++i) {
 				auto next_val = data_p[i];
-				if (dic_up->map.find(next_val) == dic_up->map.end()) { dic_up->map.emplace(next_val, idx++); }
+				if (dic_up->map.find(next_val) == dic_up->map.end()) {
+					dic_up->map.emplace(next_val, idx++);
+				}
 			};
 
 			// pair of value - idx
@@ -318,7 +330,7 @@ up<TDic<PT>> dict_fac<PT>::perfect_create(const PT* data_p, n_t n, AnalyzeState&
 
 		n_t idx {0};
 		for (auto& pair : elems) {
-			dic_up->map.template emplace(pair.first, idx);
+			dic_up->map.emplace(pair.first, idx);
 			idx++;
 		}
 
@@ -334,7 +346,9 @@ up<TDic<PT>> dict_fac<PT>::perfect_create(const PT* data_p, n_t n, AnalyzeState&
 			auto idx = 0;
 			for (size_t i = 0; i < n; ++i) {
 				auto next_val = data_p[i];
-				if (dic_up->map.find(next_val) == dic_up->map.end()) { dic_up->map.emplace(next_val, idx++); }
+				if (dic_up->map.find(next_val) == dic_up->map.end()) {
+					dic_up->map.emplace(next_val, idx++);
+				}
 			};
 
 			elems = {dic_up->map.begin(), dic_up->map.end()};
@@ -376,7 +390,7 @@ up<TDic<PT>> dict_fac<PT>::perfect_create(const PT* data_p, n_t n, AnalyzeState&
 
 		n_t idx {0};
 		for (auto& pair : elems) {
-			dic_up->map.template emplace(pair.first, idx);
+			dic_up->map.emplace(pair.first, idx);
 			idx++;
 		}
 
@@ -447,7 +461,9 @@ bsz_t dict_fac<PT>::exp_multi_dic_create(const std::vector<PT>& src_col, const s
 
 	for (const auto& map : new_dic) {
 		auto map_size = map.second.size();
-		if (max_sz < map.second.size()) { max_sz = map_size; }
+		if (max_sz < map.second.size()) {
+			max_sz = map_size;
+		}
 
 		for (const auto& val : map.second) {
 			ttl_size += val.size() + sizeof(ofs_t);
@@ -469,7 +485,9 @@ bsz_t dict_fac<PT>::exp_multi_dic_create(const std::vector<PT>& src_col) {
 	if constexpr (!std::is_same_v<PT, bol_pt>) {
 		for (n_t idx {0}; idx < src_col.size(); ++idx) {
 			const auto& src_val = src_col[idx];
-			if (dic.find(src_val) == dic.end()) { dic.insert(src_val); }
+			if (dic.find(src_val) == dic.end()) {
+				dic.insert(src_val);
+			}
 		}
 	} else {
 		FLS_ABORT("NOT IMPLEMENTED TYPE")
@@ -510,7 +528,9 @@ bsz_t dict_fac<PT>::exp_multi_dic_create(const std::vector<PT>& src_col, const s
 	sz_t max_sz {0};
 	for (const auto& map : new_dic) {
 		auto map_size = map.second.size();
-		if (max_sz < map.second.size()) { max_sz = map_size; }
+		if (max_sz < map.second.size()) {
+			max_sz = map_size;
+		}
 
 		ttl_size += map.second.size() * (sizeof(PT) + sizeof(ofs_t));
 	}
@@ -542,7 +562,9 @@ bsz_t dict_fac<PT>::exp_multi_dic_create(const std::vector<PT>& src_col, const s
 	sz_t max_sz {0};
 	for (const auto& map : new_dic) {
 		auto map_size = map.second.size();
-		if (max_sz < map.second.size()) { max_sz = map_size; }
+		if (max_sz < map.second.size()) {
+			max_sz = map_size;
+		}
 
 		ttl_size += map.second.size() * (sizeof(PT) + sizeof(ofs_t));
 	}

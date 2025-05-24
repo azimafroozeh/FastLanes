@@ -3,7 +3,7 @@
 #include "fls/cor/lyt/vec.hpp"
 #include "fls/cor/prm/mem_cpy_prm.hpp"
 #include "fls/logger/logger.hpp"
-#include "fls/printer/to_str.hpp"
+#include "fls/utl/to_str.hpp"
 #include <cstring>
 
 namespace fastlanes {
@@ -14,7 +14,7 @@ static void mem_cpy_decmpr(PageParam src, VecParam des, DecompressState& stt) {
 
 	std::memcpy(out_arr, in_arr, vec_bsz<T>());
 
-	FLS_LOG_TABLE_KEY_VALUE("cur_vec", ToStr::to_str<T>(out_arr));
+	FLS_PLOG_KEY_VALUE("cur_vec", ToStr::to_str<T>(out_arr));
 
 	stt.cur_des_arr -= 1;
 	stt.cur_src_arr -= 1;
@@ -29,7 +29,7 @@ static void off_mem_cpy_decmpr(PageParam src, VecParam des, DecompressState& stt
 	// FLS_ASSERT_LE(byte_c, CFG::BUF::SZ) // todo[buf]
 	std::memcpy(out_arr, in_arr, byte_c);
 
-	FLS_LOG_TABLE_KEY_VALUE("cur_vec", ToStr::to_str<uint8_t>(out_arr));
+	FLS_PLOG_KEY_VALUE("cur_vec", ToStr::to_str<uint8_t>(out_arr));
 
 	stt.cur_des_arr -= 1;
 	stt.cur_src_arr -= 1;

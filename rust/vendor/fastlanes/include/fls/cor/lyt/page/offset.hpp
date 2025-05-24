@@ -10,9 +10,9 @@ class Page;
 
 /*--------------------------------------------------------------------------------------------------------------------*/
 
-class off_arr {
+class OffArr {
 public:
-	explicit off_arr(); //
+	explicit OffArr(); //
 public:
 	void InitDecompress(Page& page); //
 	void InitCompress(n_t arr_c);    //

@@ -21,11 +21,11 @@ public:
 
 class TerminalOutput {
 public:
-	using row_t = vector<string>;     //
-	enum class Align { LEFT, RIGHT }; //
-	enum class POS { TOP, MID, BOT }; //
-	TerminalOutput();                 //
-	~TerminalOutput();                //
+	using row_t = vector<string>;               //
+	enum class Align : uint8_t { LEFT, RIGHT }; //
+	enum class POS : uint8_t { TOP, MID, BOT }; //
+	TerminalOutput();                           //
+	~TerminalOutput();                          //
 public:
 	///!
 	template <typename ITERATOR>
@@ -61,7 +61,7 @@ private:
 	void          add_row();
 
 public:
-	string        m_header {};                     //
+	string        m_header;                        //
 	std::string   m_horizontal;                    //
 	string        m_vertical;                      //
 	string        m_top_rgt;                       //

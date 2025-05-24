@@ -5,10 +5,10 @@
 namespace fastlanes {
 class rec_hdr {
 public:
-	bw_t    bw;
-	uint8_t empty;
-	pos_t   exc_c;
-	base_t  base;
+	bw_t      bw;
+	uint8_t   empty;
+	rle_idx_t exc_c;
+	base_t    base;
 };
 static_assert(sizeof(rec_hdr) == 12);
 

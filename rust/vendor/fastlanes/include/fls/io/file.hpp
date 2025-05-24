@@ -16,16 +16,26 @@ public:
 	~File();
 
 public:
-	/// write to file_path
+	// write to file_path
 	void Write(const Buf& buf);
-	/// write to file_path
+	// write to file_path
 	void Read(Buf& buf);
+	// write to file_path
+	void Append(const Buf& buf);
+	// Append
+	void Append(const char* pointer, n_t size);
+	//
+	void ReadRange(Buf& buf, n_t offset, n_t size);
+	// get file size
+	[[nodiscard]] n_t Size() const;
 
 public:
 	/// read from file_path and return string.
 	static string read(const path& file_path);
 	/// write to file_path
 	static void write(const path& file_path, const string& dump);
+	/// append to file_path
+	static void append(const path& file_path, const string& dump);
 
 private:
 	path              m_path;

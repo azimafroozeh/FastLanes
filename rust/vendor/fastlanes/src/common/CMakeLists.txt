@@ -1,10 +1,17 @@
 add_library(fls_common
         OBJECT
+        alias.cpp
         assert.cpp
+        bimap.cpp
+        bimap_frequency.cpp
         byte_c.cpp
         #[[]]
         common.cpp
-        str.cpp
+        decimal.cpp
+        double.cpp
+        exception.cpp
+        status.cpp
+        string.cpp
 )
 
 set(FASTLANES_OBJECT_FILES
@@ -14,3 +21,9 @@ set(FASTLANES_OBJECT_FILES
 if (FLS_ENABLE_IWYU)
     set_property(TARGET fls_common PROPERTY CXX_INCLUDE_WHAT_YOU_USE ${iwyu_path})
 endif ()
+
+
+target_link_libraries(fls_common
+        PUBLIC
+        FastLanes::headers
+)

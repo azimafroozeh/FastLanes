@@ -41,8 +41,8 @@ public:
 	n_t       tup_c;                   //
 	n_t       m_ttl_sz;                //
 	PageHdr   pg_hdr;                  //
-	off_arr   off_arr;                 //
-	ep_arr    ep_arr;                  //
+	OffArr    off_arr;                 //
+	EpArr     ep_arr;                  //
 	PageParam params;                  //
 	uint8_t*  start_p;                 //
 };

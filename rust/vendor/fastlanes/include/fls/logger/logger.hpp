@@ -1,17 +1,20 @@
 #ifndef FLS_LOGGER_LOGGER_HPP
 #define FLS_LOGGER_LOGGER_HPP
 
-#include <fstream>
-#include <iostream>
-#include <sstream>
+#include "fls/std/string.hpp"
 
 #ifdef NDEBUG
-#define FLS_LOG_TABLE(...) ;
+#define FLS_LOG_INTERNAL(...)    ;
+#define FLS_LOG_MEMORY_READ(...) ;
 #else
-#define FLS_LOG_TABLE(...) fastlanes::Logger::log_table(__VA_ARGS__);
+
+#define FLS_LOG_INTERNAL(...)    fastlanes::Logger::log_key_value(__VA_ARGS__);
+#define FLS_LOG_MEMORY_READ(...) fastlanes::Logger::log_memory_read(__VA_ARGS__);
+
 #endif
 
-#define FLS_LOG_TABLE_KEY_VALUE(...) FLS_LOG_TABLE(__FILE__, __LINE__, __PRETTY_FUNCTION__, __VA_ARGS__)
+#define FLS_PLOG_KEY_VALUE(...)   FLS_LOG_INTERNAL(__FILE__, __PRETTY_FUNCTION__, __VA_ARGS__)
+#define FLS_PLOG_MEMORY_READ(...) FLS_LOG_MEMORY_READ(__FILE__, __PRETTY_FUNCTION__, __VA_ARGS__)
 
 namespace fastlanes {
 
@@ -20,18 +23,10 @@ public:
 	~Logger() = default;
 
 public:
-	static void log_table(const std::string& file_name,
-	                      int                line,
-	                      const std::string& pretty_function,
-	                      const std::string& key,
-	                      const std::string& val);
-	explicit Logger(std::ostream& out)
-	    : out(out) {}
-	std::ostream& out;
-	template <typename T>
-	void Log(const T& obj) {
-		out << obj << std::endl;
-	}
+	static void
+	log_key_value(const string& file_name, const string& pretty_function, const string& key, const string& val);
+
+	static void log_memory_read(const string& file_name, const string& pretty_function, const void* arr);
 };
 
 } // namespace fastlanes

@@ -12,8 +12,8 @@ ExpColDecoder<PT>::ExpColDecoder() = default;
 template <typename PT>
 void ExpColDecoder<PT>::full_decode(span<std::byte> input_data, span<PT> output_data) {
 	// init
-	TColDecoder<PT>  col_decoder;
-	Materializer<PT> materializer {output_data};
+	TColDecoder<PT>              col_decoder;
+	SingleColumnMaterializer<PT> materializer {output_data};
 	col_decoder.ExtInitDict(reinterpret_cast<uint8_t*>(input_data.data()));
 	col_decoder.InitDecompress(reinterpret_cast<uint8_t*>(input_data.data()));
 

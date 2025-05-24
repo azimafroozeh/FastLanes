@@ -41,7 +41,9 @@
 //  bool fsst_hasAVX512() { return false; }
 // #endif
 
-bool fsst_hasAVX512() { return false; }
+bool fsst_hasAVX512() {
+	return false;
+}
 
 // BULK COMPRESSION OF STRINGS
 //
@@ -84,7 +86,7 @@ size_t fsst_compressAVX512(
     SymbolTable& symbolTable, u8* codeBase, u8* symbolBase, SIMDjob* input, SIMDjob* output, size_t n, size_t unroll) {
 	size_t processed = 0;
 	// define some constants (all_x means that all 8 lanes contain 64-bits value X)
-#ifdef __AVX512F__
+#ifdef __AVX512F__TODO
 	//__m512i all_suffixLim= _mm512_broadcastq_epi64(_mm_set1_epi64((__m64) (u64) symbolTable->suffixLim)); -- for
 	// variants b,c
 	__m512i all_MASK     = _mm512_broadcastq_epi64(_mm_set1_epi64((__m64)(u64)-1));

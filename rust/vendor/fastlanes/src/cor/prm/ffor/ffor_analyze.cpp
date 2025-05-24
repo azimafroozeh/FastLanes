@@ -6,8 +6,8 @@
 #include "fls/cor/prm/ffor_prm.hpp"
 #include "fls/cor/prm/patch/patch.hpp"
 #include "fls/logger/logger.hpp"
-#include "fls/printer/to_str.hpp"
 #include "fls/stt/histogram.hpp"
+#include "fls/utl/to_str.hpp"
 #include "fls/utl/util.hpp"
 #include <climits>
 #include <cmath>
@@ -24,12 +24,18 @@ bool ffor_prm<T>::is_exception(Params<T> params, T val) {
 		FLS_ASSERT_CORRECT_N(params.exc_c)
 		FLS_ASSERT_CORRECT_SZ(params.size())
 		// [fixme]
-		if (params.bw == TYPE_BIT<T>::VALUE) { return false; }
+		if (params.bw == TYPE_BIT<T>::VALUE) {
+			return false;
+		}
 
 		T lower_bound = static_cast<T>(params.base);
 
-		if (val < lower_bound) { return true; }
-		if (val - lower_bound > MAX_BIT(params.bw)) { return true; }
+		if (val < lower_bound) {
+			return true;
+		}
+		if (val - lower_bound > MAX_BIT(params.bw)) {
+			return true;
+		}
 		return false;
 	} else {
 		FLS_ABORT("THIS IT NOT SUPPORTED")
@@ -58,13 +64,16 @@ Params<T> ffor_prm<T>::find_best_params(Histogram<T>& histogram, n_t idx) {
 			upper_bound = SafeUpperBound(lower_bound, i);
 
 			/* Compute the next setting*/
-			next = {static_cast<bw_t>(i),
-			        lower_bound,
-			        typed_patch<T>::count_exceptions(lower_bound, upper_bound, val_vec, rep_vec)};
+			next = {
+			    static_cast<bw_t>(i),
+			    lower_bound,
+			    static_cast<vec_idx_t>(typed_patch<T>::count_exceptions(lower_bound, upper_bound, val_vec, rep_vec))};
 
 			FLS_ASSERT_CORRECT_EXC_C(next.exc_c)
 			/* Check to see if there is a better setting. */
-			if (next.size() < best.size() & next.exc_c <= CFG::CMPR::EXC_LIMIT_C) { best = next; }
+			if (next.size() < best.size() & next.exc_c <= CFG::PATCH::EXC_LIMIT_C) {
+				best = next;
+			}
 		}
 
 		return best;
@@ -85,8 +94,12 @@ void ffor_analyze(Vec& src_vec, Vec& des_vec, CompressState& stt) {
 
 	auto* in_p = reinterpret_cast<const T*>(des_vec.buf_arr[stt.cur_des_buff + 1].data());
 	for (size_t i {0}; i < 1024; ++i) {
-		if (in_p[i] < min) { min = in_p[i]; }
-		if (in_p[i] > max) { max = in_p[i]; }
+		if (in_p[i] < min) {
+			min = in_p[i];
+		}
+		if (in_p[i] > max) {
+			max = in_p[i];
+		}
 	}
 
 	uint64_t delta          = (static_cast<uint64_t>(max) - static_cast<uint64_t>(min));
@@ -96,9 +109,9 @@ void ffor_analyze(Vec& src_vec, Vec& des_vec, CompressState& stt) {
 	stt.bw = bw;
 	std::memcpy(stt.base, &min, sizeof(T));
 	//	base_p[0]               = min;
-	FLS_LOG_TABLE_KEY_VALUE("bw", std::to_string(stt.bw))
-	FLS_LOG_TABLE_KEY_VALUE("min", std::to_string(min))
-	FLS_LOG_TABLE_KEY_VALUE("max", std::to_string(max))
+	FLS_PLOG_KEY_VALUE("bw", std::to_string(stt.bw))
+	FLS_PLOG_KEY_VALUE("min", std::to_string(min))
+	FLS_PLOG_KEY_VALUE("max", std::to_string(max))
 }
 
 template <typename T>
@@ -119,7 +132,9 @@ void ffor_patch_analyze(Vec& src_vec, Vec& des_vec, CompressState& stt) {
 	for (size_t i {1}; i < base_c; ++i) {
 		next = ffor_prm<T>::find_best_params(*histo, i);
 
-		if (next.size() < best.size()) { best = next; }
+		if (next.size() < best.size()) {
+			best = next;
+		}
 	}
 
 	stt.bw = best.bw;
@@ -133,13 +148,15 @@ void ffor_patch_analyze(Vec& src_vec, Vec& des_vec, CompressState& stt) {
 
 	for (size_t i {0}; i < vec_n_tup(); ++i) {
 		T& val = reinterpret_cast<T*>(src_vec.buf_arr[0].mutable_data())[i];
-		if (ffor_prm<T>::is_exception(best, val)) { stt.exc_pos_arr[exc_c++] = i; }
+		if (ffor_prm<T>::is_exception(best, val)) {
+			stt.exc_pos_arr[exc_c++] = i;
+		}
 	}
 
-	FLS_LOG_TABLE_KEY_VALUE("VEC", ToStr::to_str<T>(reinterpret_cast<T*>(src_vec.buf_arr[0].mutable_data())))
-	FLS_LOG_TABLE_KEY_VALUE("BW", std::to_string(stt.bw))
-	FLS_LOG_TABLE_KEY_VALUE("EXC_C", ToStr::to_str<uint16_t>(exc_c))
-	FLS_LOG_TABLE_KEY_VALUE("BASE", ToStr::to_hex(stt.base, sizeof(T)));
+	FLS_PLOG_KEY_VALUE("VEC", ToStr::to_str<T>(reinterpret_cast<T*>(src_vec.buf_arr[0].mutable_data())))
+	FLS_PLOG_KEY_VALUE("BW", std::to_string(stt.bw))
+	FLS_PLOG_KEY_VALUE("EXC_C", ToStr::to_str<uint16_t>(exc_c))
+	FLS_PLOG_KEY_VALUE("BASE", ToStr::to_hex(stt.base, sizeof(T)));
 }
 
 template <typename T>

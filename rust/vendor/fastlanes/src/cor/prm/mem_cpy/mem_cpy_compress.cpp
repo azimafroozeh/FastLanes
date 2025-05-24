@@ -2,7 +2,7 @@
 #include "fls/cor/lyt/vec.hpp"
 #include "fls/cor/prm/mem_cpy_prm.hpp"
 #include "fls/logger/logger.hpp"
-#include "fls/printer/to_str.hpp"
+#include "fls/utl/to_str.hpp"
 
 namespace fastlanes {
 template <typename T>
@@ -11,7 +11,7 @@ static void mem_cpy_cmpr(Vec& src_vec, Vec& des_vec, CompressState& stt) {
 
 	des_vec.buf_arr[stt.cur_des_buff].UnsafeAppend(in_arr, src_vec.buf_arr[stt.cur_src_buff].length());
 
-	FLS_LOG_TABLE_KEY_VALUE("cur_vec", ToStr::to_str<T>(in_arr));
+	FLS_PLOG_KEY_VALUE("cur_vec", ToStr::to_str<T>(in_arr));
 
 	stt.cur_des_buff += 1;
 	stt.cur_src_buff += 1;
@@ -26,7 +26,7 @@ static void off_mem_cpy_cmpr(Vec& src_vec, Vec& des_vec, CompressState& stt) {
 
 	des_vec.buf_arr[stt.cur_des_buff].UnsafeAppend(in_arr, byte_c);
 
-	FLS_LOG_TABLE_KEY_VALUE("cur_vec", ToStr::to_str<uint8_t>(in_arr));
+	FLS_PLOG_KEY_VALUE("cur_vec", ToStr::to_str<uint8_t>(in_arr));
 
 	stt.cur_des_buff += 1;
 	stt.cur_src_buff += 1;

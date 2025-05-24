@@ -1,18 +1,40 @@
-#ifndef FLS_COM_EXCEPTION_HPP
-#define FLS_COM_EXCEPTION_HPP
+#ifndef FLS_COMMON_EXCEPTION_HPP
+#define FLS_COMMON_EXCEPTION_HPP
 
-#include "fls/common/common.hpp"
-#include <sstream>
-class Exception : public std::runtime_error {
-	std::string msg; /**/
+#include "fls/std/string.hpp"
+#include <cstdint>
+#include <exception>
+
+namespace fastlanes {
+/*--------------------------------------------------------------------------------------------------------------------*/
+enum class OperatorToken : uint16_t;
+/*--------------------------------------------------------------------------------------------------------------------*/
+
+class DetailedException final : public std::exception {
+	std::string message;
+
 public:
-	Exception(const std::string& arg, const char* file, int line)
-	    : std::runtime_error(arg) {
-		std::ostringstream o;
-		o << file << ":" << line << ": " << arg;
-		msg = o.str();
-	}
-	~Exception() throw() override {}
+	DetailedException(const std::string& msg, const char* file, int line);
+
+	[[nodiscard]] const char* what() const noexcept override;
 };
 
-#endif // FLS_COM_EXCEPTION_HPP
+// Function to throw a DetailedException
+[[noreturn]] void
+throw_detailed_exception(const std::string& msg, const char* file = __builtin_FILE(), int line = __builtin_LINE());
+
+class ExpressionException final : public std::exception {
+	std::string message;
+
+public:
+	ExpressionException(const std::string& operator_name, const char* file, int line);
+
+	[[nodiscard]] const char* what() const noexcept override;
+};
+
+[[noreturn]] void throw_not_supported_exception(const OperatorToken& operator_token,
+                                                const char*          file = __builtin_FILE(),
+                                                int                  line = __builtin_LINE());
+
+} // namespace fastlanes
+#endif // FLS_COMMON_EXCEPTION_HPP

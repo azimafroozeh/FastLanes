@@ -5,13 +5,14 @@
 #include "fls/cor/lyt/vec.hpp"
 #include "fls/cor/prm/b_ffor_prm.hpp"
 #include "fls/logger/logger.hpp"
-#include "fls/printer/to_str.hpp"
+#include "fls/utl/to_str.hpp"
 #include "fls/utl/util.hpp"
 #include "fls_gen/unffor/unffor.hpp"
 
 namespace fastlanes {
 template <typename T>
-static void b_ffor_decompress(PageParam src, VecParam des, DecompressState& stt) {}
+static void b_ffor_decompress(PageParam src, VecParam des, DecompressState& stt) {
+}
 
 template <typename T>
 de_cmpr_fun_t b_ffor_prm::ResolveDecompressFunc() {

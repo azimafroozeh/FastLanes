@@ -26,10 +26,10 @@ public:
 	EngineState& eng_state;
 	n_t          cur_src_buff {0};
 	n_t          cur_des_buff {0};
-	pos_t        exc_pos_arr[vec_n_tup()];
+	rle_idx_t    exc_pos_arr[vec_n_tup()];
 	uint64_t     tmp_vec[vec_n_tup()];
 	n_t          c;
-	pos_t        exc_c;
+	rle_idx_t    exc_c;
 	bw_t         bw;
 	base_t       base;
 	bitmap_t     bitmap;

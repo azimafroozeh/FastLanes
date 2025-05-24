@@ -12,7 +12,6 @@ public:
 	Col(); //
 public:
 	void   Insert(T* data, n_t c); //
-	void   Insert(T val);          //
 	void   Share(T* data, n_t c);  //
 	n_t    Count() const;          //
 	byte_c Size() const;           //

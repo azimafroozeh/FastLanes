@@ -25,10 +25,18 @@ static void Decompress32(PageParam src, VecParam des, DecompressState& stt) {
 
 template <typename T>
 de_cmpr_fun_t mem_trs::ResolveDecompressFunc() {
-	if constexpr (std::is_same<T, int64_t>()) { return Decompress64; }
-	if constexpr (std::is_same<T, uint64_t>()) { return Decompress64; }
-	if constexpr (std::is_same<T, int32_t>()) { return Decompress32; }
-	if constexpr (std::is_same<T, uint32_t>()) { return Decompress32; }
+	if constexpr (std::is_same<T, int64_t>()) {
+		return Decompress64;
+	}
+	if constexpr (std::is_same<T, uint64_t>()) {
+		return Decompress64;
+	}
+	if constexpr (std::is_same<T, int32_t>()) {
+		return Decompress32;
+	}
+	if constexpr (std::is_same<T, uint32_t>()) {
+		return Decompress32;
+	}
 
 	return nullptr;
 }

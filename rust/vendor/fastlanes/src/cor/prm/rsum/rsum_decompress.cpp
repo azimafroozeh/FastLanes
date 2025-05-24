@@ -4,7 +4,7 @@
 #include "fls/cor/lyt/vec.hpp"
 #include "fls/cor/prm/rsum_prm.hpp"
 #include "fls/logger/logger.hpp"
-#include "fls/printer/to_str.hpp"
+#include "fls/utl/to_str.hpp"
 #include "fls_gen/rsum/rsum.hpp"
 
 namespace fastlanes {
@@ -16,8 +16,8 @@ static void rsum_decompress(PageParam src, VecParam des, DecompressState& stt) {
 
 	generated::rsum::fallback::scalar::rsum(in_p, out_p, delta_bases_arr);
 
-	FLS_LOG_TABLE_KEY_VALUE("cur_vec", ToStr::to_str<T>(reinterpret_cast<T*>(out_p)))
-	FLS_LOG_TABLE_KEY_VALUE("delta_bases_arr", ToStr::to_str<T>(delta_bases_arr, 16));
+	FLS_PLOG_KEY_VALUE("cur_vec", ToStr::to_str<T>(reinterpret_cast<T*>(out_p)))
+	FLS_PLOG_KEY_VALUE("delta_bases_arr", ToStr::to_str<T>(delta_bases_arr, 16));
 
 	stt.cur_src_arr -= 1;
 	stt.cur_des_arr -= 2;

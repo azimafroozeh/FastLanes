@@ -29,7 +29,7 @@ public:
 		DELTA_NO_PATCH_REC2 = 5,
 	};
 
-	class cfg {
+	class Cfg {
 	public:
 		inline static constexpr n_t VERSION = 1; //
 	};

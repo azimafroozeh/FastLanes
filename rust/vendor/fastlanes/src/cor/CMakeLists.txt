@@ -1,15 +1,10 @@
-add_subdirectory(eng)
-add_subdirectory(exp)
 add_subdirectory(lyt)
 add_subdirectory(prm)
 
 
 add_library(fls_cor
         OBJECT
-        #        compression_plan_history.cpp
-        cpu.cpp
-        exp_pool.cpp
-        mtd.cpp
+        cor.cpp
 )
 
 set(FASTLANES_OBJECT_FILES
@@ -19,3 +14,9 @@ set(FASTLANES_OBJECT_FILES
 if (ENABLE_IWYU)
     set_property(TARGET fls_cor PROPERTY CXX_INCLUDE_WHAT_YOU_USE ${iwyu_path})
 endif ()
+
+
+target_link_libraries(fls_cor
+        PUBLIC
+        FastLanes::headers
+)

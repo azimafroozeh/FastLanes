@@ -94,7 +94,8 @@ Symbol12Map* buildSymbol12Map(Counters12& counters, long sampleParam, vector<ulo
 					end = cur + ((end - cur) * sampleFrac) / 128; // shorten long lines to the sample fraction
 			} else if (sampleFrac < 128) {
 				// in earlier rounds (sampleFrac < 128) we skip data in the sample (reduces overall work ~2x)
-				if (rnd128(i) > sampleFrac) continue;
+				if (rnd128(i) > sampleFrac)
+					continue;
 			}
 
 			if (cur < end) {
@@ -158,7 +159,8 @@ Symbol12Map* buildSymbol12Map(Counters12& counters, long sampleParam, vector<ulo
 		// add candidate symbols based on counted frequency
 		for (u32 pos1 = 0; pos1 < st->symbolCount; pos1++) {
 			u32 cnt1 = counters.count1GetNext(pos1); // may advance pos1!!
-			if (!cnt1) continue;
+			if (!cnt1)
+				continue;
 
 			Symbol12 s1 = st->symbols[pos1];
 			if (s1.length() > 1) { // 1-byte symbols are always in the map
@@ -171,7 +173,8 @@ Symbol12Map* buildSymbol12Map(Counters12& counters, long sampleParam, vector<ulo
 			}
 			for (u32 pos2 = 0; pos2 < st->symbolCount; pos2++) {
 				u32 cnt2 = counters.count2GetNext(pos1, pos2); // may advance pos2!!
-				if (!cnt2) continue;
+				if (!cnt2)
+					continue;
 
 				// create a new symbol
 				Symbol12 s2 = st->symbols[pos2];
@@ -209,7 +212,8 @@ Symbol12Map* buildSymbol12Map(Counters12& counters, long sampleParam, vector<ulo
 			*bestMap = *st;
 			bestGain = gain;
 		}
-		if (sampleFrac >= 128) break; // we do 4 rounds (sampleFrac=14,52,90,128)
+		if (sampleFrac >= 128)
+			break; // we do 4 rounds (sampleFrac=14,52,90,128)
 		makeMap(st, counters);
 	}
 	delete st;
@@ -232,7 +236,9 @@ static inline ulong compressBulk(
 			ulong    idx  = FSST12_HASH(pos) & (symbolMap.hashTabSize - 1);
 			Symbol12 s    = symbolMap.hashTab[idx];
 			word &= (0xFFFFFFFFFFFFFFFF >> (u8)s.gcl);
-			if ((s.gcl < FSST12_GCL_FREE) && *(ulong*)s.symbol == word) { code = s.gcl >> 16; }
+			if ((s.gcl < FSST12_GCL_FREE) && *(ulong*)s.symbol == word) {
+				code = s.gcl >> 16;
+			}
 			cur += (code >> 12);
 			u32 res = code & FSST12_CODE_MASK;
 			word    = fsst12_unaligned_load(cur);
@@ -241,7 +247,9 @@ static inline ulong compressBulk(
 			idx     = FSST12_HASH(pos) & (symbolMap.hashTabSize - 1);
 			s       = symbolMap.hashTab[idx];
 			word &= (0xFFFFFFFFFFFFFFFF >> (u8)s.gcl);
-			if ((s.gcl < FSST12_GCL_FREE) && *(ulong*)s.symbol == word) { code = s.gcl >> 16; }
+			if ((s.gcl < FSST12_GCL_FREE) && *(ulong*)s.symbol == word) {
+				code = s.gcl >> 16;
+			}
 			cur += (code >> 12);
 			res |= (code & FSST12_CODE_MASK) << 12;
 			memcpy(out, &res, sizeof(u64));
@@ -367,7 +375,8 @@ extern "C" u32 fsst12_import(fsst12_decoder_t* decoder, const u8* buf) {
 
 	// version field (first 8 bytes) is now there just for future-proofness, unused still (skipped)
 	memcpy(&version, buf, 8);
-	if ((version >> 32) != FSST12_VERSION) return 0;
+	if ((version >> 32) != FSST12_VERSION)
+		return 0;
 	memcpy(lenHisto, buf + 8, 16);
 
 	for (u32 i = 0; i < 8; i++)

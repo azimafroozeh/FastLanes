@@ -102,11 +102,11 @@ bsz_t TColEncoder<PT>::ExtDicFlush(Buf& buf) const {
 		dict_bsz = 0;
 		break;
 	case ExpT::FSST: {
-		dict_bsz = FSST_MAXHEADER + sizeof(dict_hdr_t);
+		dict_bsz = FSST_MAXHEADER + sizeof(DictHdrT);
 		break;
 	}
 	case ExpT::FSST12: {
-		dict_bsz = FSST12_MAXHEADER + sizeof(dict_hdr_t);
+		dict_bsz = FSST12_MAXHEADER + sizeof(DictHdrT);
 		break;
 	}
 	case ExpT::DICT:
@@ -162,22 +162,22 @@ bsz_t TColEncoder<PT>::ExtDicFlush(Buf& buf) const {
 	case ExpT::FSST: {
 		FLS_ASSERT_NOT_NULL_POINTER(stt->fsst_encoder);
 		// write hdr
-		dict_hdr_t dict_hdr = {ExpT::FSST, 0, 0, 0, 0};
-		buf.UnsafeAppend(&dict_hdr, sizeof(dict_hdr_t));
+		DictHdrT dict_hdr = {ExpT::FSST, 0, 0, 0, 0};
+		buf.UnsafeAppend(&dict_hdr, sizeof(DictHdrT));
 		// export fsst
 		auto length =
-		    fsst_export(static_cast<fsst_encoder_t*>(stt->fsst_encoder), buf.mutable_data() + sizeof(dict_hdr_t));
+		    fsst_export(static_cast<fsst_encoder_t*>(stt->fsst_encoder), buf.mutable_data() + sizeof(DictHdrT));
 		buf.Advance(length);
 		break;
 	}
 	case ExpT::FSST12: {
 		FLS_ASSERT_NOT_NULL_POINTER(stt->fsst12_encoder);
 		// write hdr
-		dict_hdr_t dict_hdr = {ExpT::FSST12, 0, 0, 0, 0};
-		buf.UnsafeAppend(&dict_hdr, sizeof(dict_hdr_t));
+		DictHdrT dict_hdr = {ExpT::FSST12, 0, 0, 0, 0};
+		buf.UnsafeAppend(&dict_hdr, sizeof(DictHdrT));
 		// export fsst
 		auto length =
-		    fsst12_export(static_cast<fsst12_encoder_t*>(stt->fsst12_encoder), buf.mutable_data() + sizeof(dict_hdr_t));
+		    fsst12_export(static_cast<fsst12_encoder_t*>(stt->fsst12_encoder), buf.mutable_data() + sizeof(DictHdrT));
 		buf.Advance(length);
 		break;
 	}

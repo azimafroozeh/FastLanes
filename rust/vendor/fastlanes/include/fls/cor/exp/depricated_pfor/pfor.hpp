@@ -15,7 +15,9 @@ struct Setting {
 	uint64_t bit_c; /**/
 	T        base;  /**/
 	uint64_t exc_c; /**/
-	byte_c   Size(count_t c) { return byte_c {(c * bit_c / CHAR_BIT) + exc_c * sizeof(T)}; }
+	byte_c   Size(count_t c) {
+		  return byte_c {(c * bit_c / CHAR_BIT) + exc_c * sizeof(T)};
+	}
 };
 
 template <typename T>
@@ -35,7 +37,9 @@ template <typename T>
 bool IsExc(T lower_bound, T upper_bound, T val) {
 	FLS_ASSERT(upper_bound > lower_bound, " upperbound is less than lowerbound", " ");
 
-	if (val <= upper_bound && val >= lower_bound) { return false; }
+	if (val <= upper_bound && val >= lower_bound) {
+		return false;
+	}
 	return true;
 }
 
@@ -53,7 +57,9 @@ count_t PFor<T>::CountExc(const T               lower_bound,
 
 	for (count_t i = 0; i < val_vec.size(); ++i) {
 		is_exc = IsExc(lower_bound, upper_bound, val_vec[i]);
-		if (!is_exc) { continue; }
+		if (!is_exc) {
+			continue;
+		}
 		/* It is an exception.
 		 * Increase the number of exception by the repetition of this value.
 		 */
@@ -99,7 +105,9 @@ Setting<T> PFor<T>::FindBestSetting(sp<Seg<T>> seg_sp, count_t idx) {
 		next = {i, lower_bound, CountExc(lower_bound, upper_bound, val_vec, rep_vec)};
 
 		/* Check to see if there is a better setting. */
-		if (next.Size(seg_sp->Count()) < best.Size(seg_sp->Count())) { best = next; }
+		if (next.Size(seg_sp->Count()) < best.Size(seg_sp->Count())) {
+			best = next;
+		}
 	}
 
 	return best;
@@ -117,7 +125,9 @@ Setting<T> PFor<T>::FindBestSetting(sp<pfor::Seg<T>> seg_sp) {
 	for (count_t i = 1; i < base_c; ++i) {
 		next = FindBestSetting(seg_sp, i);
 
-		if (next.Size(seg_sp->Count()) < best.Size(seg_sp->Count())) { best = next; }
+		if (next.Size(seg_sp->Count()) < best.Size(seg_sp->Count())) {
+			best = next;
+		}
 	}
 
 	return best;
@@ -155,7 +165,9 @@ sp<Seg<T>> PFor<T>::ExtractSeg(sp<Scanner<T>> scanner_sp) {
 	}
 
 	/* Find Offsets.*/
-	if (seg_sp->Occupancy() < fast_lanes::Cfg::SQUEEZE_RATIO) { seg_sp->Squeeze(); }
+	if (seg_sp->Occupancy() < fast_lanes::Cfg::SQUEEZE_RATIO) {
+		seg_sp->Squeeze();
+	}
 	seg_sp->exp.pyl.bitpacked_col = Cfg::START;
 	seg_sp->exp.pyl.exception_col = seg_sp->End() - seg_sp->exc_c * sizeof(T);
 
@@ -166,7 +178,9 @@ template <typename T>
 bool PFor<T>::TryFill(sp<Scanner<T>> scanner_sp, sp<Seg<T>> seg_sp) {
 	FLS_ASSERT_CORRECT_SIZE(scanner_sp->remained_c)
 
-	if (scanner_sp->remained_c == 0) { return false; }
+	if (scanner_sp->remained_c == 0) {
+		return false;
+	}
 
 	/* Initialize.*/
 	auto    vec_scanner_sp = scanner_sp->GetVecScanner();
@@ -189,7 +203,9 @@ bool PFor<T>::TryFill(sp<Scanner<T>> scanner_sp, sp<Seg<T>> seg_sp) {
 	new_size = byte_c {vec_scanner_sp->compressed_sz + seg_sp->compressed_sz};
 
 	/* Was not successful. Go to next segment*/
-	if (new_size > seg_sp->cap) { return false; }
+	if (new_size > seg_sp->cap) {
+		return false;
+	}
 
 	/* Was successful, 1)Absorb the vector, 2)Update the segment. */
 	seg_sp->uncompressed_sz = byte_c {seg_sp->uncompressed_sz + vec_scanner_sp->uncompressed_sz};

@@ -13,3 +13,8 @@ set_target_properties(fls_bitpack PROPERTIES CXX_CLANG_TIDY "")
 set(FASTLANES_OBJECT_FILES
         ${FASTLANES_OBJECT_FILES} $<TARGET_OBJECTS:fls_bitpack>
         PARENT_SCOPE)
+
+target_link_libraries(fls_bitpack
+        PUBLIC
+        FastLanes::headers
+)

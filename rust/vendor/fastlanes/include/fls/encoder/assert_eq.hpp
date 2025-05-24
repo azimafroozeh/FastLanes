@@ -3,7 +3,7 @@
 
 #pragma clang diagnostic ignored "-Wconversion"
 
-#include "fls/common/str.hpp"
+#include "fls/common/string.hpp"
 #include "fls/cor/exp/exp.hpp"
 #include "fls/cor/exp/variant.hpp"
 #include "fls/cor/lyt/dic/dic.hpp"
@@ -13,9 +13,10 @@
 #include "fls/encoder/col_encoder.hpp"
 #include "fls/expression/data_type.hpp"
 #include "fls/logger/logger.hpp"
-#include "fls/printer/to_str.hpp"
+#include "fls/utl/to_str.hpp"
 #include "fls/utl/util.hpp"
 #include "fls_gen/untranspose/untranspose.hpp"
+#include <sstream>
 
 namespace fastlanes {
 template <typename PT>
@@ -238,7 +239,9 @@ void assert_eq(Vec* vec, const PT* data_p, idx_t start_idx, ExpT exp) {
 				                                          out_p);
 
 				auto org_size = data_p[start_idx + i].size();
-				if (org_size != decompresed_size) { throw std::runtime_error("size does not match"); }
+				if (org_size != decompresed_size) {
+					throw std::runtime_error("size does not match");
+				}
 
 				for (idx_t j {0}; j < org_size; ++j) {
 					const bool equal = out_p[j] == reinterpret_cast<const uint8_t*>(data_p[start_idx + i].data())[j];

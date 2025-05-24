@@ -1,8 +1,14 @@
 add_library(fls_reader
         OBJECT
-        horizontal_column.cpp
-        fls_rowgroup.cpp
-        reader.cpp
+        column_view.cpp
+        csv_reader.cpp
+        external_reader.cpp
+        json_reader.cpp
+        rowgroup_view.cpp
+        rowgroup_reader.cpp
+        segment.cpp
+        table_reader.cpp
+        table_view.cpp
 )
 
 set(FASTLANES_OBJECT_FILES
@@ -12,3 +18,8 @@ set(FASTLANES_OBJECT_FILES
 if (FLS_ENABLE_IWYU)
     set_property(TARGET fls_reader PROPERTY CXX_INCLUDE_WHAT_YOU_USE ${iwyu_path})
 endif ()
+
+target_link_libraries(fls_reader
+        PUBLIC
+        FastLanes::headers
+)

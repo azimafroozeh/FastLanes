@@ -13,7 +13,6 @@ class Mmap;
 class S3;
 class Socket;
 class Buf;
-class ExpEncodedCol;
 /*--------------------------------------------------------------------------------------------------------------------*/
 
 /*--------------------------------------------------------------------------------------------------------------------*\
@@ -44,16 +43,20 @@ using io = variant<std::monostate,
 class IO {
 public:
 	///
-	static void flush(io& io, const ExpEncodedCol& exp_encoded_col);
-	///
 	static void flush(io& io, const Buf& buf);
 	///
+	static void append(io& io, const Buf& buf);
+	///
+	static void append(io& io, const char* pointer, n_t size);
+	///
 	static void read(const io& io, Buf& buf);
+	///
+	static void range_read(const io& io, Buf& buf, n_t offset, n_t size);
 	///
 	template <typename PT>
 	static span<PT> read(const io& io);
 	///
-	static bsz_t get_size(const io& io);
+	static n_t get_size(const io& io);
 };
 
 } // namespace fastlanes

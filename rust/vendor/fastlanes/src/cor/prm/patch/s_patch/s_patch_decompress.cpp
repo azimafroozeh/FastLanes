@@ -5,7 +5,7 @@
 #include "fls/cor/lyt/vec.hpp"
 #include "fls/cor/prm/patch/s_patch.hpp"
 #include "fls/logger/logger.hpp"
-#include "fls/printer/to_str.hpp"
+#include "fls/utl/to_str.hpp"
 #include "fls/utl/util.hpp"
 
 namespace fastlanes {
@@ -25,16 +25,24 @@ static void s_patch_decompress(PageParam src, VecParam des, DecompressState& stt
 
 	stt.cur_src_arr -= 2;
 
-	FLS_LOG_TABLE_KEY_VALUE("exc_arr", ToStr::to_str<T>(exc_arr, exc_c));
-	FLS_LOG_TABLE_KEY_VALUE("after s_patch", ToStr::to_str<T>(out_arr));
+	FLS_PLOG_KEY_VALUE("exc_arr", ToStr::to_str<T>(exc_arr, exc_c));
+	FLS_PLOG_KEY_VALUE("after s_patch", ToStr::to_str<T>(out_arr));
 }
 
 template <typename T>
 de_cmpr_fun_t s_patch::ResolveDecompressFunc() {
-	if constexpr (std::is_same<T, int64_t>()) { return s_patch_decompress<T>; }
-	if constexpr (std::is_same<T, uint64_t>()) { return s_patch_decompress<T>; }
-	if constexpr (std::is_same<T, int32_t>()) { return s_patch_decompress<T>; }
-	if constexpr (std::is_same<T, uint32_t>()) { return s_patch_decompress<T>; }
+	if constexpr (std::is_same<T, int64_t>()) {
+		return s_patch_decompress<T>;
+	}
+	if constexpr (std::is_same<T, uint64_t>()) {
+		return s_patch_decompress<T>;
+	}
+	if constexpr (std::is_same<T, int32_t>()) {
+		return s_patch_decompress<T>;
+	}
+	if constexpr (std::is_same<T, uint32_t>()) {
+		return s_patch_decompress<T>;
+	}
 
 	return nullptr;
 }

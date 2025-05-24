@@ -3,7 +3,7 @@
 #include "fls/cor/prm/patch/ll_patch.hpp"
 #include "fls/cor/prm/patch/patch.hpp"
 #include "fls/logger/logger.hpp"
-#include "fls/printer/to_str.hpp"
+#include "fls/utl/to_str.hpp"
 #include "fls/utl/util.hpp"
 
 #pragma clang diagnostic ignored "-Wconversion"
@@ -14,10 +14,10 @@ static void ll_patch_compress(Vec& src_vec, Vec& des_vec, CompressState& stt) {
 	auto*       in_arr = reinterpret_cast<T*>(src_vec.buf_arr[stt.cur_src_buff].mutable_data());
 	const auto* base_p = reinterpret_cast<const T*>(stt.base);
 
-	pos_t new_c {0};
-	pos_t old_c {0};
+	rle_idx_t new_c {0};
+	rle_idx_t old_c {0};
 	//[fixme]
-	pos_t tmp[vec_n_tup()];
+	rle_idx_t tmp[vec_n_tup()];
 	switch (stt.exc_c) {
 	case 0:
 		break;
@@ -41,28 +41,36 @@ static void ll_patch_compress(Vec& src_vec, Vec& des_vec, CompressState& stt) {
 	}
 
 	/* push the number of exceptions. */
-	des_vec.buf_arr[stt.cur_des_buff + 1].UnsafeAppend(&stt.exc_c, sizeof(pos_t));
+	des_vec.buf_arr[stt.cur_des_buff + 1].UnsafeAppend(&stt.exc_c, sizeof(rle_idx_t));
 	/* push the pos of first exception. */
-	des_vec.buf_arr[stt.cur_des_buff + 1].UnsafeAppend(&tmp[0], sizeof(pos_t));
+	des_vec.buf_arr[stt.cur_des_buff + 1].UnsafeAppend(&tmp[0], sizeof(rle_idx_t));
 
 	/* push the exceptions and fix the linked list. */
-	for (pos_t i {0}; i < stt.exc_c; ++i) {
+	for (rle_idx_t i {0}; i < stt.exc_c; ++i) {
 		des_vec.buf_arr[stt.cur_des_buff + 0].UnsafeAppend(&in_arr[tmp[i]], sizeof(T));
 
 		auto gap       = tmp[i + 1] - tmp[i] + (*base_p) - 1;
 		in_arr[tmp[i]] = gap;
 	}
 
-	FLS_LOG_TABLE_KEY_VALUE("after ll_patch", ToStr::to_str<T>(in_arr));
+	FLS_PLOG_KEY_VALUE("after ll_patch", ToStr::to_str<T>(in_arr));
 	stt.cur_des_buff += 2;
 }
 
 template <typename T>
 cmpr_fun_t ll_patch::ResolveCompressFunc() {
-	if constexpr (std::is_same<T, int64_t>()) { return ll_patch_compress<uint64_t>; }
-	if constexpr (std::is_same<T, uint64_t>()) { return ll_patch_compress<uint64_t>; }
-	if constexpr (std::is_same<T, int32_t>()) { return ll_patch_compress<uint32_t>; }
-	if constexpr (std::is_same<T, uint32_t>()) { return ll_patch_compress<uint32_t>; }
+	if constexpr (std::is_same<T, int64_t>()) {
+		return ll_patch_compress<uint64_t>;
+	}
+	if constexpr (std::is_same<T, uint64_t>()) {
+		return ll_patch_compress<uint64_t>;
+	}
+	if constexpr (std::is_same<T, int32_t>()) {
+		return ll_patch_compress<uint32_t>;
+	}
+	if constexpr (std::is_same<T, uint32_t>()) {
+		return ll_patch_compress<uint32_t>;
+	}
 
 	return nullptr;
 }

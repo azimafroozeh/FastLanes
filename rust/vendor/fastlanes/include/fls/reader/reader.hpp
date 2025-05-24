@@ -12,26 +12,35 @@
 namespace fastlanes {
 /*--------------------------------------------------------------------------------------------------------------------*/
 class Connection;
-class FLSRowgroup;
+class RowgroupView;
+class Rowgroup;
 /*--------------------------------------------------------------------------------------------------------------------*/
 class Reader {
 public:
 	explicit Reader(const path& dir_path, Connection& fls);
 
 public:
-	///!  get chunk
-	Chunk& get_chunk(n_t vec_idx);
+	vector<sp<PhysicalExpr>>& get_chunk(n_t vec_idx);
 	///
 	void reset();
 	///!
+	up<Rowgroup> materialize();
+	///
 	void to_csv(const path& dir_path);
+	///
+	[[nodiscard]] RowgroupDescriptor& footer() const;
+	///!
+	[[nodiscard]] vector<string> get_column_names() const;
+	///
+	[[nodiscard]] vector<DataType> get_data_types() const;
+
+public:
+	vector<sp<PhysicalExpr>> m_expressions;
 
 private:
-	up<Footer>               m_footer;
-	up<Chunk>                m_chunk;
-	up<Buf>                  m_buf;
-	vector<up<PhysicalExpr>> m_expressions;
-	up<FLSRowgroup>          m_fls_rg;
+	up<RowgroupDescriptor> m_footer;
+	up<Buf>                m_buf;
+	up<RowgroupView>       m_rowgroup_view;
 };
 
 } // namespace fastlanes

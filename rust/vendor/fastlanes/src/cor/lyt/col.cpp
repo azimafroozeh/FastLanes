@@ -24,7 +24,8 @@ T* Col<T>::operator[](n_t i) {
 }
 
 template <typename T>
-void Col<T>::Share(T* data, n_t c) {}
+void Col<T>::Share(T* data, n_t c) {
+}
 
 template <typename T>
 void Col<T>::Insert(T* data, n_t c) {
@@ -52,14 +53,6 @@ n_t Col<T>::Count() const {
 template <typename T>
 byte_c Col<T>::Size() const {
 	return byte_c {sizeof(T) * m_buffer.size()};
-}
-
-template <typename T>
-void Col<T>::Insert(T val) {
-	FLS_ASSERT(m_count + 1 <= CFG::ROW_GROUP_SIZE, " ", "over_capacity");
-
-	m_buffer.push_back(val);
-	m_count += 1;
 }
 
 /*---------------------------------------------------------------------------------------------------------------------\

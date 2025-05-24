@@ -6,10 +6,29 @@
 namespace generated { namespace rsum {
 namespace fallback {
 namespace scalar {
-void rsum(const uint8_t* __restrict in, uint8_t* __restrict out, const uint8_t* __restrict base);
-void rsum(const uint16_t* __restrict in, uint16_t* __restrict out, const uint16_t* __restrict base);
-void rsum(const uint32_t* __restrict in, uint32_t* __restrict out, const uint32_t* __restrict base);
-void rsum(const uint64_t* __restrict in, uint64_t* __restrict out, const uint64_t* __restrict base);
+void        rsum(const uint8_t* __restrict in, uint8_t* __restrict out, const uint8_t* __restrict base);
+void        rsum(const uint16_t* __restrict in, uint16_t* __restrict out, const uint16_t* __restrict base);
+void        rsum(const uint32_t* __restrict in, uint32_t* __restrict out, const uint32_t* __restrict base);
+void        rsum(const uint64_t* __restrict in, uint64_t* __restrict out, const uint64_t* __restrict base);
+inline void rsum(const int64_t* __restrict in, int64_t* __restrict out, const int64_t* __restrict base) {
+	rsum(reinterpret_cast<const uint64_t*>(in),
+	     reinterpret_cast<uint64_t*>(out),
+	     reinterpret_cast<const uint64_t*>(base));
+}
+inline void rsum(const int32_t* __restrict in, int32_t* __restrict out, const int32_t* __restrict base) {
+	rsum(reinterpret_cast<const uint32_t*>(in),
+	     reinterpret_cast<uint32_t*>(out),
+	     reinterpret_cast<const uint32_t*>(base));
+}
+inline void rsum(const int16_t* __restrict in, int16_t* __restrict out, const int16_t* __restrict base) {
+	rsum(reinterpret_cast<const uint16_t*>(in),
+	     reinterpret_cast<uint16_t*>(out),
+	     reinterpret_cast<const uint16_t*>(base));
+}
+inline void rsum(const int8_t* __restrict in, int8_t* __restrict out, const int8_t* __restrict base) {
+	rsum(reinterpret_cast<const uint8_t*>(in), reinterpret_cast<uint8_t*>(out), reinterpret_cast<const uint8_t*>(base));
+}
+
 } // namespace scalar
 namespace unit64 {
 void rsum(const uint8_t* __restrict in, uint8_t* __restrict out, const uint8_t* __restrict base);

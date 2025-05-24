@@ -12,7 +12,7 @@ class RowGroupView;
 class RowgroupEncodingResult;
 class CorrelationGraph;
 class Rowgroup;
-class Footer;
+struct TableDescriptorT;
 /*--------------------------------------------------------------------------------------------------------------------*/
 enum class ExpressionChoosingStrategy : uint8_t {
 	INVALID                = 0,
@@ -24,14 +24,7 @@ public:
 	Wizard() = delete;
 
 public:
-	static up<Footer> Spell(const Connection& fls);
-	static void       ChooseExpr(ExpressionChoosingStrategy strategy, RowgroupEncodingResult& result, Footer& plan);
-
-private:
-	static void constant_check(const Rowgroup& rowgroup, Footer& footer);
-	static void equality_check(const Rowgroup& rowgroup, Footer& compression_plan);
-	static void expression_check(const Rowgroup& rowgroup, Footer& compression_plan);
-	static void map_1t1_check(const Rowgroup& rowgroup, Footer& compression_plan);
+	static up<TableDescriptorT> Spell(const Connection& fls);
 };
 } // namespace fastlanes
 

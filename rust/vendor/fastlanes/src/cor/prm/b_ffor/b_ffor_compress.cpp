@@ -1,14 +1,14 @@
 #include "fls/cor/eng/compressor.hpp"
 #include "fls/cor/lyt/vec.hpp"
 #include "fls/cor/prm/b_ffor_prm.hpp"
-#include "fls/logger/logger.hpp"
-#include "fls/printer/to_str.hpp"
+#include "fls/ffor.hpp"
+#include "fls/utl/to_str.hpp"
 #include "fls/utl/util.hpp"
-#include "fls_gen/ffor/ffor.hpp"
 
 namespace fastlanes {
 template <typename T>
-static void ffor_compress(Vec& src_vec, Vec& des_vec, CompressState& stt) {}
+static void ffor_compress(Vec& src_vec, Vec& des_vec, CompressState& stt) {
+}
 
 template <typename T>
 cmpr_fun_t b_ffor_prm::ResolveCompressFunc() {

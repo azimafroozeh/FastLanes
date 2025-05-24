@@ -2,7 +2,7 @@
 #include "fls/cor/lyt/vec.hpp"
 #include "fls/cor/prm/rsum_prm.hpp"
 #include "fls/logger/logger.hpp"
-#include "fls/printer/to_str.hpp"
+#include "fls/utl/to_str.hpp"
 #include "fls/utl/util.hpp"
 #include "fls_gen/unrsum/unrsum.hpp"
 
@@ -19,7 +19,7 @@ static void rsum_compress(Vec& src_vec, Vec& des_vec, CompressState& stt) {
 
 	stt.cur_des_buff += 1;
 
-	FLS_LOG_TABLE_KEY_VALUE("in_arr after unrsum", ToStr::to_str<T>(in_arr));
+	FLS_PLOG_KEY_VALUE("in_arr after unrsum", ToStr::to_str<T>(in_arr));
 }
 
 template <typename T>

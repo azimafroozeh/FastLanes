@@ -10,3 +10,8 @@ endif ()
 set(FASTLANES_OBJECT_FILES
         ${FASTLANES_OBJECT_FILES} $<TARGET_OBJECTS:cpu>
         PARENT_SCOPE)
+
+target_link_libraries(cpu
+        PUBLIC
+        FastLanes::headers
+)

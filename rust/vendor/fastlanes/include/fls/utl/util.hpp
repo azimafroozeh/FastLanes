@@ -10,10 +10,14 @@ namespace fastlanes {
 template <typename T>
 auto valid_bit_width(T val) {
 	if (val < 0x10000) {
-		if (val < 0x100) { return 8; }
+		if (val < 0x100) {
+			return 8;
+		}
 		return 16;
 	}
-	if (val < 0x100000000L) { return 32; }
+	if (val < 0x100000000L) {
+		return 32;
+	}
 	return 64;
 }
 
@@ -30,7 +34,9 @@ static uint8_t RANGE_BIT(T range) { // NOLINT
 	} else if constexpr (std::is_same<T, double>()) {
 		FLS_ABORT("Not Supported")
 	} else {
-		if (range == 0) { return 0; }
+		if (range == 0) {
+			return 0;
+		}
 
 		uint8_t bw = 0;
 		do {
@@ -88,7 +94,9 @@ T SafeUpperBound(T base, n_t bw) {
 	FLS_ASSERT(TYPE_BIT<T>::VALUE >= bw, "More bits than supported number of bits.", " ");
 
 	// is it necessary?
-	if (bw == 0) { return 0; }
+	if (bw == 0) {
+		return base;
+	}
 	/* Domain -> [x y] , range =  y - x. */
 	const T range = static_cast<T>(MAX_BIT(bw));
 	const T MAX   = std::numeric_limits<T>::max();

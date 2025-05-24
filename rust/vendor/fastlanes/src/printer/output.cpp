@@ -6,9 +6,13 @@
 namespace fastlanes {
 TerminalOutput::TerminalOutput() = default;
 
-void TerminalOutput::SetAlignment(unsigned int i, TerminalOutput::Align alignment) { m_alignment[i] = alignment; }
+void TerminalOutput::SetAlignment(unsigned int i, TerminalOutput::Align alignment) {
+	m_alignment[i] = alignment;
+}
 
-TerminalOutput::Align TerminalOutput::Alignment(unsigned int i) const { return m_alignment[i]; }
+TerminalOutput::Align TerminalOutput::Alignment(unsigned int i) const {
+	return m_alignment[i];
+}
 
 void TerminalOutput::EndOfRow() {
 	m_rows.push_back(m_current);
@@ -31,7 +35,9 @@ void TerminalOutput::Setup() const {
 	setup_alignment();
 }
 
-const std::vector<TerminalOutput::row_t>& TerminalOutput::Rows() const { return m_rows; }
+const std::vector<TerminalOutput::row_t>& TerminalOutput::Rows() const {
+	return m_rows;
+}
 
 std::string TerminalOutput::Ruler(POS pos) const {
 
@@ -68,13 +74,17 @@ std::string TerminalOutput::Ruler(POS pos) const {
 	return result;
 }
 
-unsigned TerminalOutput::Width(unsigned int i) const { return m_width[i]; }
+unsigned TerminalOutput::Width(unsigned int i) const {
+	return m_width[i];
+}
 
 unsigned TerminalOutput::CorrectDistance(const std::string& string_to_correct) const {
 	return static_cast<unsigned>(string_to_correct.size() - glyph_length(string_to_correct));
 }
 
-bool TerminalOutput::HasRuler() const { return m_has_ruler; }
+bool TerminalOutput::HasRuler() const {
+	return m_has_ruler;
+}
 
 std::string TerminalOutput::repeat(unsigned int times, const std::string& c) {
 	std::string result;
@@ -98,7 +108,9 @@ unsigned TerminalOutput::glyph_length(const std::string& s) const {
 }
 
 unsigned TerminalOutput::columns() const {
-	if (m_rows.empty()) { return 0; }
+	if (m_rows.empty()) {
+		return 0;
+	}
 
 	return static_cast<unsigned>(m_rows[0].size());
 }
@@ -115,13 +127,19 @@ void TerminalOutput::determine_widths() const {
 
 void TerminalOutput::setup_alignment() const {
 	for (unsigned i = 0; i < columns(); ++i) {
-		if (m_alignment.find(i) == m_alignment.end()) { m_alignment[i] = Align::LEFT; }
+		if (m_alignment.find(i) == m_alignment.end()) {
+			m_alignment[i] = Align::LEFT;
+		}
 	}
 }
 
-std::string TerminalOutput::Vertical() const { return m_vertical; }
+std::string TerminalOutput::Vertical() const {
+	return m_vertical;
+}
 
-std::string TerminalOutput::Horizontal() const { return m_horizontal; }
+std::string TerminalOutput::Horizontal() const {
+	return m_horizontal;
+}
 
 void TerminalOutput::Add(const std::string& content) {
 	//
@@ -140,23 +158,32 @@ template void TerminalOutput::AddRow<vector<string>>(const vector<string>& conta
 template void TerminalOutput::AddRow<vector<char const*>>(const vector<char const*>& container);
 
 TerminalOutput::~TerminalOutput() {
-	if (m_out) { *m_out << *this; }
+	if (m_out) {
+		*m_out << *this;
+		m_out->flush();
+	}
 }
 
-void TerminalOutput::Print(std::ostream& os) const { os << *this; }
+void TerminalOutput::Print(std::ostream& os) const {
+	os << *this;
+}
 
 std::ostream& operator<<(std::ostream& stream, TerminalOutput const& table) {
 	table.Setup();
 	auto final_iter = table.Rows().end() - 1;
 
-	if (table.HasRuler()) { stream << table.Ruler(TerminalOutput::POS::TOP) << "\n"; }
+	if (table.HasRuler()) {
+		stream << table.Ruler(TerminalOutput::POS::TOP) << "\n";
+	}
 
 	// HEADER
 	{
 		stream << table.Vertical();
 		stream << table.m_header;
 		stream << "\n";
-		if (table.HasRuler()) { stream << table.Ruler(TerminalOutput::POS::MID) << "\n"; }
+		if (table.HasRuler()) {
+			stream << table.Ruler(TerminalOutput::POS::MID) << "\n";
+		}
 	}
 
 	// ROWS
@@ -179,7 +206,9 @@ std::ostream& operator<<(std::ostream& stream, TerminalOutput const& table) {
 			stream << table.Ruler(TerminalOutput::POS::BOT) << "\n";
 			continue;
 		}
-		if (table.HasRuler()) { stream << table.Ruler(TerminalOutput::POS::MID) << "\n"; }
+		if (table.HasRuler()) {
+			stream << table.Ruler(TerminalOutput::POS::MID) << "\n";
+		}
 	}
 
 	return stream;
@@ -191,8 +220,12 @@ void CsvOutput::Add(const std::string& content) {
 }
 
 CsvOutput::~CsvOutput() {
-	if (m_out) { *m_out << ss.str(); }
+	if (m_out) {
+		*m_out << ss.str();
+	}
 }
 
-void CsvOutput::EndOfRow() { ss << "\n"; }
+void CsvOutput::EndOfRow() {
+	ss << "\n";
+}
 } // namespace fastlanes

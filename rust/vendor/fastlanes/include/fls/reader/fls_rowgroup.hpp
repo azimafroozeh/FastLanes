@@ -1,21 +1,25 @@
 #ifndef FLS_READER_FLS_ROWGROUP_HPP
 #define FLS_READER_FLS_ROWGROUP_HPP
 
-#include "fls/reader/horizontal_column.hpp"
 #include "fls/std/span.hpp"
 #include "fls/std/vector.hpp"
 
 namespace fastlanes {
 /*--------------------------------------------------------------------------------------------------------------------*/
-class Footer;
+class RowgroupDescriptor;
+class ColumnView;
 /*--------------------------------------------------------------------------------------------------------------------*/
 
-class FLSRowgroup {
+class RowgroupView {
 public:
-	explicit FLSRowgroup(span<std::byte> ptr, const Footer& footer);
+	explicit RowgroupView(span<std::byte> ptr, const RowgroupDescriptor& footer);
 
 public:
-	vector<HorizontalColumn> columns;
+	ColumnView&       operator[](n_t col_idx);
+	const ColumnView& operator[](n_t col_idx) const;
+
+public:
+	vector<up<ColumnView>> columns;
 };
 
 } // namespace fastlanes

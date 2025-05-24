@@ -2,7 +2,7 @@
 #include "fls/cor/lyt/vec.hpp"
 #include "fls/cor/prm/trs_prm.hpp"
 #include "fls/logger/logger.hpp"
-#include "fls/printer/to_str.hpp"
+#include "fls/utl/to_str.hpp"
 #include "fls_gen/transpose/transpose.hpp"
 #include <cstring>
 
@@ -11,12 +11,12 @@ template <typename T>
 static void trs_cmpr(Vec& src_vec, Vec& des_vec, CompressState& stt) {
 	T* in_arr = reinterpret_cast<T*>(src_vec.buf_arr[stt.cur_src_buff].mutable_data());
 
-	FLS_LOG_TABLE_KEY_VALUE("before transpose", ToStr::to_str<T>(in_arr));
+	FLS_PLOG_KEY_VALUE("before transpose", ToStr::to_str<T>(in_arr));
 	/* Fixme: not efficient. implement inplace_transpose */
 	T tmp[vec_n_tup()];
 	generated::transpose::fallback::scalar::transpose_i(in_arr, tmp);
 	std::memcpy(in_arr, tmp, vec_bsz<T>());
-	FLS_LOG_TABLE_KEY_VALUE("after transpose", ToStr::to_str<T>(in_arr));
+	FLS_PLOG_KEY_VALUE("after transpose", ToStr::to_str<T>(in_arr));
 }
 
 template <typename T>

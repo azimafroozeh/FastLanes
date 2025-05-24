@@ -11,3 +11,8 @@ set_target_properties(fls_b_ffor_prm PROPERTIES CXX_CLANG_TIDY "")
 set(FASTLANES_OBJECT_FILES
     ${FASTLANES_OBJECT_FILES} $<TARGET_OBJECTS:fls_b_ffor_prm>
     PARENT_SCOPE)
+
+target_link_libraries(fls_b_ffor_prm
+        PUBLIC
+        FastLanes::headers
+)

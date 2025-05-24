@@ -21,12 +21,30 @@ public:
 	static constexpr uint64_t VEC_SZ         = 1024;         //
 	static constexpr uint64_t VEC_TUP_C      = 1024;         //
 	static constexpr uint64_t ROW_GROUP_SIZE = 256UL * 1024; //
+	static constexpr uint64_t N_VEC_PER_RG   = 64;           //
+
+	// Rowgroup
+	struct Defaults {
+		static constexpr bool ENABLE_VERBOSE = false;
+	};
+
+	// Rowgroup
+	struct RowGroup {
+		static constexpr uint64_t N_VECTORS_PER_ROWGROUP = 64;
+		static constexpr uint64_t N_VALUES_PER_ROWGROUP  = 64 * 1024;
+	};
+
+	// Rowgroup
+	struct Footer {
+		static constexpr fls_bool IS_INLINED = FLS_FALSE;
+	};
 
 	/* String Config. */
 	struct String {
-		static constexpr uint64_t MAX_SIZE           = 4294967295; // max 32 bit unsigned integer
-		static constexpr uint64_t ADAPTIVE_TRY_C     = 3;          //
-		static constexpr double   ADAPTIVE_THRESHOLD = 00.80;      //
+		static constexpr uint64_t MAX_SIZE             = 4294967295; // max 32 bit unsigned integer
+		static constexpr uint64_t ADAPTIVE_TRY_C       = 3;          //
+		static constexpr double   ADAPTIVE_THRESHOLD   = 00.80;      //
+		static constexpr n_t      max_bytes_per_string = 10000;
 	};
 
 	/* Sampler Config. */
@@ -34,6 +52,7 @@ public:
 		static constexpr uint64_t SAMPLE_C           = 16UL * 1024; //
 		static constexpr uint64_t ADAPTIVE_TRY_C     = 3;           //
 		static constexpr double   ADAPTIVE_THRESHOLD = 00.80;       //
+		static constexpr uint64_t SAMPLE_SIZE        = 7;           //
 	};
 
 	/* Dictionary Config. */
@@ -63,8 +82,8 @@ public:
 	};
 
 	/* CMPR Config. */
-	struct CMPR {
-		static constexpr uint64_t EXC_LIMIT_C = 100; // between 5 and 10 percent
+	struct PATCH {
+		static constexpr uint64_t EXC_LIMIT_C = 200; // between 5 and 10 percent
 	};
 
 	/* PQ Config. */
@@ -83,7 +102,7 @@ public:
 		static constexpr uint64_t MAX = 5;
 	};
 
-	struct BIT_MAP {
+	struct BitMap {
 		static constexpr uint64_t UNIT_BIT = 64;                //
 		static constexpr uint64_t SZ       = VEC_SZ / 8;        //
 		static constexpr uint64_t UNIT_C   = VEC_SZ / UNIT_BIT; //
@@ -97,9 +116,23 @@ public:
 		static constexpr hdr_field_t RG_SPECIAL_CODE = 111111111;
 		static constexpr hdr_field_t CC_SPECIAL_CODE = 222222222;
 	};
-
 	struct FSST {
-		static constexpr int NULL_TERMINATED = 0; //
+		static constexpr int NULL_TERMINATED = 0;                    //
+		static constexpr int MAX_HEADER_SIZE = 8 + 1 + 8 + 2048 + 1; //
+	};
+	struct FSST12 {
+		static constexpr int NULL_TERMINATED = 0;                     //
+		static constexpr int MAX_HEADER_SIZE = 8 + 16 + 4096 + 32768; //
+	};
+	struct CCC {
+		static constexpr double MAX_UNIQUENESS_RATIO_FOR_DICTIONARY_ENCODING = 0.25;
+	};
+	struct UNIFIED_TRANSPOSED {
+		static constexpr n_t BASES_SIZE = 128;
+	};
+	struct NULLS {
+		static constexpr double NULLS_THRESHOLD_PERCENTAGE = 0.95;                 //
+		static constexpr int    MAX_HEADER_SIZE            = 8 + 1 + 8 + 2048 + 1; //
 	};
 };
 

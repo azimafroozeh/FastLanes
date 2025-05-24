@@ -4,7 +4,7 @@
 #include "fls/cor/lyt/vec.hpp"
 #include "fls/cor/prm/ffor_prm.hpp"
 #include "fls/logger/logger.hpp"
-#include "fls/printer/to_str.hpp"
+#include "fls/utl/to_str.hpp"
 #include "fls_gen/unffor/unffor.hpp"
 #include <cstring>
 
@@ -23,9 +23,9 @@ static void ffor_decompress(PageParam src, VecParam des, DecompressState& stt) {
 
 	generated::unffor::fallback::scalar::unffor(in_p, out_p, bw, base_p);
 
-	FLS_LOG_TABLE_KEY_VALUE("VEC", ToStr::to_str<T>(reinterpret_cast<T*>(out_p)))
-	FLS_LOG_TABLE_KEY_VALUE("BW", std::to_string(bw))
-	FLS_LOG_TABLE_KEY_VALUE("BASE", ToStr::to_hex(stt.base, sizeof(T)));
+	FLS_PLOG_KEY_VALUE("VEC", ToStr::to_str<T>(reinterpret_cast<T*>(out_p)))
+	FLS_PLOG_KEY_VALUE("BW", std::to_string(bw))
+	FLS_PLOG_KEY_VALUE("BASE", ToStr::to_hex(stt.base, sizeof(T)));
 
 	stt.cur_src_arr -= 3;
 	std::memcpy(stt.base, base_p, sizeof(T));

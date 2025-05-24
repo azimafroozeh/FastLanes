@@ -31,17 +31,21 @@ inline bool operator==(const char c, const Term t) {
 	}
 }
 
-inline bool operator!=(const char c, const Term t) { return !(c == t); }
+inline bool operator!=(const char c, const Term t) {
+	return !(c == t);
+}
 
 // Wraps returned fields so we can also indicate
 // that we hit row endings or the end of the csv itself
 struct Field {
 	explicit Field(FieldType t)
 	    : type(t)
-	    , data(nullptr) {}
+	    , data(nullptr) {
+	}
 	explicit Field(const std::string& str)
 	    : type(FieldType::DATA)
-	    , data(&str) {}
+	    , data(&str) {
+	}
 
 	FieldType          type;
 	const std::string* data;
@@ -90,7 +94,9 @@ public:
 	    : m_input(input) {
 		// Reserve space upfront to improve performance
 		m_fieldbuf.reserve(FIELDBUF_CAP);
-		if (!m_input.good()) { throw std::runtime_error("Something is wrong with input stream"); }
+		if (!m_input.good()) {
+			throw std::runtime_error("Something is wrong with input stream");
+		}
 	}
 
 	// Change the quote character
@@ -113,15 +119,21 @@ public:
 
 	// The parser is in the empty state when there are
 	// no more tokens left to read from the input buffer
-	bool empty() { return m_state == State::EMPTY; }
+	bool empty() {
+		return m_state == State::EMPTY;
+	}
 
 	// Not the actual position in the stream (its buffered) just the
 	// position up to last availiable token
-	std::streamoff position() const { return m_scanposition + static_cast<std::streamoff>(m_cursor); }
+	std::streamoff position() const {
+		return m_scanposition + static_cast<std::streamoff>(m_cursor);
+	}
 
 	// Reads a single field from the CSV
 	Field next_field() {
-		if (empty()) { return Field(FieldType::CSV_END); }
+		if (empty()) {
+			return Field(FieldType::CSV_END);
+		}
 		m_fieldbuf.clear();
 
 		// This loop runs until either the parser has
@@ -228,10 +240,14 @@ private:
 	// If it finds that the previous token was a '\r', and
 	// the next token will be a '\n', it skips the '\n'.
 	void handle_crlf(const char c) {
-		if (m_terminator != Term::CRLF || c != '\r') { return; }
+		if (m_terminator != Term::CRLF || c != '\r') {
+			return;
+		}
 
 		char* token = top_token();
-		if (token && *token == '\n') { m_cursor++; }
+		if (token && *token == '\n') {
+			m_cursor++;
+		}
 	}
 
 	// Pulls the next token from the input buffer, but does not move
@@ -239,7 +255,9 @@ private:
 	// is also empty return a nullptr.
 	char* top_token() {
 		// Return null if there's nothing left to read
-		if (m_eof && m_cursor == m_inputbuf_size) { return nullptr; }
+		if (m_eof && m_cursor == m_inputbuf_size) {
+			return nullptr;
+		}
 
 		// Refill the input buffer if it's been fully read
 		if (m_cursor == m_inputbuf_size) {
@@ -254,7 +272,9 @@ private:
 				m_inputbuf_size = m_input.gcount();
 
 				// Return null if there's nothing left to read
-				if (m_inputbuf_size == 0) { return nullptr; }
+				if (m_inputbuf_size == 0) {
+					return nullptr;
+				}
 			}
 		}
 
@@ -296,11 +316,17 @@ public:
 			return m_current_row == other.m_current_row && m_row.size() == other.m_row.size();
 		}
 
-		bool operator!=(const iterator& other) const { return !(*this == other); }
+		bool operator!=(const iterator& other) const {
+			return !(*this == other);
+		}
 
-		reference operator*() const { return m_row; }
+		reference operator*() const {
+			return m_row;
+		}
 
-		pointer operator->() const { return &m_row; }
+		pointer operator->() const {
+			return &m_row;
+		}
 
 	private:
 		value_type m_row {};
@@ -313,11 +339,15 @@ public:
 				auto field = m_parser->next_field();
 				switch (field.type) {
 				case FieldType::CSV_END:
-					if (num_fields < m_row.size()) { m_row.resize(num_fields); }
+					if (num_fields < m_row.size()) {
+						m_row.resize(num_fields);
+					}
 					m_current_row = -1;
 					return;
 				case FieldType::ROW_END:
-					if (num_fields < m_row.size()) { m_row.resize(num_fields); }
+					if (num_fields < m_row.size()) {
+						m_row.resize(num_fields);
+					}
 					m_current_row++;
 					return;
 				case FieldType::DATA:
@@ -332,8 +362,12 @@ public:
 		}
 	};
 
-	iterator begin() { return iterator(this); };
-	iterator end() { return iterator(this, true); };
+	iterator begin() {
+		return iterator(this);
+	};
+	iterator end() {
+		return iterator(this, true);
+	};
 };
 }} // namespace aria::csv
 #endif

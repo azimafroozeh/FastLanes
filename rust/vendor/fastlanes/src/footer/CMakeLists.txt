@@ -1,8 +1,9 @@
 add_library(fls_footer
         OBJECT
         #[[]]
-        col_description.cpp
-        rowgroup_footer.cpp
+        column_descriptor.cpp
+        rowgroup_descriptor.cpp
+        table_descriptor.cpp
 )
 
 if (FLS_ENABLE_IWYU)
@@ -12,3 +13,8 @@ endif ()
 set(FASTLANES_OBJECT_FILES
         ${FASTLANES_OBJECT_FILES} $<TARGET_OBJECTS:fls_footer>
         PARENT_SCOPE)
+
+target_link_libraries(fls_footer
+        PUBLIC
+        FastLanes::headers
+)

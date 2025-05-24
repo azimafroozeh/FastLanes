@@ -1,21 +1,19 @@
 #ifndef FLS_ENCODER_MATERIALIZER_HPP
 #define FLS_ENCODER_MATERIALIZER_HPP
 
-#include "fls/std/span.hpp"
+#include "fls/std/vector.hpp"
 
 namespace fastlanes {
-class Vec;
+class Rowgroup;
+class PhysicalExpr;
 
-template <typename PT>
 class Materializer {
 public:
-	explicit Materializer(span<PT> output_span);
+	explicit Materializer(Rowgroup& rowgroup);
+	void Materialize(const vector<sp<PhysicalExpr>>& expressions, n_t vec_idx) const;
 
 public:
-	void Materialize(const Vec& vec);
-
-public:
-	span<PT> output_span;
+	Rowgroup& rowgroup;
 };
 
 } // namespace fastlanes

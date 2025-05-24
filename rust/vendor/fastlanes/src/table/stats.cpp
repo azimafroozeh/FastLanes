@@ -4,23 +4,32 @@
 #include <limits>
 
 namespace fastlanes {
-
-template <typename PT>
-TypedStats<PT>::ValueMtd::ValueMtd(const n_t dict_code)
-    : dict_code(dict_code)
-    , repetition(1) {}
-
 template <typename PT>
 TypedStats<PT>::TypedStats()
-    : t_stats {}
-    , n_null {0}
-    , n_run {1}                            // there is always one run.
-    , is_constant {true}                   //
-    , min {std::numeric_limits<PT>::max()} //
-    , max {std::numeric_limits<PT>::min()} //
-    {
+    : min {std::numeric_limits<PT>::max()}    //
+    , max {std::numeric_limits<PT>::lowest()} //
+    , last_seen_val(0)
+    , n_nulls(0)
+    , is_double_castable(false) {
+}
 
-    };
+template <typename PT>
+TypedStats<PT>::~TypedStats() = default;
+
+template <typename PT>
+bool TypedStats<PT>::IsConstant() {
+	FLS_ASSERT_FALSE(bimap_frequency.empty())
+
+	return bimap_frequency.size() == 1;
+};
 
 FLS_ALL_CTS(TypedStats)
+
+FlsStringStats::FlsStringStats()
+    : is_constant {true}
+    , maximum_n_bytes_p_value(std::numeric_limits<n_t>::lowest())
+    , is_numeric(false)
+    , last_seen_val("NULL") {
+}
+
 } // namespace fastlanes

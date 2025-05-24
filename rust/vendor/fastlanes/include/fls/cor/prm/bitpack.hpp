@@ -27,14 +27,30 @@ void Compress08(Vec& vec_src, Vec& vec_des, CompressState& cpmr_state);
 \---------------------------------------------------------------------------------------------------------------------*/
 template <typename T>
 cmpr_fun_t GetCompress() {
-	if (std::is_same<T, uint64_t>()) { return Compress64; }
-	if (std::is_same<T, uint32_t>()) { return Compress32; }
-	if (std::is_same<T, uint16_t>()) { return Compress16; }
-	if (std::is_same<T, uint8_t>()) { return Compress08; }
-	if (std::is_same<T, int64_t>()) { return Compress64; }
-	if (std::is_same<T, int32_t>()) { return Compress32; }
-	if (std::is_same<T, int16_t>()) { return Compress16; }
-	if (std::is_same<T, int8_t>()) { return Compress08; }
+	if (std::is_same<T, uint64_t>()) {
+		return Compress64;
+	}
+	if (std::is_same<T, uint32_t>()) {
+		return Compress32;
+	}
+	if (std::is_same<T, uint16_t>()) {
+		return Compress16;
+	}
+	if (std::is_same<T, uint8_t>()) {
+		return Compress08;
+	}
+	if (std::is_same<T, int64_t>()) {
+		return Compress64;
+	}
+	if (std::is_same<T, int32_t>()) {
+		return Compress32;
+	}
+	if (std::is_same<T, int16_t>()) {
+		return Compress16;
+	}
+	if (std::is_same<T, int8_t>()) {
+		return Compress08;
+	}
 	return nullptr;
 }
 

@@ -1,5 +1,6 @@
 #include "fls/expression/logical_expression.hpp"
 #include "fls/reader/reader.hpp"
+#include "fls/reader/segment.hpp"
 #include "fls/table/chunk.hpp"
 #include "fls/table/rowgroup.hpp"
 #include <sstream>

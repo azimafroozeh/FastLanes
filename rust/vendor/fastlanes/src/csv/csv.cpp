@@ -2,30 +2,40 @@
 #include "fls/common/common.hpp"
 #include "fls/connection.hpp"
 #include "fls/io/file.hpp"
+#include "fls/reader/segment.hpp"
+#include "fls/table/attribute.hpp"
 #include "fls/table/chunk.hpp"
-#include "sstream"
+#include <sstream>
 
 namespace fastlanes {
 
-void CSV::write(const path& dir_path, const Chunk& chunk) {
-	path file_path = dir_path / "extracted_from_fls.csv";
+constexpr string_view DELIMINATOR = "|";
+constexpr string_view NEW_LINE    = "\n";
 
-	std::stringstream stream;
-	for (n_t row_id {0}; row_id < CFG::VEC_SZ; ++row_id) {
-		for (n_t col_id {0}; col_id < chunk.vecs.size(); ++col_id) {
-			const auto& vec = chunk.vecs[col_id].get();
-			visit(overloaded {[&]<typename PT>(const up<TypedVector<PT>>& typed_vector) {
-				                  stream << typed_vector->m_data[row_id];
-			                  },
-			                  [](auto&) {
-				                  FLS_UNREACHABLE();
-			                  }},
-			      vec);
+void CSV::to_csv(const path& file_path, const Rowgroup& rowgroup) {
+	auto file = FileSystem::opend_app(file_path);
 
-			if (col_id < chunk.vecs.size() - 1) { stream << "|"; };
-			if (col_id == chunk.vecs.size() - 1) { stream << "\n"; };
-		};
+	if (!file.is_open()) {
+		throw std::runtime_error("Could not open file for writing");
 	}
-	File::write(file_path, stream.str());
+
+	const n_t n_col {rowgroup.internal_rowgroup.size()};
+	for (n_t row_idx {0}; row_idx < rowgroup.n_tup; row_idx++) {
+
+		for (n_t last_idx {n_col - 1}, col_idx {0}; col_idx < rowgroup.internal_rowgroup.size(); col_idx++) {
+			const auto& col = rowgroup.internal_rowgroup[col_idx];
+
+			string val = Attribute::ToStr(col, row_idx);
+
+			file << val;
+			if (col_idx != last_idx) {
+				file << DELIMINATOR; // Newline after each row
+			}
+		}
+
+		file << NEW_LINE;
+	}
+
+	file.close();
 }
 } // namespace fastlanes

@@ -1,7 +1,6 @@
 #include "fls/cor/prm/patch/patch.hpp"
 #include "fls/cfg/cfg.hpp"
 #include "fls/cor/eng/compressor.hpp"
-#include "fls/printer/print.hpp"
 #include "fls/utl/bit_util.hpp"
 
 #pragma clang diagnostic ignored "-Wconversion"
@@ -11,7 +10,9 @@ template <typename T>
 bool typed_patch<T>::is_exception(T lower_bound, T upper_bound, T val) {
 	if constexpr (std::is_same<T, uint64_t>() || std::is_same<T, uint32_t>() || std::is_same<T, uint16_t>() ||
 	              std::is_same<T, uint8_t>()) {
-		if (val <= upper_bound && val >= lower_bound) { return false; }
+		if (val <= upper_bound && val >= lower_bound) {
+			return false;
+		}
 		return true;
 	} else {
 		FLS_ABORT("this is not supported!")
@@ -19,19 +20,19 @@ bool typed_patch<T>::is_exception(T lower_bound, T upper_bound, T val) {
 	}
 }
 
-void patch::b_patch_compress(pos_t arr[], pos_t c, bitmap_t bitmap) {
-	for (n_t i {0}; i < CFG::BIT_MAP::UNIT_C; ++i) {
+void patch::b_patch_compress(rle_idx_t arr[], rle_idx_t c, bitmap_t bitmap) {
+	for (n_t i {0}; i < CFG::BitMap::UNIT_C; ++i) {
 		bitmap[i] = 0;
 	}
 
 	for (auto i {0}; i < c; ++i) {
-		pos_t unit_num     = arr[i] / CFG::BIT_MAP::UNIT_BIT; // Which unit?
-		pos_t relative_idx = arr[i] % CFG::BIT_MAP::UNIT_BIT; // Where in the unit?
+		rle_idx_t unit_num     = arr[i] / CFG::BitMap::UNIT_BIT; // Which unit?
+		rle_idx_t relative_idx = arr[i] % CFG::BitMap::UNIT_BIT; // Where in the unit?
 		bit::set(bitmap[unit_num], relative_idx);
 	}
 }
 
-bool patch::is_compulsory_exc(pos_t curr, pos_t next, uint64_t range) {
+bool patch::is_compulsory_exc(rle_idx_t curr, rle_idx_t next, uint64_t range) {
 	FLS_ASSERT_CORRECT_RANGE(range)
 
 	return static_cast<uint64_t>(next - curr) > range;
@@ -53,7 +54,9 @@ n_t typed_patch<T>::count_exceptions(const T                      lower_bound,
 
 		for (n_t i = 0; i < val_vec.size(); ++i) {
 			is_exc = is_exception(lower_bound, upper_bound, val_vec[i]);
-			if (!is_exc) { continue; }
+			if (!is_exc) {
+				continue;
+			}
 			/* It is an exception.
 			 * Increase the number of exception by the repetition of this value.
 			 */
@@ -71,7 +74,7 @@ template <typename T>
 void typed_patch<T>::b_patch_decompress(T* out_p, uint64_t* bitmap, T* exc_p) {
 	int    c {0};
 	unit_t unit;
-	for (size_t i {0}; i < CFG::BIT_MAP::UNIT_C; ++i) {
+	for (size_t i {0}; i < CFG::BitMap::UNIT_C; ++i) {
 		unit = bitmap[i];
 		while (unit != 0) {
 			uint64_t t        = unit & -unit;
@@ -83,10 +86,11 @@ void typed_patch<T>::b_patch_decompress(T* out_p, uint64_t* bitmap, T* exc_p) {
 }
 
 template <typename T>
-void typed_patch<T>::l_patch_decompress(T* in, pos_t first, pos_t c) {}
+void typed_patch<T>::l_patch_decompress(T* in, rle_idx_t first, rle_idx_t c) {
+}
 
 template <typename T>
-void typed_patch<T>::l_patch_compress(T* in, T* exc, pos_t arr[], pos_t c, n_t max_range) {
+void typed_patch<T>::l_patch_compress(T* in, T* exc, rle_idx_t arr[], rle_idx_t c, n_t max_range) {
 	//	if (stt.exc_c == 0) {
 	//		/* push the pos of first exception */
 	//		des_vec.arr_arr[stt.cur_des_arr + 1].UnsafeAppend(&stt.exc_c, sizeof(pos_t));

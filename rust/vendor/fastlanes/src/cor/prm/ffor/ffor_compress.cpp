@@ -1,9 +1,9 @@
 #include "fls/cor/eng/compressor.hpp"
 #include "fls/cor/lyt/vec.hpp"
 #include "fls/cor/prm/ffor_prm.hpp"
+#include "fls/ffor.hpp"
 #include "fls/logger/logger.hpp"
-#include "fls/printer/to_str.hpp"
-#include "fls_gen/ffor/ffor.hpp"
+#include "fls/utl/to_str.hpp"
 
 namespace fastlanes {
 template <typename T>
@@ -18,9 +18,9 @@ static void ffor_compress(Vec& src_vec, Vec& des_vec, CompressState& stt) {
 	des_vec.buf_arr[stt.cur_des_buff + 1].UnsafeAppend(stt.base, sizeof(T));
 	des_vec.buf_arr[stt.cur_des_buff + 2].UnsafeAdvance(ffor_prm<T>::vec_sz(stt.bw));
 
-	FLS_LOG_TABLE_KEY_VALUE("VEC", ToStr::to_str<T>(const_cast<T*>(in_arr)))
-	FLS_LOG_TABLE_KEY_VALUE("BW", std::to_string(stt.bw))
-	FLS_LOG_TABLE_KEY_VALUE("BASE", ToStr::to_hex(stt.base, sizeof(T)));
+	FLS_PLOG_KEY_VALUE("VEC", ToStr::to_str<T>(const_cast<T*>(in_arr)))
+	FLS_PLOG_KEY_VALUE("BW", std::to_string(stt.bw))
+	FLS_PLOG_KEY_VALUE("BASE", ToStr::to_hex(stt.base, sizeof(T)));
 
 	stt.cur_des_buff += 3;
 }

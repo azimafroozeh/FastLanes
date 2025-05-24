@@ -13,8 +13,8 @@
 #pragma clang diagnostic ignored "-Wconversion"
 
 namespace fastlanes {
-dict_hdr_t dict_hdr_t::load(const uint8_t* p) {
-	dict_hdr_t dict_hdr;
+DictHdrT DictHdrT::load(const uint8_t* p) {
+	DictHdrT dict_hdr;
 	std::memcpy(&dict_hdr, p, sizeof(dict_hdr));
 	return dict_hdr;
 }
@@ -23,13 +23,15 @@ Dic::Dic(AnalyzeState& stt)
     : data_buf {stt.data_buf}
     , offs_buf {stt.offs_buf}
     , compressed_data_buf {stt.compressed_data_buf}
-    , compressed_offs_buf {stt.compressed_offs_buf} {}
+    , compressed_offs_buf {stt.compressed_offs_buf} {
+}
 
 Dic::Dic(DecompressState& stt)
     : data_buf {stt.data_buf}
     , offs_buf {stt.offs_buf}
     , compressed_data_buf {stt.decompressed_data_buf}
-    , compressed_offs_buf {stt.decompressed_offs_buf} {}
+    , compressed_offs_buf {stt.decompressed_offs_buf} {
+}
 
 Dic::~Dic() = default;
 
@@ -48,7 +50,7 @@ TDic<PT>::TDic(DecompressState& stt)
 
 template <typename PT>
 n_t TDic<PT>::size() {
-	auto ttl_sz {sizeof(dict_hdr_t)};
+	auto ttl_sz {sizeof(DictHdrT)};
 	ttl_sz += compressed_offs_buf.length();
 
 	if constexpr (std::is_same<PT, i64_pt>() || std::is_same_v<PT, dbl_pt>) {
@@ -87,7 +89,7 @@ void TDic<PT>::Compress(CompressState& stt) {
 template <typename PT>
 void TDic<PT>::Write(Buf& buf, CompressState& stt) {
 	/* HDR*/
-	dict_hdr_t dict_hdr = {ExpT::DICT, 0, 0, 0, static_cast<uint32_t>(map.size() + exc_map.size())};
+	DictHdrT dict_hdr = {ExpT::DICT, 0, 0, 0, static_cast<uint32_t>(map.size() + exc_map.size())};
 
 	buf.UnsafeAppend(&dict_hdr, sizeof(dict_hdr));
 
@@ -113,7 +115,7 @@ void TDic<PT>::Write(Buf& buf, CompressState& stt) {
 template <typename PT>
 void TDic<PT>::repetition_to_index() {
 	// [fixme]
-	FLS_LOG_TABLE_KEY_VALUE("fixme", "unordered_map has been used")
+	FLS_PLOG_KEY_VALUE("fixme", "unordered_map has been used")
 	idx_t idx = 0;
 	for (auto& it : map) {
 		auto& c = it.second;
@@ -133,7 +135,7 @@ void TDic<PT>::Decompress(const uint8_t* a_src_p, DecompressState& stt) {
 
 	auto* src_p = const_cast<uint8_t*>(a_src_p);
 	/* HDR*/
-	dict_hdr_t dict_hdr;
+	DictHdrT dict_hdr;
 	std::memcpy(&dict_hdr, src_p, sizeof(dict_hdr));
 	src_p += sizeof(dict_hdr);
 
@@ -205,7 +207,7 @@ up<idx_vec_t> TDic<PT>::get_idx_vec(const ofs_t* offset_arr, const void* a_byte_
 }
 
 template <typename PT>
-bool sort_val_ascending(std::pair<PT, n_t> a, std::pair<PT, n_t> b) {
+bool sort_val_ascending(std::pair<PT, n_t>& a, std::pair<PT, n_t>& b) {
 	return a.second < b.second;
 }
 

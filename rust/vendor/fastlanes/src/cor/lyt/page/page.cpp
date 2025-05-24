@@ -5,14 +5,15 @@
 #include "fls/cor/lyt/rec_hdr.hpp"
 #include "fls/cor/lyt/vec.hpp"
 #include "fls/logger/logger.hpp"
-#include "fls/printer/to_str.hpp"
+#include "fls/utl/to_str.hpp"
 #include <memory>
 
 #pragma clang diagnostic ignored "-Wconversion"
 
 namespace fastlanes {
 Page::Page()
-    : m_ttl_sz {0} {}
+    : m_ttl_sz {0} {
+}
 
 void Page::Reset() {
 	for (auto& buf : buf_arr) {
@@ -49,7 +50,9 @@ void Page::InitCompress(const sp<Exp>& exp_sp) {
 	/* Add rec buff hdrs*/
 	auto* rpn = exp_sp->cmpr_rpn();
 	for (n_t i {0}; i < rpn->des_buf_c; ++i) {
-		if (!rpn->is_compressed[i]) { continue; }
+		if (!rpn->is_compressed[i]) {
+			continue;
+		}
 
 		m_ttl_sz += sizeof(rec_hdr);
 	}
@@ -57,7 +60,7 @@ void Page::InitCompress(const sp<Exp>& exp_sp) {
 	/* Start pointer*/
 	start_p = nullptr;
 
-	FLS_LOG_TABLE_KEY_VALUE("initial_sz", std::to_string(m_ttl_sz))
+	FLS_PLOG_KEY_VALUE("initial_sz", std::to_string(m_ttl_sz))
 }
 
 void Page::InitDecompress(const uint8_t* p, const sp<Exp>& exp_up) {
@@ -81,10 +84,12 @@ void Page::InitDecompress(const uint8_t* p, const sp<Exp>& exp_up) {
 
 	tup_c = 0;
 
-	FLS_LOG_TABLE_KEY_VALUE("pg", ToStr::to_str(*this));
+	FLS_PLOG_KEY_VALUE("pg", ToStr::to_str(*this));
 }
 
-PageHdr Page::hdr() { return pg_hdr; }
+PageHdr Page::hdr() {
+	return pg_hdr;
+}
 
 void Page::Absorb(Vec& vec) {
 	if (vec_c() >= 1) {
@@ -103,19 +108,23 @@ void Page::Absorb(Vec& vec) {
 	m_ttl_sz += vec_ttl_sz;
 	pg_hdr.vec_c++;
 
-	FLS_LOG_TABLE_KEY_VALUE("ep", ToStr::to_str(ep_arr))
-	FLS_LOG_TABLE_KEY_VALUE(
-	    "ep_arr", ToStr::to_str<uint32_t>(reinterpret_cast<uint32_t*>(ep_arr_buf.mutable_data()), pg_hdr.vec_c))
-	FLS_LOG_TABLE_KEY_VALUE("ttl_sz", std::to_string(m_ttl_sz));
-	FLS_LOG_TABLE_KEY_VALUE("vec_ttl_sz", std::to_string(vec_ttl_sz));
-	FLS_LOG_TABLE_KEY_VALUE("vec_c", std::to_string(vec_c()));
+	FLS_PLOG_KEY_VALUE("ep", ToStr::to_str(ep_arr))
+	FLS_PLOG_KEY_VALUE("ep_arr",
+	                   ToStr::to_str<uint32_t>(reinterpret_cast<uint32_t*>(ep_arr_buf.mutable_data()), pg_hdr.vec_c))
+	FLS_PLOG_KEY_VALUE("ttl_sz", std::to_string(m_ttl_sz));
+	FLS_PLOG_KEY_VALUE("vec_ttl_sz", std::to_string(vec_ttl_sz));
+	FLS_PLOG_KEY_VALUE("vec_c", std::to_string(vec_c()));
 
 	vec.Reset();
 }
 
-void Page::vec_c_inc() { pg_hdr.vec_c++; }
+void Page::vec_c_inc() {
+	pg_hdr.vec_c++;
+}
 
-uint16_t Page::vec_c() { return pg_hdr.vec_c; }
+uint16_t Page::vec_c() {
+	return pg_hdr.vec_c;
+}
 
 void Page::OffsetToSink(Buf& sink) {
 	/* First one
@@ -126,7 +135,7 @@ void Page::OffsetToSink(Buf& sink) {
 	}
 
 	sink.UnsafeAppend(off_arr.arr, off_arr.ttl_sz());
-	FLS_LOG_TABLE_KEY_VALUE("OFF_arr", ToStr::to_str(off_arr))
+	FLS_PLOG_KEY_VALUE("OFF_arr", ToStr::to_str(off_arr))
 }
 
 PageParam Page::page_params() {
@@ -142,7 +151,9 @@ PageParam Page::page_params() {
 n_t Page::size_of(Vec& vec) {
 	n_t vec_ttl_sz {0};
 
-	if (vec_c() >= 1) { vec_ttl_sz = ep_arr.sz(); }
+	if (vec_c() >= 1) {
+		vec_ttl_sz = ep_arr.sz();
+	}
 
 	for (size_t i {0}; i < arr_c; ++i) {
 		auto added_sz = vec.buf_arr[i].length();

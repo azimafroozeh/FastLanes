@@ -1,21 +1,30 @@
 #include "fls/io/io.hpp"
 #include "fls/cor/lyt/buf.hpp"
-#include "fls/encoder/exp_col_encoder.hpp"
 
 namespace fastlanes {
-void IO::flush(io& io, const ExpEncodedCol& expr_encoded_col) {
-	// write the buffer
-	visit(overloaded {
-	          [&](up<ExternalMemory>& memory) { memory->Ingest(*expr_encoded_col.data_buf); },
-	          [](auto&) { FLS_UNREACHABLE() },
-	      },
-	      io);
-}
 
 void IO::flush(io& io, const Buf& buf) {
 	// write the buffer
 	visit(overloaded {
 	          [&](up<File>& file) { file->Write(buf); },
+	          [](auto&) { FLS_UNREACHABLE() },
+	      },
+	      io);
+}
+
+void IO::append(io& io, const Buf& buf) {
+	// write the buffer
+	visit(overloaded {
+	          [&](up<File>& file) { file->Append(buf); },
+	          [](auto&) { FLS_UNREACHABLE() },
+	      },
+	      io);
+}
+
+void IO::append(io& io, const char* pointer, n_t size) {
+	// write the buffer
+	visit(overloaded {
+	          [&](up<File>& file) { file->Append(pointer, size); },
 	          [](auto&) { FLS_UNREACHABLE() },
 	      },
 	      io);
@@ -28,11 +37,19 @@ void IO::read(const io& io, Buf& buf) {
 	      },
 	      io);
 }
+void IO::range_read(const io& io, Buf& buf, const n_t offset, const n_t size) {
+	visit(overloaded {
+	          [&](const up<File>& file) { file->ReadRange(buf, offset, size); },
+	          [](auto&) { FLS_UNREACHABLE() },
+	      },
+	      io);
+}
 
-bsz_t IO::get_size(const io& io) {
-	bsz_t size = 0;
+n_t IO::get_size(const io& io) {
+	n_t size = 0;
 	visit(overloaded {
 	          [&](const up<ExternalMemory>& external_memory) { size = external_memory->GetSpan().size(); },
+	          [&](const up<File>& file) { size = file->Size(); },
 	          [](auto&) { FLS_UNREACHABLE() },
 	      },
 	      io);

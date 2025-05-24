@@ -2,6 +2,7 @@
 #include "fls/cfg/cfg.hpp"
 #include "fls/common/macros.hpp"
 #include "fls/expression/physical_expression.hpp"
+#include "fls/reader/segment.hpp"
 #include "fls/table/rowgroup.hpp"
 
 namespace fastlanes {
@@ -28,16 +29,10 @@ void TypedVector<PT>::point_to(n_t vec_idx) {
 
 template <typename PT>
 ConstantVector<PT>::ConstantVector(const PT& value)
-    : value(value) {}
+    : value(value) {
+}
 
 FLS_ALL_CTS(TypedVector)
 FLS_ALL_CTS(ConstantVector)
 
-Chunk::Chunk(const vector<up<PhysicalExpr>>& expr_vec) {
-	for (const auto& exp : expr_vec) {
-		FLS_ASSERT_TRUE(!exp->operands.empty())
-
-		vecs.push_back(std::ref(exp->operands[0]));
-	}
-}
 } // namespace fastlanes

@@ -23,10 +23,18 @@ static void s_patch_compress(Vec& src_vec, Vec& des_vec, CompressState& stt) {
 
 template <typename T>
 cmpr_fun_t s_patch::ResolveCompressFunc() {
-	if constexpr (std::is_same<T, int64_t>()) { return s_patch_compress<uint64_t>; }
-	if constexpr (std::is_same<T, uint64_t>()) { return s_patch_compress<uint64_t>; }
-	if constexpr (std::is_same<T, int32_t>()) { return s_patch_compress<uint32_t>; }
-	if constexpr (std::is_same<T, uint32_t>()) { return s_patch_compress<uint32_t>; }
+	if constexpr (std::is_same<T, int64_t>()) {
+		return s_patch_compress<uint64_t>;
+	}
+	if constexpr (std::is_same<T, uint64_t>()) {
+		return s_patch_compress<uint64_t>;
+	}
+	if constexpr (std::is_same<T, int32_t>()) {
+		return s_patch_compress<uint32_t>;
+	}
+	if constexpr (std::is_same<T, uint32_t>()) {
+		return s_patch_compress<uint32_t>;
+	}
 
 	return nullptr;
 }

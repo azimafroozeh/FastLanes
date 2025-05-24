@@ -3,7 +3,7 @@
 
 #include "fls/common/common.hpp"
 #include "fls/cor/fun.hpp"
-#include <limits.h>
+#include <climits>
 
 namespace fastlanes {
 /*--------------------------------------------------------------------------------------------------------------------*/
@@ -15,11 +15,13 @@ class Histogram;
 template <typename T>
 class Params {
 public:
-	n_t size() { return (1024 * bw / CHAR_BIT) + exc_c * sizeof(T); } //
+	n_t size() {
+		return (1024 * bw / CHAR_BIT) + exc_c * sizeof(T);
+	} //
 public:
-	bw_t bw;    //
-	T    base;  //
-	n_t  exc_c; //
+	bw_t      bw;    //
+	T         base;  //
+	vec_idx_t exc_c; //
 };
 
 template <typename T>

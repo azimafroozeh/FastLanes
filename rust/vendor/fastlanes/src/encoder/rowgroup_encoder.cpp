@@ -4,13 +4,14 @@
 #include "fls/cor/exp/exp_type.hpp"                      // for ExpT
 #include "fls/cor/exp/uncompressed/uncompressed_exp.hpp" // for uncompresse...
 #include "fls/encoder/exp_col_encoder.hpp"               // for ExpColEncoder
-#include "fls/std/variant.hpp"                           // for overloaded
-#include "fls/table/schema.hpp"                          // for Schema
-#include <memory>                                        // for make_unique
-#include <stdexcept>                                     // for runtime_error
-#include <stdint.h>                                      // for uint8_t
-#include <string>                                        // for basic_string
-#include <variant>                                       // for visit, variant
+#include "fls/footer/rowgroup_footer.hpp"                // for Schema
+#include "fls/reader/segment.hpp"
+#include "fls/std/variant.hpp" // for overloaded
+#include <memory>              // for make_unique
+#include <stdexcept>           // for runtime_error
+#include <stdint.h>            // for uint8_t
+#include <string>              // for basic_string
+#include <variant>             // for visit, variant
 
 namespace fastlanes {
 
@@ -22,35 +23,43 @@ AllExpEncodedCol empty_col_result() {
 	return res;
 }
 
-AllExpEncodedCol RowgroupEncoder::encode_all(const col_pt& col, const ColDescription& col_description) const {
-	const auto type = col_description.type;
-	if (type == DataType::FALLBACK) { return {}; }
+AllExpEncodedCol RowgroupEncoder::encode_all(const col_pt& col, const ColumnDescriptor& column_descriptor) const {
+	const auto type = column_descriptor.data_type;
+	if (type == DataType::FALLBACK) {
+		return {};
+	}
 
 	// TODO [LQ_DEADLINE]
 	AllExpEncodedCol result = std::visit( //
 	    overloaded {
 	        [](const auto&) -> AllExpEncodedCol { throw std::runtime_error("NOT SUPPORTED"); },
 	        [&](const up<TypedCol<dbl_pt>>& column) {
-		        if (column->data.empty()) { return empty_col_result(); } // TODO [LQ_DEADLINE]
+		        if (column->data.empty()) {
+			        return empty_col_result();
+		        } // TODO [LQ_DEADLINE]
 		        return dbl_tester_up->Encode(column->data);
 	        },
 	        [&](const up<TypedCol<i64_pt>>& column) {
-		        if (column->data.empty()) { return empty_col_result(); } // TODO [LQ_DEADLINE]
+		        if (column->data.empty()) {
+			        return empty_col_result();
+		        } // TODO [LQ_DEADLINE]
 		        return i64_tester_up->Encode(column->data);
 	        },
 	        [&](const up<TypedCol<str_pt>>& column) {
-		        if (column->data.empty()) { return empty_col_result(); } // TODO [LQ_DEADLINE]
+		        if (column->data.empty()) {
+			        return empty_col_result();
+		        } // TODO [LQ_DEADLINE]
 		        return str_tester_up->Encode(column->data);
 	        },
 	        [&](const up<Struct>& struct_col) {
-		        const auto res = encode(struct_col->table, col_description.children);
+		        const auto res = encode(struct_col->internal_rowgroup, column_descriptor.children);
 		        // Returning the first subcolumn of the struct
 		        return *res.col_result_vec.begin();
 	        },
 	        [&](const up<List>& list_col) {
 		        RowgroupEncodingResult res;
 		        auto                   col_result = encode_all(
-                    list_col->child, type == DataType::MAP ? col_description : col_description.children.front());
+                    list_col->child, type == DataType::MAP ? column_descriptor : column_descriptor.children.front());
 		        res.col_result_vec.push_back(col_result);
 		        // TODO [TYPE]
 		        const vector<i64_pt> offsets_i64 = {list_col->ofs_arr.begin(), list_col->ofs_arr.end()};
@@ -59,7 +68,7 @@ AllExpEncodedCol RowgroupEncoder::encode_all(const col_pt& col, const ColDescrip
 	    },
 	    col);
 
-	result.col_idx = col_description.idx;
+	result.col_idx = column_descriptor.idx;
 
 	return result;
 }
@@ -76,8 +85,8 @@ void RowgroupEncoder::Encode(Connection& fls) const {
 	fls.m_encoding_result = make_unique<RowgroupEncodingResult>(encode(fls.rowgroup(), *fls.m_rowgroup_footer));
 }
 
-RowgroupEncodingResult RowgroupEncoder::encode(const rowgroup_pt&        table,
-                                               const col_descriptions_t& col_descriptions) const {
+RowgroupEncodingResult RowgroupEncoder::encode(const rowgroup_pt&       table,
+                                               const ColumnDescriptors& col_descriptions) const {
 	RowgroupEncodingResult table_compression_res;
 
 	for (const auto& col_description : col_descriptions) {
@@ -89,7 +98,7 @@ RowgroupEncodingResult RowgroupEncoder::encode(const rowgroup_pt&        table,
 
 RowgroupEncodingResult RowgroupEncoder::encode(const Rowgroup& rowgroup, const Footer& footer) const {
 
-	return encode(rowgroup.internal_rowgroup, rowgroup.m_schema.col_descriptions());
+	return encode(rowgroup.internal_rowgroup, rowgroup.m_footer.m_column_descriptors);
 }
 
 } // namespace fastlanes

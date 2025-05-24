@@ -205,8 +205,8 @@ public:
 	    {false, true},
 	    24};
 };
-class dict_frq_exp : public dict_exp {};
-class dict_val_exp : public dict_exp {};
+class DictFrqExp : public dict_exp {};
+class DictValExp : public dict_exp {};
 
 } // namespace fastlanes
 #endif // FLS_COR_EXP_DICT_DICT_EXP_HPP

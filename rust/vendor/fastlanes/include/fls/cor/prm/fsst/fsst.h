@@ -244,17 +244,23 @@ fsst_decompress(fsst_decoder_t* decoder, /* IN: use this symbol table for compre
 		if ((code = str_in[pos_in++]) < FSST_ESC) {
 			size_t pos_write = pos_out, end_write = pos_out + len[code];
 			unsigned char* __restrict__ symbol_pointer = ((unsigned char* __restrict__)&symbol[code]) - pos_write;
-			if ((pos_out = end_write) > size) { end_write = size; }
+			if ((pos_out = end_write) > size) {
+				end_write = size;
+			}
 			for (; pos_write < end_write; pos_write++) { /* only write if there is room */
 				str_out[pos_write] = symbol_pointer[pos_write];
 			}
 		} else {
-			if (pos_out < size) { str_out[pos_out] = str_in[pos_in]; /* idem */ }
+			if (pos_out < size) {
+				str_out[pos_out] = str_in[pos_in]; /* idem */
+			}
 			pos_in++;
 			pos_out++;
 		}
 	}
-	if (pos_out >= size && (decoder->zero_terminated & 1)) { str_out[size - 1] = 0; }
+	if (pos_out >= size && (decoder->zero_terminated & 1)) {
+		str_out[size - 1] = 0;
+	}
 	return pos_out; /* full size of decompressed string (could be >size, then the actually decompressed part) */
 }
 

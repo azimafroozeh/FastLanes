@@ -7,28 +7,74 @@
 namespace fastlanes {
 
 File::File(const path& path) // NOLINT
-    : m_path(path) {}
+    : m_path(path) {
+}
 
 File::~File() {
 
-	if (m_of_stream != nullptr) { FileSystem::close(*m_of_stream); }
+	if (m_of_stream != nullptr) {
+		FileSystem::close(*m_of_stream);
+	}
 
-	if (m_if_stream != nullptr) { FileSystem::close(*m_if_stream); }
+	if (m_if_stream != nullptr) {
+		FileSystem::close(*m_if_stream);
+	}
 }
 
 void File::Write(const Buf& buf) {
-	if (m_of_stream == nullptr) { m_of_stream = make_unique<std::ofstream>(FileSystem::open_w(m_path)); }
+	if (m_of_stream == nullptr) {
+		m_of_stream = make_unique<std::ofstream>(FileSystem::open_w(m_path));
+	}
 	//
 	m_of_stream->write(reinterpret_cast<char*>(buf.data()), static_cast<int64_t>(buf.Size()));
 }
 
 void File::Read(Buf& buf) {
-	if (m_if_stream == nullptr) { m_if_stream = make_unique<std::ifstream>(FileSystem::open_r_binary(m_path)); }
+	if (m_if_stream == nullptr) {
+		m_if_stream = make_unique<std::ifstream>(FileSystem::open_r_binary(m_path));
+	}
 
-	FLS_ASSERT_LE(fs::file_size(m_path), buf.Capacity())
+	auto file_size = fs::file_size(m_path);
+	FLS_ASSERT_LE(file_size, buf.Capacity())
 
-	m_if_stream->read(reinterpret_cast<char*>(buf.mutable_data()), static_cast<int64_t>(buf.Size()));
-};
+	m_if_stream->read(reinterpret_cast<char*>(buf.mutable_data()), static_cast<int64_t>(file_size));
+}
+
+void File::ReadRange(Buf& buf, const n_t offset, const n_t size) {
+	if (m_if_stream == nullptr) {
+		m_if_stream = make_unique<std::ifstream>(FileSystem::open_r_binary(m_path));
+	}
+
+	[[maybe_unused]] auto file_size = fs::file_size(m_path);
+	FLS_ASSERT_LE(offset + size, file_size);
+	FLS_ASSERT_LE(size, buf.Capacity());
+
+	m_if_stream->seekg(static_cast<std::streamoff>(offset), std::ios::beg);
+	m_if_stream->read(reinterpret_cast<char*>(buf.mutable_data()), static_cast<std::streamsize>(size));
+}
+
+n_t File::Size() const {
+	if (!exists(m_path)) {
+		throw std::runtime_error("File does not exist");
+	}
+	return static_cast<n_t>(std::filesystem::file_size(m_path));
+}
+
+void File::Append(const Buf& buf) {
+	if (m_of_stream == nullptr) {
+		// Open file in append mode
+		m_of_stream = std::make_unique<std::ofstream>(m_path, std::ios::binary | std::ios::app);
+	}
+	m_of_stream->write(reinterpret_cast<char*>(buf.data()), static_cast<int64_t>(buf.Size()));
+}
+
+void File::Append(const char* pointer, n_t size) {
+	if (m_of_stream == nullptr) {
+		// Open file in append mode
+		m_of_stream = std::make_unique<std::ofstream>(m_path, std::ios::binary | std::ios::app);
+	}
+	m_of_stream->write(pointer, static_cast<int64_t>(size));
+}
 
 /*--------------------------------------------------------------------------------------------------------------------*\
  * STATIC
@@ -42,6 +88,14 @@ string File::read(const path& file_path) {
 
 void File::write(const path& dir_path, const string& dump) {
 	auto file = FileSystem::open_w(dir_path);
+
+	file << dump;
+
+	FileSystem::close(file);
+}
+
+void File::append(const path& dir_path, const string& dump) {
+	auto file = FileSystem::opend_app(dir_path);
 
 	file << dump;
 

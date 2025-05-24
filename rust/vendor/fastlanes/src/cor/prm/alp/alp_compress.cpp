@@ -10,18 +10,18 @@
 namespace fastlanes {
 static void alp_compress(Vec& src_vec, Vec& des_vec, CompressState& stt) {
 
-	auto* dbl_arr = reinterpret_cast<dbl_pt*>(src_vec.buf_arr[stt.cur_src_buff].mutable_data());
+	// auto* dbl_arr = reinterpret_cast<dbl_pt*>(src_vec.buf_arr[stt.cur_src_buff].mutable_data());
 	auto& alp_stt = *stt.eng_state.analyze_state_up->alp_dbl_state_up;
 
-	auto* exc_arr   = reinterpret_cast<dbl_pt*>(des_vec.buf_arr[stt.cur_des_buff + 0].mutable_data());
-	auto* pos_arr   = reinterpret_cast<uint16_t*>(des_vec.buf_arr[stt.cur_des_buff + 1].mutable_data());
+	// auto* exc_arr   = reinterpret_cast<dbl_pt*>(des_vec.buf_arr[stt.cur_des_buff + 0].mutable_data());
+	// auto* pos_arr   = reinterpret_cast<uint16_t*>(des_vec.buf_arr[stt.cur_des_buff + 1].mutable_data());
 	auto* exc_c_arr = reinterpret_cast<uint16_t*>(des_vec.buf_arr[stt.cur_des_buff + 2].mutable_data());
 	auto* base_arr  = reinterpret_cast<int64_t*>(des_vec.buf_arr[stt.cur_des_buff + 3].mutable_data());
 	auto* ffor_arr  = reinterpret_cast<int64_t*>(des_vec.buf_arr[stt.cur_des_buff + 5].mutable_data());
 
 	uint8_t bw = 0;
 	int64_t tmp_dig_arr[vec_sz()]; // TODO BUFFER_POOl
-	alp::encoder<double>::encode(dbl_arr, exc_arr, pos_arr, exc_c_arr, tmp_dig_arr, alp_stt);
+	// alp::encoder<double>::encode(dbl_arr, exc_arr, pos_arr, exc_c_arr, tmp_dig_arr, alp_stt); TODO
 	alp::encoder<double>::analyze_ffor(tmp_dig_arr, bw, base_arr);
 	generated::ffor::fallback::scalar::ffor(tmp_dig_arr, ffor_arr, bw, base_arr);
 

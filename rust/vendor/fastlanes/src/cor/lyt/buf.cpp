@@ -2,6 +2,7 @@
 #include "fls/cfg/cfg.hpp"
 #include "fls/io/external_memory.hpp"
 #include <cstring>
+#include <stdexcept>
 
 namespace fastlanes {
 static constexpr uint64_t BUF_SZ = 64ULL * 8 * 256 * 1024;
@@ -68,6 +69,21 @@ uint8_t* Buf::data() const {
 }
 
 template <typename PT>
+PT* Buf::GetFixedSizeArray(const n_t size) {
+	FLS_ASSERT_CORRECT_SZ(size)
+
+	FLS_ASSERT_LE(m_off + size, m_capacity)
+	m_off += size;
+
+	return reinterpret_cast<PT*>(m_active_p);
+}
+
+template <typename PT>
+void Buf::TypedAppend(const PT* data_p) {
+	Append(data_p, sizeof(PT));
+}
+
+template <typename PT>
 const PT* Buf::data() {
 	/**/
 	return reinterpret_cast<const PT*>(m_active_p);
@@ -76,10 +92,11 @@ const PT* Buf::data() {
 void Buf::Append(const void* data_p, const n_t sz) {
 	/**/
 	FLS_ASSERT_NOT_NULL_POINTER(data_p)
-	FLS_ASSERT_NOT_ZERO(sz)
 	FLS_ASSERT_LE(m_off + sz, m_capacity)
 
-	if (m_off + sz > m_capacity) { FLS_ABORT("NOT ENOUGH SPACE!") }
+	if (m_off + sz > m_capacity) {
+		FLS_ABORT("NOT ENOUGH SPACE!")
+	}
 
 	std::memcpy(m_active_p + m_off, data_p, sz);
 	m_off += sz;
@@ -109,7 +126,9 @@ void Buf::Advance(const n_t byte_c) {
 	/**/
 	FLS_ASSERT_CORRECT_N(byte_c)
 
-	if (m_off + byte_c > m_capacity) { FLS_ABORT("NOT ENOUGH SPACE!") }
+	if (m_off + byte_c > m_capacity) {
+		FLS_ABORT("NOT ENOUGH SPACE!")
+	}
 
 	m_off += byte_c;
 }
@@ -154,7 +173,9 @@ void Buf::Resize(const sz_t new_sz) {
 	if (m_owned_p != m_active_p) {
 		throw std::runtime_error("Buffer is already swapped, swapped buffer can be resized.");
 	}
-	if (new_sz <= m_capacity) { return; }
+	if (new_sz <= m_capacity) {
+		return;
+	}
 
 	auto* tmp_p = new uint8_t[new_sz];
 	ExternalMemory::Copy(tmp_p, m_owned_p, m_capacity);
@@ -186,9 +207,19 @@ void Buf::Clone(const Buf& a_buf) {
 /*---------------------------------------------------------------------------------------------------------------------\
  * Specialization
 \---------------------------------------------------------------------------------------------------------------------*/
-// clang-format off
 template const ofs_t* Buf::data<ofs_t>();
-template  uint32_t* Buf::mutable_data<uint32_t>();
-template  uint64_t* Buf::mutable_data<uint64_t>();
+template uint32_t*    Buf::mutable_data<uint32_t>();
+template uint64_t*    Buf::mutable_data<uint64_t>();
+template uint8_t*     Buf::mutable_data<uint8_t>();
+template uint8_t**    Buf::mutable_data<uint8_t*>();
+
+template i64_pt* Buf::GetFixedSizeArray<i64_pt>(n_t length);
+template i32_pt* Buf::GetFixedSizeArray<i32_pt>(n_t length);
+template i16_pt* Buf::GetFixedSizeArray<i16_pt>(n_t length);
+template i08_pt* Buf::GetFixedSizeArray<i08_pt>(n_t length);
+template dbl_pt* Buf::GetFixedSizeArray<dbl_pt>(n_t length);
+template flt_pt* Buf::GetFixedSizeArray<flt_pt>(n_t length);
+
+template void Buf::TypedAppend(const ofs_t* data_p);
 
 } // namespace fastlanes

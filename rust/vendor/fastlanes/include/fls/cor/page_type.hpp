@@ -4,7 +4,7 @@
 #include <cstdint>
 
 namespace fastlanes {
-enum class PageT {
+enum class PageT : uint8_t {
 	DICT_PAGE = 0,
 	DATA_PAGE = 1,
 }; //

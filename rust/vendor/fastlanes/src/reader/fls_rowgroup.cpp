@@ -1,17 +1,29 @@
 #include "fls/reader/fls_rowgroup.hpp"
-#include "fls/footer/rowgroup_footer.hpp"
-#include "fls/reader/horizontal_column.hpp"
+#include "fls/common/assert.hpp"
+#include "fls/connection.hpp"
+#include "fls/footer/rowgroup_descriptor.hpp"
+#include "fls/reader/column_view.hpp"
+#include "fls/reader/segment.hpp"
 
 namespace fastlanes {
 
-FLSRowgroup::FLSRowgroup(span<std::byte> ptr, const Footer& footer) {
+RowgroupView::RowgroupView(span<std::byte> ptr, const RowgroupDescriptor& footer) {
 
-	for (const auto& col_mtd : footer.column_metadatas) {
-		const auto ofs  = col_mtd.offset;
-		const auto size = col_mtd.size;
-
-		const span<std::byte> sub_span = ptr.subspan(ofs, size);
-		columns.emplace_back(sub_span);
+	for (const auto& column_descriptor : footer.m_column_descriptors) {
+		const span<std::byte> column_span = ptr;
+		columns.emplace_back(make_unique<ColumnView>(column_span, column_descriptor, footer));
 	}
+}
+
+ColumnView& RowgroupView::operator[](const n_t col_idx) {
+	FLS_ASSERT_NOT_EMPTY_VEC(columns)
+
+	return *columns[col_idx];
+}
+
+const ColumnView& RowgroupView::operator[](const n_t col_idx) const {
+	FLS_ASSERT_NOT_EMPTY_VEC(columns)
+
+	return *columns[col_idx];
 }
 } // namespace fastlanes

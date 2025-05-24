@@ -12,7 +12,7 @@ void fls_fsst_compress(Vec& src_vec, Vec& des_vec, CompressState& stt) {
 	auto*    encoder = reinterpret_cast<fsst_encoder_t*>(stt.eng_state.analyze_state_up->fsst_encoder);
 	uint8_t* str_arr = src_vec.buf_arr[stt.cur_src_buff + 0].mutable_data();
 	auto*    off_arr = reinterpret_cast<uint32_t*>(src_vec.buf_arr[stt.cur_src_buff + 1].mutable_data());
-	auto     tmp     = fsst::offset_to_pointer(1024, off_arr, str_arr);
+	auto     tmp     = fsst_wrapper::offset_to_pointer(1024, off_arr, str_arr);
 
 	auto* out_p   = des_vec.buf_arr[stt.cur_des_buff + 0].mutable_data();
 	auto* len_out = reinterpret_cast<uint32_t*>(des_vec.buf_arr[stt.cur_des_buff + 1].mutable_data());
@@ -35,13 +35,13 @@ void fls_fsst_compress(Vec& src_vec, Vec& des_vec, CompressState& stt) {
 }
 
 template <typename T>
-cmpr_fun_t fsst::ResolveCompressFunc() {
+cmpr_fun_t fsst_wrapper::ResolveCompressFunc() {
 	return fls_fsst_compress;
 }
 
 /*---------------------------------------------------------------------------------------------------------------------\
  * Specialization
 \---------------------------------------------------------------------------------------------------------------------*/
-FLS_ALL_FTS(cmpr_fun_t, fsst::ResolveCompressFunc)
+FLS_ALL_FTS(cmpr_fun_t, fsst_wrapper::ResolveCompressFunc)
 
 } // namespace fastlanes

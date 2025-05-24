@@ -1,15 +1,19 @@
-#include "fls/reader/reader.hpp"
+#include "fls/reader/reader.hpp"                  //
 #include "fls/connection.hpp"                     // for Connector (ptr only)
 #include "fls/cor/lyt/buf.hpp"                    // for Buf
 #include "fls/csv/csv.hpp"                        // for CSV
+#include "fls/encoder/materializer.hpp"           //
+#include "fls/expression/decoding_operator.hpp"   //
+#include "fls/expression/encoding_operator.hpp"   //
+#include "fls/expression/expression_executor.hpp" //
 #include "fls/expression/interpreter.hpp"         // for Interpreter
 #include "fls/expression/physical_expression.hpp" // for PhysicalExpr
-#include "fls/footer/rowgroup_footer.hpp"         // for Footer, ColumnMeta...
+#include "fls/expression/predicate_operator.hpp"  //
+#include "fls/footer/rowgroup_descriptor.hpp"     // for Footer, ColumnMeta...
 #include "fls/io/file.hpp"                        // for File
 #include "fls/io/io.hpp"                          // for IO, io
-#include "fls/json/fls_json.hpp"
-#include "fls/json/nlohmann/json.hpp" // for json
-#include "fls/reader/horizontal_column.hpp"
+#include "fls/json/nlohmann/json.hpp"             // for json
+#include "fls/reader/column_view.hpp"
 #include "fls/table/chunk.hpp" // for Chunk
 #include <filesystem>          // for operator/, path
 #include <memory>              // for make_unique, uniqu...
@@ -18,46 +22,85 @@
 namespace fastlanes {
 Reader::Reader(const path& dir_path, Connection& fls) {
 	// read footer
-	{
-		auto                 json_string     = File::read(dir_path / FOOTER_FILE_NAME);
-		const nlohmann::json j               = nlohmann::json::parse(json_string);
-		auto                 rowgroup_footer = j.get<Footer>();
-		m_footer                             = make_unique<Footer>(rowgroup_footer);
-	}
+	{ m_footer = make_rowgroup_descriptor(dir_path / FOOTER_FILE_NAME); }
 
 	// read file
 	{
 		// allocate buffer
-		m_buf = make_unique<Buf>(m_footer->rowgroup_size);         // todo[memory_pool]
+		m_buf = make_unique<Buf>(m_footer->m_rowgroup_size);       // todo[memory_pool]
 		io io = make_unique<File>(dir_path / FASTLANES_FILE_NAME); // todo[IO]
 		IO::read(io, *m_buf);
-		m_fls_rg = make_unique<FLSRowgroup>(m_buf->Span(), *m_footer);
+		m_rowgroup_view = make_unique<RowgroupView>(m_buf->Span(), *m_footer);
 	}
 
-	// init expression
+	// init level 1 expression
 	{
 		m_expressions.reserve(m_footer->size());
-		for (const auto& col_mtd : m_footer->column_metadatas) {
-			m_expressions.emplace_back(make_unique<PhysicalExpr>());
+		for (n_t col_idx {0}; col_idx < m_footer->size(); ++col_idx) {
+			auto& column_descriptor = m_footer->m_column_descriptors[col_idx];
+			auto& column_view       = (*m_rowgroup_view)[col_idx];
 
-			Interpreter::State state;
-			Interpreter::Decoding::Interpret(col_mtd.encoding_rpn, *m_expressions.back(), state);
+			InterpreterState state;
+			auto             physical_expr = make_decoding_expression(column_descriptor, column_view, *this, state);
+			ExprExecutor::CountOperator(*physical_expr);
+			m_expressions.emplace_back(physical_expr);
 		}
 	}
-
-	// init chunk
-	{ m_chunk = make_unique<Chunk>(m_expressions); }
 }
 
-Chunk& Reader::get_chunk(n_t vec_idx) { return *m_chunk; }
+vector<sp<PhysicalExpr>>& Reader::get_chunk(const n_t vec_idx) {
+	for (n_t col_idx {0}; col_idx < m_footer->size(); ++col_idx) {
+		auto& physical_expr = *m_expressions[col_idx];
+		ExprExecutor::smart_execute(physical_expr, vec_idx);
+	}
+	return m_expressions;
+}
 
-void Reader::reset() { m_chunk.reset(); }
+void Reader::reset() {
+	m_footer.reset();
+	m_buf.reset();
+	m_rowgroup_view.reset();
+}
+
+up<Rowgroup> Reader::materialize() {
+	auto               rowgroup_up = std::make_unique<Rowgroup>(*m_footer);
+	const Materializer materializer {*rowgroup_up};
+
+	for (n_t vec_idx {0}; vec_idx < m_footer->m_n_vec; vec_idx++) {
+		auto& expressions = get_chunk(vec_idx);
+		materializer.Materialize(expressions, vec_idx);
+	};
+
+	// materializer.rowgroup.Cast();
+	materializer.rowgroup.Finalize();
+	materializer.rowgroup.GetStatistics();
+
+	return rowgroup_up;
+}
 
 void Reader::to_csv(const path& dir_path) {
-	for (n_t vec_idx {0}; vec_idx < m_footer->n_vec; vec_idx++) {
-		auto& chunk = get_chunk(vec_idx);
-		CSV::write(dir_path, chunk);
-	};
+	const auto& materialized_rowgroup = materialize();
+	CSV::to_csv(dir_path, *materialized_rowgroup);
+}
+
+RowgroupDescriptor& Reader::footer() const {
+	return *m_footer;
+}
+
+vector<string> Reader::get_column_names() const {
+	if (m_footer == nullptr) {
+		throw std::runtime_error("Footer is initialized");
+	}
+
+	return m_footer->GetColumnNames();
+}
+
+vector<DataType> Reader::get_data_types() const {
+	if (m_footer == nullptr) {
+		throw std::runtime_error("Footer is initialized");
+	}
+
+	return m_footer->GetDataTypes();
 }
 
 } // namespace fastlanes

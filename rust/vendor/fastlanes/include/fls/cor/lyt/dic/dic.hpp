@@ -29,9 +29,9 @@ class HzlDeCmp;
 
 /*--------------------------------------------------------------------------------------------------------------------*/
 
-class dict_hdr_t {
+class DictHdrT {
 public:
-	static dict_hdr_t load(const uint8_t* p); //
+	static DictHdrT load(const uint8_t* p); //
 public:
 	ExpT     exp_t;
 	uint8_t  emp_1;
@@ -39,7 +39,8 @@ public:
 	uint8_t  version;
 	uint32_t entry_c;
 };
-static_assert(sizeof(dict_hdr_t) == 8);
+constexpr static n_t DICT_HEADER_SIZE = 8;
+static_assert(sizeof(DictHdrT) == DICT_HEADER_SIZE);
 
 /* TODO: Remove base */
 class Dic {
@@ -56,11 +57,11 @@ public:
 	virtual void          repetition_to_index()                                      = 0; //
 	virtual n_t           size()                                                     = 0; //
 public:
-	Buf&       data_buf;            //
-	Buf&       offs_buf;            //
-	Buf&       compressed_data_buf; //
-	Buf&       compressed_offs_buf; //
-	dict_hdr_t dict_hdr;
+	Buf&     data_buf;            //
+	Buf&     offs_buf;            //
+	Buf&     compressed_data_buf; //
+	Buf&     compressed_offs_buf; //
+	DictHdrT dict_hdr;
 };
 
 template <typename T>

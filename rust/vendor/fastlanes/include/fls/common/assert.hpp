@@ -45,7 +45,7 @@
 #define FLS_ASSERT_CORRECT_EXC_C(C)             FLS_ASSERT(C <= 1024 && C >= 0, " ", fastlanes::Assert::ZERO);
 #define FLS_ASSERT_NOT_EMPTY_STR(STR)           FLS_ASSERT(STR.size() > 0, " ", " ");
 #define FLS_ASSERT_E(L_VAL, R_VAL)              FLS_ASSERT(L_VAL == R_VAL, " ", " ");
-#define FLS_ASSERT_CORRECT_IDX(Expr)            FLS_ASSERT(Expr >= 0, " ", fastlanes::Assert::IDX);
+#define FLS_ASSERT_CORRECT_IDX(Expr)            FLS_ASSERT(Expr != INVALID_N, " ", fastlanes::Assert::IDX);
 #define FLS_ASSERT_NOT_EMPTY_VEC(VEC)           FLS_ASSERT(!VEC.empty(), " ", fastlanes::Assert::EMPTY_VECTOR);
 #include <cstdint>
 

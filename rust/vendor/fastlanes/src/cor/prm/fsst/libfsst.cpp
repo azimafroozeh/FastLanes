@@ -27,10 +27,12 @@ inline uint64_t fsst_unaligned_load(u8 const* v) {
 	return ret;
 }
 
-Symbol concat(Symbol a, Symbol b) {
+inline Symbol concat(Symbol a, Symbol b) {
 	Symbol s;
 	u32    length = a.length() + b.length();
-	if (length > Symbol::maxLength) { length = Symbol::maxLength; }
+	if (length > Symbol::maxLength) {
+		length = Symbol::maxLength;
+	}
 	s.set_code_len(FSST_CODE_MASK, length);
 	s.val.num = (b.val.num << (8 * a.length())) | a.val.num;
 	return s;
@@ -58,9 +60,11 @@ public:
 };
 } // namespace std
 
-bool isEscapeCode(u16 pos) { return pos < FSST_CODE_BASE; }
+inline bool isEscapeCode(u16 pos) {
+	return pos < FSST_CODE_BASE;
+}
 
-std::ostream& operator<<(std::ostream& out, const Symbol& s) {
+inline std::ostream& operator<<(std::ostream& out, const Symbol& s) {
 	for (u32 i = 0; i < s.length(); i++) {
 		out << s.val.str[i];
 	}
@@ -90,7 +94,9 @@ SymbolTable* buildSymbolTable(Counters& counters, std::vector<u8*> line, u32 len
 		}
 		u32 min_size = FSST_SAMPLE_MAX_SZ, i = st->terminator = 256;
 		while (i-- > 0) {
-			if (byte_histo[i] > min_size) { continue; }
+			if (byte_histo[i] > min_size) {
+				continue;
+			}
 			st->terminator = i;
 			min_size       = byte_histo[i];
 		}
@@ -112,7 +118,9 @@ SymbolTable* buildSymbolTable(Counters& counters, std::vector<u8*> line, u32 len
 
 			if (sampleFrac < 128) {
 				// in earlier rounds (sampleFrac < 128) we skip data in the sample (reduces overall work ~2x)
-				if (rnd128(i) > sampleFrac) { continue; }
+				if (rnd128(i) > sampleFrac) {
+					continue;
+				}
 			}
 			if (cur < end) {
 				u16 pos2 = 255, pos1 = st->findLongestSymbol(cur, end);
@@ -122,7 +130,9 @@ SymbolTable* buildSymbolTable(Counters& counters, std::vector<u8*> line, u32 len
 					u8* old = cur;
 					counters.count1Inc(pos1);
 					// count single symbol (i.e. an option is not extending it)
-					if (st->symbols[pos1].length() != 1) { counters.count1Inc(*cur); }
+					if (st->symbols[pos1].length() != 1) {
+						counters.count1Inc(*cur);
+					}
 					if (cur < end - 7) {
 						u64    word = fsst_unaligned_load(cur);
 						size_t pos  = word & 0xFFFFFF;
@@ -190,7 +200,9 @@ SymbolTable* buildSymbolTable(Counters& counters, std::vector<u8*> line, u32 len
 		// add candidate symbols based on counted frequency
 		for (u32 pos1 = 0; pos1 < FSST_CODE_BASE + (size_t)st->nSymbols; pos1++) {
 			u32 cnt1 = counters.count1GetNext(pos1); // may advance pos1!!
-			if (!cnt1) { continue; }
+			if (!cnt1) {
+				continue;
+			}
 
 			// heuristic: promoting single-byte symbols (*8) helps reduce exception rates and increases [de]compression
 			// speed
@@ -204,7 +216,9 @@ SymbolTable* buildSymbolTable(Counters& counters, std::vector<u8*> line, u32 len
 			}
 			for (u32 pos2 = 0; pos2 < FSST_CODE_BASE + (size_t)st->nSymbols; pos2++) {
 				u32 cnt2 = counters.count2GetNext(pos1, pos2); // may advance pos2!!
-				if (!cnt2) { continue; }
+				if (!cnt2) {
+					continue;
+				}
 
 				// create a new symbol
 				Symbol s2 = st->symbols[pos2];
@@ -323,7 +337,9 @@ static inline size_t compressSIMD(SymbolTable& symbol_table,
 					symbol_base[in_off++] =
 					    (u8)symbol_table.terminator; // write an extra char at the end that will not be encoded
 				}
-				if (++batch_pos == 512) { break; }
+				if (++batch_pos == 512) {
+					break;
+				}
 			} while (cur_off < len_arr[cur_line]);
 
 			if ((batch_pos == 512) || (out_off > (1 << 19)) || (++cur_line >= nlines)) { // cannot accumulate more?
@@ -534,7 +550,9 @@ std::vector<u8*> makeSample(u8* sample_buf, u8* str_in[], u32** len_ref, size_t 
 			sample_rnd    = FSST_HASH(sample_rnd);
 			size_t linenr = sample_rnd % nlines;
 			while (len_in[linenr] == 0) {
-				if (++linenr == nlines) { linenr = 0; }
+				if (++linenr == nlines) {
+					linenr = 0;
+				}
 			}
 
 			// choose a chunk
@@ -566,7 +584,9 @@ extern "C" fsst_encoder_t* fsst_create(size_t n, u32 len_in[], u8* str_in[], int
 	encoder->symbolTable =
 	    std::shared_ptr<SymbolTable>(buildSymbolTable(encoder->counters, sample, sample_len, zero_terminated));
 
-	if (sample_len != len_in) { delete[] sample_len; }
+	if (sample_len != len_in) {
+		delete[] sample_len;
+	}
 	delete[] sample_buf;
 	return (fsst_encoder_t*)encoder;
 }
@@ -621,7 +641,8 @@ extern "C" u32 fsst_import(fsst_decoder_t* decoder, const u8* buf) {
 
 	// version field (first 8 bytes) is now there just for future-proofness, unused still (skipped)
 	memcpy(&version, buf, 8);
-	if ((version >> 32) != FSST_VERSION) return 0;
+	if ((version >> 32) != FSST_VERSION)
+		return 0;
 	decoder->zero_terminated = buf[8] & 1;
 	memcpy(lenHisto, buf + 9, 8);
 
@@ -645,7 +666,9 @@ extern "C" u32 fsst_import(fsst_decoder_t* decoder, const u8* buf) {
 			}
 		}
 	}
-	if (decoder->zero_terminated) { lenHisto[0]++; }
+	if (decoder->zero_terminated) {
+		lenHisto[0]++;
+	}
 
 	// fill unused symbols with text "corrupt". Gives a chance to detect corrupted code sequences (if there are unused
 	// symbols).
