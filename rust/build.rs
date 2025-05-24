@@ -7,57 +7,47 @@ use std::{
 
 use flate2::read::GzDecoder;
 use tar::Archive;
-use vergen::Emitter; // v9 emitter
-use vergen_gix::GixBuilder; // Git metadata builder
+use vergen::Emitter;
+use vergen_gix::GixBuilder;
 
 const FLS_TARBALL: &[u8] = include_bytes!("fastlanes-src.tar.gz");
 
-fn main() {
-    // ── 1) Emit Git-derived version info ────────────────────────────
-    // Re-run if HEAD or tags change
+fn main() -> Result<(), Box<dyn std::error::Error>> {
+    /* ── 1) Git-derived build info ─────────────────────────────── */
     println!("cargo:rerun-if-changed=.git/HEAD");
     println!("cargo:rerun-if-changed=.git/refs/tags");
 
-    // Build the instruction set for Git metadata (VERGEN_GIT_*)
-    let git_instr = GixBuilder::default()
-        .semver(true) // sets VERGEN_GIT_SEMVER
-        .build()
-        .expect("configure vergen-gix");
-
-    // Ask vergen to write the `cargo:` directives
+    // emit all VERGEN_GIT_* variables
+    let git = GixBuilder::all_git()?;          // -> Instructions
     Emitter::default()
-        .add_instructions(&git_instr)
-        .expect("attach git instructions")
-        .emit()
-        .expect("emit cargo directives");
+        .add_instructions(&git)?
+        .emit()?;                              // writes the cargo: directives
 
-    // ── 2) Locate sources ───────────────────────────────────────────
-    let crate_dir = PathBuf::from(env::var("CARGO_MANIFEST_DIR").unwrap());
-    let out_dir = PathBuf::from(env::var("OUT_DIR").unwrap());
+    /* ── 2) Locate the C++ sources ─────────────────────────────── */
+    let crate_dir  = PathBuf::from(env::var("CARGO_MANIFEST_DIR")?);
+    let out_dir    = PathBuf::from(env::var("OUT_DIR")?);
     let unpack_dst = out_dir.join("fastlanes-src");
 
     let repo_root = crate_dir.parent().expect("rust/ has a parent");
     let src_dir: PathBuf = if repo_root.join("CMakeLists.txt").exists() {
-        // dev/CI build → use workspace checkout
-        repo_root.into()
+        repo_root.into()                 // workspace checkout
     } else {
-        // crates.io build → unpack embedded tarball
-        ensure_unpacked(&unpack_dst);
+        ensure_unpacked(&unpack_dst)?;
         dive_one_level(&unpack_dst)
     };
 
     println!("cargo:warning=--- Running CMake in {:?} ---", src_dir);
 
-    let install_prefix = cmake::Config::new(&src_dir)
+    let install = cmake::Config::new(&src_dir)
         .define("CMAKE_VERBOSE_MAKEFILE", "ON")
         .profile("Release")
         .build_target("install")
         .build();
 
-    let include_dir = install_prefix.join("include");
-    let lib_dir = install_prefix.join("lib");
+    let include_dir = install.join("include");
+    let lib_dir     = install.join("lib");
 
-    // ── 3) Build the CXX bridge ─────────────────────────────────────
+    /* ── 3) Build the CXX bridge ───────────────────────────────── */
     cxx_build::bridge("src/lib.rs")
         .include(&include_dir)
         .include(&crate_dir)
@@ -67,27 +57,30 @@ fn main() {
         .flag_if_supported("-Wno-error=unknown-warning-option")
         .compile("fastlanes_rs");
 
-    // ── 4) Link the freshly-built FastLanes static lib ──────────────
+    /* ── 4) Link the static FastLanes library ──────────────────── */
     println!("cargo:rustc-link-search=native={}", lib_dir.display());
     println!("cargo:rustc-link-lib=static=FastLanes");
     println!("cargo:rustc-link-lib=c++");
 
-    // ── 5) Re-run triggers for local files ─────────────────────────
+    /* ── 5) Re-run triggers for local files ────────────────────── */
     println!("cargo:rerun-if-changed=fastlanes-src.tar.gz");
     println!("cargo:rerun-if-changed=src/lib.rs");
     println!("cargo:rerun-if-changed=bridge_shim.cpp");
+
+    Ok(())
 }
 
-// -------------------------------------------------------------------
-fn ensure_unpacked(dst: &Path) {
+/* ------------------------------------------------------------------- */
+fn ensure_unpacked(dst: &Path) -> Result<(), Box<dyn std::error::Error>> {
     if dst.exists() {
-        return;
+        return Ok(());
     }
     println!("cargo:warning=Unpacking FastLanes sources to {:?}", dst);
 
-    fs::create_dir_all(dst).expect("create unpack dir");
+    fs::create_dir_all(dst)?;
     let gz = GzDecoder::new(Cursor::new(FLS_TARBALL));
-    Archive::new(gz).unpack(dst).expect("untar FastLanes");
+    Archive::new(gz).unpack(dst)?;
+    Ok(())
 }
 
 fn dive_one_level(dir: &Path) -> PathBuf {
