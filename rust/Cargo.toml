@@ -1,27 +1,22 @@
-# rust/Cargo.tmol
-
 [package]
-name = "fls-rs"
-version = "0.0.0"
-build = "build.rs"
-edition = "2021"
-authors = ["Azim Afroozeh <afroozeh3@gmail.com>"]
-description = "FastLanes File Format"
-license = "MIT"
-repository = "https://github.com/cwida/FastLanes"
-homepage = "https://fastlanes.io"
-documentation = "https://docs.rs/fls-rs"
-readme = "README.md"
-keywords = ["FastLanes", "FileFormat", "Compression"]
-categories = ["database", "compression"]
+name         = "fls-rs"
+version      = "0.0.0"
+edition      = "2021"
+authors      = ["Azim Afroozeh <afroozeh3@gmail.com>"]
+description  = "FastLanes File Format"
+license      = "MIT"
+repository   = "https://github.com/cwida/FastLanes"
+homepage     = "https://fastlanes.io"
+documentation= "https://docs.rs/fls-rs"
+readme       = "README.md"
+build        = "build.rs"
 
-# Ship only what the crate needs
 include = [
     "src/**",
     "bridge_shim.cpp",
     "bridge_shim.hpp",
     "build.rs",
-    "fastlanes-src.tar.gz",
+    "vendor/fastlanes/**",   # ← vendored C++ sources
     "Cargo.toml",
     "README.md",
     "LICENSE*"
@@ -32,16 +27,14 @@ include = [
 status = "true"
 [badges."github-actions"]
 repository = "cwida/FastLanes"
-workflow = "rust"
+workflow   = "rust"
 
 [dependencies]
-cxx = "1"
-anyhow = "1"
+cxx     = "1"
+anyhow  = "1"
 
 [build-dependencies]
-vergen = { version = "9", default-features = false, features = ["build"] }
-vergen-gix = { version = "1", default-features = false, features = ["build"] }
-cmake = "0.1"
-cxx-build = "1"
-flate2 = "1"
-tar = "0.4"
+vergen       = { version = "9", default-features = false, features = ["build"] }
+vergen-gix   = { version = "1", default-features = false, features = ["build"] }
+cmake        = "0.1"
+cxx-build    = "1"
