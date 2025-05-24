@@ -18,7 +18,7 @@ public:
 		return lib_name;
 	}
 
-	static constexpr array<uint64_t, 3> get_all_versions() {
+	static constexpr array<uint64_t, 4> get_all_versions() {
 		return {//
 		        //
 		        FASTLANES_VERSION_01,
