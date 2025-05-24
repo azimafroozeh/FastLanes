@@ -121,4 +121,4 @@ rustfmt.toml
 # Coverage reports
 coverage/
 
-rust/fastlanes-src.zip
+rust/fastlanes-src.tar.gz
