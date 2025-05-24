@@ -73,7 +73,7 @@ clean-rust: clean-vendor
 	$(CARGO) clean --manifest-path $(CRATE_ROOT)/Cargo.toml
 	@echo "Rust clean complete."
 
-run-rust-example: version-bump-rust
+run-rust-example: build-rust
 	@echo "Running Rust example ‘rust_example’…"
 	cd $(CRATE_ROOT) && \
 	CC="$(CC)" CXX="$(CXX)" \
