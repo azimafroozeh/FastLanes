@@ -31,7 +31,6 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     let include_src = src_dir.join("include").canonicalize()?; // FastLanes headers
     let lib_dir = cmake_dir.join("lib"); // libfastlanes.a
 
-
     println!("cargo:warning=--- FLS : cmake-dir {cmake_dir:?} ---");
     println!("cargo:warning=--- FLS : lib_dir {lib_dir:?} ---");
 
