@@ -88,7 +88,7 @@ public:
 
 private:
 	static constexpr auto lib_name        = string_view("FastLanes");
-	static constexpr auto current_version = string_view("0.1.3-alpha.4"); // smart entry point
+	static constexpr auto current_version = string_view("0.1.3-alpha.5"); // smart entry point
 };
 
 } // namespace fastlanes
