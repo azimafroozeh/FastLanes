@@ -9,7 +9,7 @@ int main() {
 		const std::filesystem::path output_csv = EXAMPLE_CMAKE_SOURCE_DIR "/decoded_by_fastlanes.csv";
 
 		// Establish connection to FastLanes
-		std::cout << fastlanes::Info::get_version()() << std::endl;
+		std::cout << std::string(fastlanes::Info::get_version()()) << std::endl;
 
 		// STEP 1: Read the CSV from the specified directory
 		connection->inline_footer().read_csv(data_dir);
