@@ -4,6 +4,8 @@
 
 
 FastLanes is like Parquet with **40% better compression** and **40× faster decoding**.
+* All encodings are FULLY SIMD friendly with 0 EXPLICIT SIMD
+* 
 
 ---
 
