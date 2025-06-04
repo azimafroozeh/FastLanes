@@ -178,7 +178,7 @@ stp<T>::~stp() {
 // Operator overloading.
 template <typename T, typename U>
 inline bool operator==(const stp<T>& sp1, const stp<U>& sp2) {
-	return sp1.get() == sp2.get();
+        return sp1.Get() == sp2.Get();
 }
 
 template <typename T>
@@ -188,17 +188,17 @@ inline bool operator==(const stp<T>& sp, std::nullptr_t) noexcept {
 
 template <typename T, typename U>
 inline bool operator!=(const stp<T>& sp1, const stp<U>& sp2) {
-	return sp1.get() != sp2.get();
+        return sp1.Get() != sp2.Get();
 }
 
 template <typename T>
 inline bool operator!=(const stp<T>& sp, std::nullptr_t) noexcept {
-	return sp.get();
+        return sp.Get();
 }
 
 template <typename T>
 inline bool operator!=(std::nullptr_t, const stp<T>& sp) noexcept {
-	return sp.get();
+        return sp.Get();
 }
 } // namespace fastlanes
 #endif // FLS_CMN_STP_HPP
