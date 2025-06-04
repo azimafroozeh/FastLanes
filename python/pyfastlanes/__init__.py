@@ -9,7 +9,7 @@ try:
         connect,
         # Add any other bindings you expose here
     )
-except ModuleNotFoundError:  # pragma: no cover - fallback for missing extension
+except ImportError:  # pragma: no cover - fallback for missing extension
     def get_version() -> str:
         """Return a placeholder version when the C++ extension is unavailable."""
 
