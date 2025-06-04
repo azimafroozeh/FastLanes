@@ -19,8 +19,8 @@ public:
 	static std::ofstream open_w(const path& file);
 	///! open write in binary
 	static std::ofstream open_w_binary(const path& file);
-	///! open write in binary
-	static std::ofstream opend_app(const path& file);
+        ///! open file for appending
+        static std::ofstream opend_app(const path& file);
 	///! close
 	template <typename STREAM>
 	static void close(STREAM& stream);
