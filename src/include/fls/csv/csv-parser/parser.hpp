@@ -123,8 +123,8 @@ public:
 		return m_state == State::EMPTY;
 	}
 
-	// Not the actual position in the stream (its buffered) just the
-	// position up to last availiable token
+        // Not the actual position in the stream (its buffered) just the
+        // position up to last available token
 	std::streamoff position() const {
 		return m_scanposition + static_cast<std::streamoff>(m_cursor);
 	}
