@@ -24,9 +24,7 @@ Status FileHeader::Load(FileHeader& file_header, const path& file_path) {
 		return Status::Error(Status::ErrorCode::ERR_1_SMALL_FILE_SIZE);
 	}
 
-	std::ifstream file(file_path, std::ios::binary);
-
-	auto fastlanes_file = FileSystem::open_r(file_path);
+        std::ifstream file(file_path, std::ios::binary);
 
 	// Read first 24 bytes
 	file.read(reinterpret_cast<char*>(&file_header), sizeof(FileHeader));

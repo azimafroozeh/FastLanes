@@ -88,17 +88,17 @@ RowgroupDescriptor& Reader::footer() const {
 }
 
 vector<string> Reader::get_column_names() const {
-	if (m_footer == nullptr) {
-		throw std::runtime_error("Footer is initialized");
-	}
+        if (m_footer == nullptr) {
+                throw std::runtime_error("Footer is not initialized");
+        }
 
 	return m_footer->GetColumnNames();
 }
 
 vector<DataType> Reader::get_data_types() const {
-	if (m_footer == nullptr) {
-		throw std::runtime_error("Footer is initialized");
-	}
+        if (m_footer == nullptr) {
+                throw std::runtime_error("Footer is not initialized");
+        }
 
 	return m_footer->GetDataTypes();
 }
