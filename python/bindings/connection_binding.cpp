@@ -16,22 +16,22 @@ void bind_connection(py::module_& m) {
 	         py::arg("dir_path"),
 	         "Write to fastlanes file format",
 	         py::return_value_policy::reference_internal)
-            .def("read_fls",
-                 &fastlanes::Connection::read_fls,
-                 py::arg("dir_path"),
-                 "Read a .fls file and return a FastLanes Reader",
-                 py::return_value_policy::move)
-            .def(
-                "verify_fls",
-                [](fastlanes::Connection& self, const std::filesystem::path& file_path) {
-                        return self.verify_fls(file_path).success;
-                },
-                py::arg("file_path"),
-                "Verify a FastLanes file and return True on success")
-            .def("inline_footer",
-                 &fastlanes::Connection::inline_footer,
-                 "Enable footer inlining",
-                 py::return_value_policy::reference_internal)
+	    .def("read_fls",
+	         &fastlanes::Connection::read_fls,
+	         py::arg("dir_path"),
+	         "Read a .fls file and return a FastLanes Reader",
+	         py::return_value_policy::move)
+	    .def(
+	        "verify_fls",
+	        [](fastlanes::Connection& self, const std::filesystem::path& file_path) {
+		        return self.verify_fls(file_path).success;
+	        },
+	        py::arg("file_path"),
+	        "Verify a FastLanes file and return True on success")
+	    .def("inline_footer",
+	         &fastlanes::Connection::inline_footer,
+	         "Enable footer inlining",
+	         py::return_value_policy::reference_internal)
 	    .def("__enter__", [](fastlanes::Connection& c) { return &c; })
 	    .def("__exit__", [](fastlanes::Connection& c, py::object, py::object, py::object) { c.reset(); });
 }
