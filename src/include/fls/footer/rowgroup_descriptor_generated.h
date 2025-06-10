@@ -77,7 +77,7 @@ struct RowgroupDescriptorBuilder {
 	::flatbuffers::FlatBufferBuilder& fbb_;
 	::flatbuffers::uoffset_t          start_;
 	void                              add_m_n_vec(uint64_t m_n_vec) {
-        fbb_.AddElement<uint64_t>(RowgroupDescriptor::VT_M_N_VEC, m_n_vec, 0);
+		                             fbb_.AddElement<uint64_t>(RowgroupDescriptor::VT_M_N_VEC, m_n_vec, 0);
 	}
 	void add_m_column_descriptors(
 	    ::flatbuffers::Offset<::flatbuffers::Vector<::flatbuffers::Offset<fastlanes::ColumnDescriptor>>>

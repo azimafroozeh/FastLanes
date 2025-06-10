@@ -92,7 +92,7 @@ struct SegmentDescriptorBuilder {
 	::flatbuffers::FlatBufferBuilder& fbb_;
 	::flatbuffers::uoffset_t          start_;
 	void                              add_entrypoint_offset(uint64_t entrypoint_offset) {
-        fbb_.AddElement<uint64_t>(SegmentDescriptor::VT_ENTRYPOINT_OFFSET, entrypoint_offset, 0);
+		                             fbb_.AddElement<uint64_t>(SegmentDescriptor::VT_ENTRYPOINT_OFFSET, entrypoint_offset, 0);
 	}
 	void add_entrypoint_size(uint64_t entrypoint_size) {
 		fbb_.AddElement<uint64_t>(SegmentDescriptor::VT_ENTRYPOINT_SIZE, entrypoint_size, 0);

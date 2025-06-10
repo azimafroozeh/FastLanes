@@ -37,7 +37,7 @@ struct ExpressionResult FLATBUFFERS_FINAL_CLASS : private ::flatbuffers::Table {
 	typedef ExpressionResultBuilder Builder;
 	enum FlatBuffersVTableOffset    FLATBUFFERS_VTABLE_UNDERLYING_TYPE { VT_OPERATOR_TOKEN = 4, VT_SIZE = 6 };
 	fastlanes::OperatorToken        operator_token() const {
-        return static_cast<fastlanes::OperatorToken>(GetField<uint16_t>(VT_OPERATOR_TOKEN, 0));
+		       return static_cast<fastlanes::OperatorToken>(GetField<uint16_t>(VT_OPERATOR_TOKEN, 0));
 	}
 	uint64_t size() const {
 		return GetField<uint64_t>(VT_SIZE, 0);
@@ -58,7 +58,7 @@ struct ExpressionResultBuilder {
 	::flatbuffers::FlatBufferBuilder& fbb_;
 	::flatbuffers::uoffset_t          start_;
 	void                              add_operator_token(fastlanes::OperatorToken operator_token) {
-        fbb_.AddElement<uint16_t>(ExpressionResult::VT_OPERATOR_TOKEN, static_cast<uint16_t>(operator_token), 0);
+		                             fbb_.AddElement<uint16_t>(ExpressionResult::VT_OPERATOR_TOKEN, static_cast<uint16_t>(operator_token), 0);
 	}
 	void add_size(uint64_t size) {
 		fbb_.AddElement<uint64_t>(ExpressionResult::VT_SIZE, size, 0);
@@ -192,7 +192,7 @@ struct ColumnDescriptorBuilder {
 	::flatbuffers::FlatBufferBuilder& fbb_;
 	::flatbuffers::uoffset_t          start_;
 	void                              add_data_type(fastlanes::DataType data_type) {
-        fbb_.AddElement<uint8_t>(ColumnDescriptor::VT_DATA_TYPE, static_cast<uint8_t>(data_type), 0);
+		                             fbb_.AddElement<uint8_t>(ColumnDescriptor::VT_DATA_TYPE, static_cast<uint8_t>(data_type), 0);
 	}
 	void add_encoding_rpn(::flatbuffers::Offset<fastlanes::RPN> encoding_rpn) {
 		fbb_.AddOffset(ColumnDescriptor::VT_ENCODING_RPN, encoding_rpn);

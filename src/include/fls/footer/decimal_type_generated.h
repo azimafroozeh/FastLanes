@@ -27,7 +27,7 @@ struct DecimalType FLATBUFFERS_FINAL_CLASS : private ::flatbuffers::Table {
 	typedef DecimalTypeBuilder   Builder;
 	enum FlatBuffersVTableOffset FLATBUFFERS_VTABLE_UNDERLYING_TYPE { VT_PRECISION = 4, VT_SCALE = 6 };
 	uint64_t                     precision() const {
-        return GetField<uint64_t>(VT_PRECISION, 0);
+		                    return GetField<uint64_t>(VT_PRECISION, 0);
 	}
 	uint64_t scale() const {
 		return GetField<uint64_t>(VT_SCALE, 0);
@@ -48,7 +48,7 @@ struct DecimalTypeBuilder {
 	::flatbuffers::FlatBufferBuilder& fbb_;
 	::flatbuffers::uoffset_t          start_;
 	void                              add_precision(uint64_t precision) {
-        fbb_.AddElement<uint64_t>(DecimalType::VT_PRECISION, precision, 0);
+		                             fbb_.AddElement<uint64_t>(DecimalType::VT_PRECISION, precision, 0);
 	}
 	void add_scale(uint64_t scale) {
 		fbb_.AddElement<uint64_t>(DecimalType::VT_SCALE, scale, 0);
