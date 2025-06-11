@@ -1,0 +1,44 @@
+{
+  "columns": [
+    {
+      "name": "Column_1",
+      "type": "FLS_U08",
+      "index": "0"
+    },
+    {
+      "name": "Column_2",
+      "type": "FLS_U08",
+      "index": "1"
+    },
+    {
+      "name": "Column_3",
+      "type": "FLS_U08",
+      "index": "2"
+    },
+    {
+      "name": "Column_4",
+      "type": "FLS_U08",
+      "index": "3"
+    },
+    {
+      "name": "Column_5",
+      "type": "FLS_U08",
+      "index": "4"
+    },
+    {
+      "name": "Column_6",
+      "type": "FLS_U08",
+      "index": "5"
+    },
+    {
+      "name": "Column_7",
+      "type": "FLS_U08",
+      "index": "6"
+    },
+    {
+      "name": "Column_8",
+      "type": "FLS_U08",
+      "index": "7"
+    }
+  ]
+}
