@@ -311,6 +311,7 @@ if (EXISTS "${CMAKE_SOURCE_DIR}/playground/CMakeLists.txt")
     message("- FLS: Adding Playground ")
     add_subdirectory(playground)
 endif ()
+
 # Python : -------------------------------------------------------------------------------------------------------------
 if (FLS_BUILD_PYTHON)
     message("----------------------------------------------------------------------------------------------------------")
@@ -319,4 +320,11 @@ if (FLS_BUILD_PYTHON)
     add_subdirectory(python)   # your module’s CMakeLists.txt
 endif ()
 
+# JPEG PLAYGROUND : NEEDS TO BE REMOVED --------------------------------------------------------------------------------
+if (true)
+    message("----------------------------------------------------------------------------------------------------------")
+    message("- FLS: Building JPEG PLAYGROUND")
+
+    add_subdirectory(jpeg_playground)   # your module’s CMakeLists.txt
+endif ()
 
