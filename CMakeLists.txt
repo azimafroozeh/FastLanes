@@ -110,6 +110,7 @@ option(FLS_BUILD_EXAMPLES "Build Examples" OFF)
 option(FLS_BUILD_GPU "Build GPU" OFF)
 option(FLS_BUILD_GTEST "Build GTEST" OFF)
 option(FLS_BUILD_SHARED_LIBS "Build FastLanes library as shared" OFF)
+option(FLS_BUILD_CLI "Build CLI" OFF)
 option(FLS_ENABLE_INSTALL "Generate install targets for FastLanes" ON)
 option(FLS_ENABLE_CLANG_TIDY "Enable clang_tidy on all targets" OFF)
 option(FLS_ENABLE_IWYU "Enable include-what-you-use tool" OFF)
@@ -228,13 +229,6 @@ if (FLS_ENABLE_CLANG_TIDY)
         )
         message("-- FLS: clang-tidy version: ${CLANG_TIDY_VERSION}")
 
-        execute_process(
-                COMMAND ${CLANG_TIDY_EXE} --version
-                OUTPUT_VARIABLE CLANG_TIDY_VERSION
-                OUTPUT_STRIP_TRAILING_WHITESPACE
-        )
-        message("-- FLS: clang-tidy version: ${CLANG_TIDY_VERSION}")
-
     endif ()
 endif ()
 
@@ -311,12 +305,21 @@ if (EXISTS "${CMAKE_SOURCE_DIR}/playground/CMakeLists.txt")
     message("- FLS: Adding Playground ")
     add_subdirectory(playground)
 endif ()
+
 # Python : -------------------------------------------------------------------------------------------------------------
 if (FLS_BUILD_PYTHON)
     message("----------------------------------------------------------------------------------------------------------")
     message("- FLS: Building FastLanes Python Extension")
 
     add_subdirectory(python)   # your module’s CMakeLists.txt
+endif ()
+
+# Python : -------------------------------------------------------------------------------------------------------------
+if (FLS_BUILD_CLI)
+    message("----------------------------------------------------------------------------------------------------------")
+    message("- FLS: Building FastLanes CLI")
+
+    add_subdirectory(cli)   # your module’s CMakeLists.txt
 endif ()
 
 
