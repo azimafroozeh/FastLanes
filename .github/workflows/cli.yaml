@@ -31,7 +31,8 @@ jobs:
             -DCMAKE_CXX_COMPILER=clang++ \
             -DFLS_BUILD_CLI=ON \
             -DFLS_BUILD_TESTING=ON \
-            -DFLS_ENABLE_INSTALL=OFF
+            -DFLS_ENABLE_INSTALL=OFF \
+            ..
 
       - name: Build CLI
         run: |
