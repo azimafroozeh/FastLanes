@@ -41,10 +41,10 @@ inline bool extract_dct_to_csv(const fs::path& jpg, const fs::path& csv) {
 		return false;
 	}
 
-	out << "component,block_row,block_col";
-	for (int k = 0; k < 64; ++k)
-		out << ",c" << k;
-	out << '\n';
+	// out << "component|block_row|block_col";
+	// for (int k = 0; k < 64; ++k)
+	// 	out << ",COL" << k;
+	// out << '\n';
 
 	for (int c = 0; c < dinfo.num_components; ++c) {
 		auto*    ci = &dinfo.comp_info[c];
@@ -55,9 +55,9 @@ inline bool extract_dct_to_csv(const fs::path& jpg, const fs::path& csv) {
 
 			for (unsigned bc = 0; bc < bw; ++bc) {
 				JCOEFPTR blk = row[0][bc];
-				out << c << '|' << br << '|' << bc;
+				out << c << ',' << br << ',' << bc;
 				for (int k = 0; k < 64; ++k)
-					out << '|' << blk[k];
+					out << ',' << blk[k];
 				out << '\n';
 			}
 		}
