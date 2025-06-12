@@ -4,6 +4,7 @@ run-name: >-
 
 on:
   push:
+    branches: [ main, dev ]
   pull_request:
     branches: [ main, dev ]
 
@@ -31,7 +32,7 @@ jobs:
       - name: Detect CPU count
         run: echo "BUILD_THREADS=$(nproc)" >> $GITHUB_ENV
 
-      # 5) Build & extract baseline CSV
+      # 5) Build & extract baseline (dev)
       - name: Build & extract baseline (dev)
         id: baseline
         run: |
@@ -49,7 +50,7 @@ jobs:
           cmake --build . --parallel $BUILD_THREADS --target benchmark_compression_ratio
           cp benchmark/result/compression_ratio/tpch/fastlanes.csv $GITHUB_WORKSPACE/dev-compression.csv
 
-      # 6) Build & extract current CSV
+      # 6) Build & extract current (this commit)
       - name: Build & extract current (this commit)
         id: current
         run: |
@@ -67,9 +68,9 @@ jobs:
           cmake --build . --parallel $BUILD_THREADS --target benchmark_compression_ratio
           cp benchmark/result/compression_ratio/tpch/fastlanes.csv $GITHUB_WORKSPACE/curr-compression.csv
 
-      # 7) Upload raw CSVs for debugging/artifacts
+      # 7) Upload raw CSVs for artifacts or failure inspection
       - name: Upload raw CSVs
-        if: failure() || github.event_name == 'pull_request'
+        if: ${{ failure() || github.event_name == 'pull_request' }}
         uses: actions/upload-artifact@v4
         with:
           name: compression-csvs
@@ -77,7 +78,7 @@ jobs:
             - dev-compression.csv
             - curr-compression.csv
 
-      # 8) Set up Python (needed by Makefile recipe)
+      # 8) Set up Python (needed by the Makefile recipe)
       - name: Set up Python
         uses: actions/setup-python@v4
         with:
