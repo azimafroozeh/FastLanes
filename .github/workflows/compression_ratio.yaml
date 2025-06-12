@@ -4,29 +4,36 @@ run-name: >-
 
 on:
   push:
+    branches: [ main, dev ]
   pull_request:
     branches: [ main, dev ]
 
 jobs:
   cli:
     runs-on: ubuntu-latest
-    env:
-      BUILD_THREADS: ${{ runner.cores }}
 
     steps:
+      # 1) Checkout the current commit
       - name: Checkout current commit
         uses: actions/checkout@v3
         with:
           fetch-depth: 0
 
+      # 2) Install LLVM
       - name: Install LLVM
         uses: ./.github/actions/install-llvm
 
+      # 3) Clone dev branch for baseline
       - name: Clone dev branch
         run: |
           git clone --branch dev https://github.com/${{ github.repository }} code-dev
 
-      - name: Build & extract baseline CSV
+      # 4) Detect CPU count for parallel builds
+      - name: Detect CPU count
+        run: echo "BUILD_THREADS=$(nproc)" >> $GITHUB_ENV
+
+      # 5) Build & extract baseline CSV
+      - name: Build & extract baseline (dev)
         id: baseline
         run: |
           cd code-dev
@@ -41,10 +48,10 @@ jobs:
             -DFLS_ENABLE_INSTALL=OFF \
             ..
           cmake --build . --parallel $BUILD_THREADS --target benchmark_compression_ratio
-          # copy the repo-written CSV into workspace
           cp benchmark/result/compression_ratio/tpch/fastlanes.csv $GITHUB_WORKSPACE/dev-compression.csv
 
-      - name: Build & extract current CSV
+      # 6) Build & extract current CSV
+      - name: Build & extract current (this commit)
         id: current
         run: |
           cd $GITHUB_WORKSPACE
@@ -61,6 +68,7 @@ jobs:
           cmake --build . --parallel $BUILD_THREADS --target benchmark_compression_ratio
           cp benchmark/result/compression_ratio/tpch/fastlanes.csv $GITHUB_WORKSPACE/curr-compression.csv
 
+      # 7) Upload raw CSVs for debugging/artifacts
       - name: Upload raw CSVs
         if: failure() || github.event_name == 'pull_request'
         uses: actions/upload-artifact@v4
@@ -70,18 +78,21 @@ jobs:
             - dev-compression.csv
             - curr-compression.csv
 
+      # 8) Set up Python (needed by Makefile recipe)
       - name: Set up Python
         uses: actions/setup-python@v4
         with:
           python-version: '3.x'
 
-      - name: Generate compression report
+      # 9) Generate the Markdown report via your Makefile
+      - name: Generate compression report via Makefile
         run: |
-          python .github/scripts/compression_report.py \
-            --baseline dev-compression.csv \
-            --current  curr-compression.csv \
-            --out      report.md
+          make -f mk/compression_report.mk \
+            BASELINE=dev-compression.csv \
+            CURRENT=curr-compression.csv \
+            REPORT=report.md
 
+      # 10) Comment the regression table back to the PR
       - name: Comment compression regression table
         if: ${{ github.event_name == 'pull_request' }}
         uses: peter-evans/create-or-update-comment@v4
