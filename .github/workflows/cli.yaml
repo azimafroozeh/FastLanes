@@ -37,7 +37,7 @@ jobs:
       - name: Build CLI
         run: |
           cd build
-          ninja cli
+          cmake --build . --parallel $BUILD_THREADS
 
       - name: Run CLI tests
         run: |
