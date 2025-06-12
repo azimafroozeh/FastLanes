@@ -13,7 +13,7 @@
 // -----------------------------------------------------------------------------
 
 static void usage() {
-	std::cout << "fastlanes <command> [options] <file> …\n"
+	std::cout << "fls <command> [options] <file> …\n"
 	             "Commands:\n"
 	             "  meta        Show file metadata\n"
 	             "  schema      Print schema\n"
