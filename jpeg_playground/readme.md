@@ -52,13 +52,31 @@ I modified the `stb_image.h` to generate the CSVs.
 static FILE  *f_quant, *f_idct, *f_colorsp;
 static FILE  *f_quant_sc, *f_idct_sc, *f_colorsp_sc;
 
-static void init_debug_csv_files(void) {
-    f_quant = fopen("./tmp/jpeg_quant.csv",    "a+"); // data before de-quantation
-    f_idct    = fopen("./tmp/jpeg_idct.csv",       "a+"); // data before de-dct
-    f_colorsp = fopen("./tmp/jpeg_colorspace.csv", "a+"); // data befor de-colorsp
-    f_quant_sc = fopen("./tmp/jpeg_quant_sc.csv",    "a+"); // data before de-quantation
-    f_idct_sc    = fopen("./tmp/jpeg_idct_sc.csv",       "a+"); // data before de-dct
-    f_colorsp_sc = fopen("./tmp/jpeg_colorspace_sc.csv", "a+"); // data befor de-colorsp
+
+static void init_debug_csv_files(const char *output_dir_path) {
+    const char *names[] = {
+        "jpeg_quant.csv",
+        "jpeg_idct.csv",
+        "jpeg_colorspace.csv",
+        "jpeg_quant_sc.csv",
+        "jpeg_idct_sc.csv",
+        "jpeg_colorspace_sc.csv"
+    };
+
+    FILE **fps[] = {
+        &f_quant, &f_idct, &f_colorsp,
+        &f_quant_sc, &f_idct_sc, &f_colorsp_sc
+    };
+
+    char path[PATH_MAX];
+    for (size_t i = 0; i < sizeof(names)/sizeof(*names); ++i) {
+        snprintf(path, sizeof(path), "%s/%s", output_dir_path, names[i]);
+        *fps[i] = fopen(path, "a+");
+        if (!*fps[i]) {
+            perror(path);
+            exit(EXIT_FAILURE);
+        }
+    }
 }
 ```
 

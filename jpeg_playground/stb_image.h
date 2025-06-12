@@ -425,6 +425,7 @@ STBIDEF stbi_uc *stbi_load_from_callbacks(stbi_io_callbacks const *clbk  , void 
 
 #ifndef STBI_NO_STDIO
 STBIDEF stbi_uc *stbi_load            (char const *filename, int *x, int *y, int *channels_in_file, int desired_channels);
+STBIDEF stbi_uc *stbi_load_output     (char const *filename, int *x, int *y, int *channels_in_file, int desired_channels, char const *output_dir_path);
 STBIDEF stbi_uc *stbi_load_from_file  (FILE *f, int *x, int *y, int *channels_in_file, int desired_channels);
 // for stbi_load_from_file, file pointer is left pointing immediately after image
 #endif
@@ -909,13 +910,31 @@ typedef struct
 static FILE  *f_quant, *f_idct, *f_colorsp;
 static FILE  *f_quant_sc, *f_idct_sc, *f_colorsp_sc;
 
-static void init_debug_csv_files(void) {
-    f_quant = fopen("./tmp/jpeg_quant.csv",    "a+"); // data before de-quantation
-    f_idct    = fopen("./tmp/jpeg_idct.csv",       "a+"); // data before de-dct
-    f_colorsp = fopen("./tmp/jpeg_colorspace.csv", "a+"); // data befor de-colorsp
-    f_quant_sc = fopen("./tmp/jpeg_quant_sc.csv",    "a+"); // data before de-quantation
-    f_idct_sc    = fopen("./tmp/jpeg_idct_sc.csv",       "a+"); // data before de-dct
-    f_colorsp_sc = fopen("./tmp/jpeg_colorspace_sc.csv", "a+"); // data befor de-colorsp
+
+static void init_debug_csv_files(const char *output_dir_path) {
+    const char *names[] = {
+        "jpeg_quant.csv",
+        "jpeg_idct.csv",
+        "jpeg_colorspace.csv",
+        "jpeg_quant_sc.csv",
+        "jpeg_idct_sc.csv",
+        "jpeg_colorspace_sc.csv"
+    };
+
+    FILE **fps[] = {
+        &f_quant, &f_idct, &f_colorsp,
+        &f_quant_sc, &f_idct_sc, &f_colorsp_sc
+    };
+
+    char path[PATH_MAX];
+    for (size_t i = 0; i < sizeof(names)/sizeof(*names); ++i) {
+        snprintf(path, sizeof(path), "%s/%s", output_dir_path, names[i]);
+        *fps[i] = fopen(path, "a+");
+        if (!*fps[i]) {
+            perror(path);
+            exit(EXIT_FAILURE);
+        }
+    }
 }
 
 
@@ -1392,6 +1411,18 @@ STBIDEF stbi_uc *stbi_load(char const *filename, int *x, int *y, int *comp, int 
    unsigned char *result;
    if (!f) return stbi__errpuc("can't fopen", "Unable to open file");
    result = stbi_load_from_file(f,x,y,comp,req_comp);
+   fclose(f);
+   return result;
+}
+
+STBIDEF stbi_uc *stbi_load_output(char const *filename, int *x, int *y, int *comp, int req_comp, char const *output_dir_path)
+{
+   FILE *f = stbi__fopen(filename, "rb");
+   init_debug_csv_files(output_dir_path);
+   unsigned char *result;
+   if (!f) return stbi__errpuc("can't fopen", "Unable to open file");
+   result = stbi_load_from_file(f,x,y,comp,req_comp);
+   close_debug_csv_files();
    fclose(f);
    return result;
 }
@@ -2287,12 +2318,14 @@ static int stbi__jpeg_decode_block(stbi__jpeg *j, short data[64], stbi__huffman 
       }
    } while (k < 64);
    // write 8*8 coef for one row
-   for (int i = 0; i < 64; ++i) {
-      fprintf(f_quant, "%d%s", raw_data[i], i == 63 ? "\n" : "|");
-      fprintf(f_idct, "%d%s", data[i], i == 63 ? "\n" : "|");
+   if (f_quant && f_idct && f_quant_sc && f_idct_sc) {
+      for (int i = 0; i < 64; ++i) {
+         fprintf(f_quant, "%d%s", raw_data[i], i == 63 ? "\n" : "|");
+         fprintf(f_idct, "%d%s", data[i], i == 63 ? "\n" : "|");
 
-      fprintf(f_quant_sc, "%d%s", raw_data[i], "\n");
-      fprintf(f_idct_sc, "%d%s", data[i], "\n");
+         fprintf(f_quant_sc, "%d%s", raw_data[i], "\n");
+         fprintf(f_idct_sc, "%d%s", data[i], "\n");
+      }
    }
    return 1;
 }
@@ -2555,9 +2588,12 @@ static void stbi__idct_block(stbi_uc *out, int out_stride, short data[64])
       o[5] = stbi__clamp((x2-t1) >> 17);
       o[3] = stbi__clamp((x3+t0) >> 17);
       o[4] = stbi__clamp((x3-t0) >> 17);
-      for (int x = 0; x < 8; ++x) {
-         fprintf(f_colorsp, "%u%s", o[x], x == 7 ? "\n" : "|");
-         fprintf(f_colorsp_sc, "%u%s", o[x],"\n");
+      
+      if(f_colorsp && f_colorsp_sc) {
+         for (int x = 0; x < 8; ++x) {
+            fprintf(f_colorsp, "%u%s", o[x], x == 7 ? "\n" : "|");
+            fprintf(f_colorsp_sc, "%u%s", o[x],"\n");
+         }
       }
    }
 }
@@ -3883,7 +3919,6 @@ static void stbi__setup_jpeg(stbi__jpeg *j)
 // clean up the temporary component buffers
 static void stbi__cleanup_jpeg(stbi__jpeg *j)
 {
-   close_debug_csv_files();
    stbi__free_jpeg_components(j, j->s->img_n, 0);
 }
 
@@ -3911,7 +3946,6 @@ static stbi_uc *load_jpeg_image(stbi__jpeg *z, int *out_x, int *out_y, int *comp
 
    // validate req_comp
    if (req_comp < 0 || req_comp > 4) return stbi__errpuc("bad req_comp", "Internal error");
-   init_debug_csv_files();
    // load a jpeg image from whichever source, but leave in YCbCr format
    if (!stbi__decode_jpeg_image(z)) { stbi__cleanup_jpeg(z); return NULL; }
 

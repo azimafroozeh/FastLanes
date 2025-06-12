@@ -24,9 +24,9 @@ std::string to_lower(std::string s) {
 }
 
 // Function to decode JPEG and append its raw pixel data to an existing CSV stream
-bool append_decoded_jpeg_to_csv(const fs::path& jpeg_path, std::ofstream& csv_out_stream, bool write_header_info) {
+bool append_decoded_jpeg_to_csv(const fs::path& jpeg_path, const fs::path& output_dir_path, std::ofstream& csv_out_stream, bool write_header_info) {
 	int            width, height, channels;
-	unsigned char* img_data = stbi_load(jpeg_path.string().c_str(), &width, &height, &channels, 0);
+	unsigned char* img_data = stbi_load_output(jpeg_path.string().c_str(), &width, &height, &channels, 0, output_dir_path.string().c_str());
 	if (!img_data) {
 		std::cerr << "Error: Could not decode JPEG file: " << jpeg_path << " - " << stbi_failure_reason() << std::endl;
 		return false;
@@ -63,7 +63,7 @@ int main() {
 	// Hardcoded directories
 	fs::path    input_dir_path  = fastlanes::string {FLS_CMAKE_SOURCE_DIR} + "/jpeg_playground/example/example_image";
 	fs::path    output_dir_path = fastlanes::string {FLS_CMAKE_SOURCE_DIR} + "/jpeg_playground/tmp";
-	std::string output_csv_name = fastlanes::string {FLS_CMAKE_SOURCE_DIR} + "/jpeg_playground/decoded_pixel_data.csv";
+	std::string output_csv_name = fastlanes::string {FLS_CMAKE_SOURCE_DIR} + "/jpeg_playground/tmp/decoded_pixel_data.csv";
 
 	// Ensure input directory exists
 	if (!fs::exists(input_dir_path) || !fs::is_directory(input_dir_path)) {
@@ -94,7 +94,7 @@ int main() {
 		if (entry.is_regular_file()) {
 			auto ext = to_lower(entry.path().extension().string());
 			if (ext == ".jpg" || ext == ".jpeg") {
-				if (append_decoded_jpeg_to_csv(entry.path(), combined_csv_file, false))
+				if (append_decoded_jpeg_to_csv(entry.path(), output_dir_path, combined_csv_file, false))
 					files_processed++;
 				else
 					files_failed++;
