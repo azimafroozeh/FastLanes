@@ -1,35 +1,37 @@
 name: CLI
+run-name: >-
+  ${{ github.workflow }} on ${{ github.ref_name }} (#${{ github.run_number }}) — ${{ github.event.pull_request.title || github.event.head_commit.message }}
 
 on:
   push:
   pull_request:
+    branches: [ main, dev ]
 
 jobs:
   cli:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
 
-      - name: Install dependencies
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y clang-13 cmake ninja-build
+      - name: Install LLVM
+        uses: ./.github/actions/install-llvm
 
       - name: Detect CPU count
         run: echo "BUILD_THREADS=$(nproc)" >> $GITHUB_ENV
 
       - name: Configure CMake
         run: |
-          mkdir -p build
-          cd build
+          mkdir -p build && cd build
           cmake -G Ninja \
-            -DCMAKE_C_COMPILER=clang-13 \
-            -DCMAKE_CXX_COMPILER=clang++-13 \
+            -DCMAKE_BUILD_TYPE=Release \
+            -DCMAKE_C_COMPILER=clang \
+            -DCMAKE_CXX_COMPILER=clang++ \
             -DFLS_BUILD_CLI=ON \
             -DFLS_BUILD_TESTING=ON \
-            -DFLS_ENABLE_INSTALL=OFF \
-            ..
+            -DFLS_ENABLE_INSTALL=OFF
 
       - name: Build CLI
         run: |
