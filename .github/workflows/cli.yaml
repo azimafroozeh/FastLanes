@@ -6,12 +6,10 @@ on:
 
 jobs:
   cli:
-    name: Build & Test fastlanes CLI
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
       - name: Install dependencies
         run: |
@@ -19,7 +17,6 @@ jobs:
           sudo apt-get install -y clang-13 cmake ninja-build
 
       - name: Detect CPU count
-        shell: bash
         run: echo "BUILD_THREADS=$(nproc)" >> $GITHUB_ENV
 
       - name: Configure CMake
@@ -46,7 +43,7 @@ jobs:
 
       - name: Upload test logs on failure
         if: failure()
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: ctest-log
           path: build/Testing/Temporary/LastTest.log
