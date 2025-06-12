@@ -1,7 +1,6 @@
 name: COMPRESSION RATIO
 run-name: >-
   ${{ github.workflow }} on ${{ github.ref_name }} (#${{ github.run_number }}) — ${{ github.event.pull_request.title || github.event.head_commit.message }}
-
 on:
   push:
   pull_request:
@@ -75,9 +74,9 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: compression-csvs
-          path:
-            - dev-compression.csv
-            - curr-compression.csv
+          path: |
+            dev-compression.csv
+            curr-compression.csv
 
       # 8) Set up Python (needed by the Makefile recipe)
       - name: Set up Python
