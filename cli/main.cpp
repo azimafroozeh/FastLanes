@@ -35,7 +35,7 @@ static void usage() {
 }
 
 static void not_impl(std::string_view cmd) {
-	std::cout << "[fastlanes] '" << cmd << "' is recognised but not implemented yet.\n";
+	std::cout << "[fls] '" << cmd << "' is recognised but not implemented yet.\n";
 }
 
 // -----------------------------------------------------------------------------
@@ -95,8 +95,7 @@ static int cmd_check_stats(const std::vector<std::string>& files) {
 	return 0;
 }
 static int cmd_convert(const std::vector<std::string>& args) {
-	not_impl("convert");
-	return 0;
+	return cmd_csv(args);
 }
 static int cmd_to_avro(const std::vector<std::string>& files) {
 	not_impl("to-avro");
@@ -119,15 +118,10 @@ int dispatch(const std::string& cmd, std::vector<std::string> args) {
 
 	if (cmd == "merge") {
 		if (args.size() < 2) {
-			std::cerr << "Error: merge needs <output.parquet> <in1.parquet> [...]\n";
+			std::cerr << "Error: merge needs <output.parquet> <in1.parquet> [...]>\n";
 			return 1;
 		}
 		return cmd_merge(args);
-	}
-
-	if (args.empty()) {
-		usage();
-		return 1;
 	}
 
 	bool    json_out = false;
@@ -135,7 +129,7 @@ int dispatch(const std::string& cmd, std::vector<std::string> args) {
 	int64_t head_n   = 10;
 
 	if (cmd == "head") {
-		for (std::size_t i = 0; i + 1 < args.size(); ++i) {
+		for (std::vector<std::string>::size_type i = 0; i + 1 < args.size(); ++i) {
 			if (args[i] == "-n") {
 				head_n     = std::stoll(args[i + 1]);
 				auto first = args.begin() + static_cast<std::vector<std::string>::difference_type>(i);
@@ -146,7 +140,7 @@ int dispatch(const std::string& cmd, std::vector<std::string> args) {
 		}
 		return cmd_head(args, head_n);
 	} else if (cmd == "cat") {
-		for (std::size_t i = 0; i < args.size();) {
+		for (std::vector<std::string>::size_type i = 0; i < args.size();) {
 			if (args[i] == "--json") {
 				json_out = true;
 				auto it  = args.begin() + static_cast<std::vector<std::string>::difference_type>(i);

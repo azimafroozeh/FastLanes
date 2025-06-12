@@ -4,3 +4,6 @@ add_subdirectory(fls_reader_tests)
 add_subdirectory(primitive_tests)
 add_subdirectory(unit_tests)
 
+if (FLS_BUILD_CLI)
+    add_subdirectory(cli_tests)
+endif ()

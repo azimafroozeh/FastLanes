@@ -1,0 +1,52 @@
+name: CLI
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  cli:
+    name: Build & Test fastlanes CLI
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Install dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y clang-13 cmake ninja-build
+
+      - name: Detect CPU count
+        shell: bash
+        run: echo "BUILD_THREADS=$(nproc)" >> $GITHUB_ENV
+
+      - name: Configure CMake
+        run: |
+          mkdir -p build
+          cd build
+          cmake -G Ninja \
+            -DCMAKE_C_COMPILER=clang-13 \
+            -DCMAKE_CXX_COMPILER=clang++-13 \
+            -DFLS_BUILD_CLI=ON \
+            -DFLS_BUILD_TESTING=ON \
+            -DFLS_ENABLE_INSTALL=OFF \
+            ..
+
+      - name: Build CLI
+        run: |
+          cd build
+          ninja cli
+
+      - name: Run CLI tests
+        run: |
+          cd build
+          ctest --output-on-failure --parallel $BUILD_THREADS
+
+      - name: Upload test logs on failure
+        if: failure()
+        uses: actions/upload-artifact@v3
+        with:
+          name: ctest-log
+          path: build/Testing/Temporary/LastTest.log
