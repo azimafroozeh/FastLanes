@@ -25,16 +25,12 @@ list(APPEND CMAKE_PREFIX_PATH
 find_package(JPEG REQUIRED)
 
 # 4) Your executables
-add_executable(fastlanes_example fastlanes.cpp)
-add_executable(jpeg_to_csv jpeg_decode_to_csv.cpp)
 add_executable(jpeg_compress jpeg_analyze.cpp)
+target_include_directories(jpeg_compress PUBLIC include)
 
 # 5) Ensure they all wait for libjpeg-turbo to build & install,
 #    then link against FastLanes and the JPEG::JPEG target
-foreach (target IN ITEMS
-        fastlanes_example
-        jpeg_to_csv
-        jpeg_compress)
+foreach (target IN ITEMS jpeg_compress)
     add_dependencies(${target} libjpeg_turbo_ep)
     target_link_libraries(${target}
             PUBLIC
