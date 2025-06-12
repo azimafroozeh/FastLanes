@@ -38,6 +38,11 @@ BenchmarkCase tpch_case {Tpch::dataset,
                          std::string(FLS_CMAKE_SOURCE_DIR) +
                              "/benchmark/result/compression_ratio/tpch/fastlanes_detailed.csv"};
 
+BenchmarkCase image_ds_case {
+    IMAGE_DS::dataset,
+    std::string(FLS_CMAKE_SOURCE_DIR) + "/benchmark/result/compression_ratio/image/fastlanes.csv",
+    std::string(FLS_CMAKE_SOURCE_DIR) + "/benchmark/result/compression_ratio/image/fastlanes_detailed.csv"};
+
 void run_compression_ratio_benchmark(const BenchmarkCase& benchmark_case) {
 	const auto& result_file_path          = benchmark_case.result_file_path;
 	const auto  detailed_result_file_path = benchmark_case.detailed_result_file_path;
@@ -166,6 +171,6 @@ void run_compression_ratio_benchmark(const BenchmarkCase& benchmark_case) {
 }
 
 int main() {
-	run_compression_ratio_benchmark(public_bi_case);
+	run_compression_ratio_benchmark(image_ds_case);
 	return EXIT_SUCCESS;
 }

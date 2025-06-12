@@ -1,0 +1,272 @@
+{
+  "columns": [
+    {
+      "name": "component",
+      "type": "smallint"
+    },
+    {
+      "name": "block_row",
+      "type": "smallint"
+    },
+    {
+      "name": "block_col",
+      "type": "smallint"
+    },
+    {
+      "name": "COL0",
+      "type": "smallint"
+    },
+    {
+      "name": "COL1",
+      "type": "smallint"
+    },
+    {
+      "name": "COL2",
+      "type": "smallint"
+    },
+    {
+      "name": "COL3",
+      "type": "smallint"
+    },
+    {
+      "name": "COL4",
+      "type": "smallint"
+    },
+    {
+      "name": "COL5",
+      "type": "smallint"
+    },
+    {
+      "name": "COL6",
+      "type": "smallint"
+    },
+    {
+      "name": "COL7",
+      "type": "smallint"
+    },
+    {
+      "name": "COL8",
+      "type": "smallint"
+    },
+    {
+      "name": "COL9",
+      "type": "smallint"
+    },
+    {
+      "name": "COL10",
+      "type": "smallint"
+    },
+    {
+      "name": "COL11",
+      "type": "smallint"
+    },
+    {
+      "name": "COL12",
+      "type": "smallint"
+    },
+    {
+      "name": "COL13",
+      "type": "smallint"
+    },
+    {
+      "name": "COL14",
+      "type": "smallint"
+    },
+    {
+      "name": "COL15",
+      "type": "smallint"
+    },
+    {
+      "name": "COL16",
+      "type": "smallint"
+    },
+    {
+      "name": "COL17",
+      "type": "smallint"
+    },
+    {
+      "name": "COL18",
+      "type": "smallint"
+    },
+    {
+      "name": "COL19",
+      "type": "smallint"
+    },
+    {
+      "name": "COL20",
+      "type": "smallint"
+    },
+    {
+      "name": "COL21",
+      "type": "smallint"
+    },
+    {
+      "name": "COL22",
+      "type": "smallint"
+    },
+    {
+      "name": "COL23",
+      "type": "smallint"
+    },
+    {
+      "name": "COL24",
+      "type": "smallint"
+    },
+    {
+      "name": "COL25",
+      "type": "smallint"
+    },
+    {
+      "name": "COL26",
+      "type": "smallint"
+    },
+    {
+      "name": "COL27",
+      "type": "smallint"
+    },
+    {
+      "name": "COL28",
+      "type": "smallint"
+    },
+    {
+      "name": "COL29",
+      "type": "smallint"
+    },
+    {
+      "name": "COL30",
+      "type": "smallint"
+    },
+    {
+      "name": "COL31",
+      "type": "smallint"
+    },
+    {
+      "name": "COL32",
+      "type": "smallint"
+    },
+    {
+      "name": "COL33",
+      "type": "smallint"
+    },
+    {
+      "name": "COL34",
+      "type": "smallint"
+    },
+    {
+      "name": "COL35",
+      "type": "smallint"
+    },
+    {
+      "name": "COL36",
+      "type": "smallint"
+    },
+    {
+      "name": "COL37",
+      "type": "smallint"
+    },
+    {
+      "name": "COL38",
+      "type": "smallint"
+    },
+    {
+      "name": "COL39",
+      "type": "smallint"
+    },
+    {
+      "name": "COL40",
+      "type": "smallint"
+    },
+    {
+      "name": "COL41",
+      "type": "smallint"
+    },
+    {
+      "name": "COL42",
+      "type": "smallint"
+    },
+    {
+      "name": "COL43",
+      "type": "smallint"
+    },
+    {
+      "name": "COL44",
+      "type": "smallint"
+    },
+    {
+      "name": "COL45",
+      "type": "smallint"
+    },
+    {
+      "name": "COL46",
+      "type": "smallint"
+    },
+    {
+      "name": "COL47",
+      "type": "smallint"
+    },
+    {
+      "name": "COL48",
+      "type": "smallint"
+    },
+    {
+      "name": "COL49",
+      "type": "smallint"
+    },
+    {
+      "name": "COL50",
+      "type": "smallint"
+    },
+    {
+      "name": "COL51",
+      "type": "smallint"
+    },
+    {
+      "name": "COL52",
+      "type": "smallint"
+    },
+    {
+      "name": "COL53",
+      "type": "smallint"
+    },
+    {
+      "name": "COL54",
+      "type": "smallint"
+    },
+    {
+      "name": "COL55",
+      "type": "smallint"
+    },
+    {
+      "name": "COL56",
+      "type": "smallint"
+    },
+    {
+      "name": "COL57",
+      "type": "smallint"
+    },
+    {
+      "name": "COL58",
+      "type": "smallint"
+    },
+    {
+      "name": "COL59",
+      "type": "smallint"
+    },
+    {
+      "name": "COL60",
+      "type": "smallint"
+    },
+    {
+      "name": "COL61",
+      "type": "smallint"
+    },
+    {
+      "name": "COL62",
+      "type": "smallint"
+    },
+    {
+      "name": "COL63",
+      "type": "smallint"
+    }
+  ]
+}

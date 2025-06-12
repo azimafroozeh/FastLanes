@@ -8,6 +8,7 @@
 #include "data/fannie_mae.hpp"
 #include "data/fc_bench.hpp"
 #include "data/generated.hpp"
+#include "data/image_ds.hpp"
 #include "data/issues.hpp"
 #include "data/public_bi.hpp"
 #include "data/sdrbench.hpp"
