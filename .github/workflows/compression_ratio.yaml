@@ -9,7 +9,7 @@ on:
       - dev
 
 jobs:
-  cli:
+  bench_compression_ratio:
     runs-on: macos-latest
 
     steps:
