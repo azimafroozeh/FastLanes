@@ -42,7 +42,7 @@ jobs:
       - name: Run CLI tests
         run: |
           cd build
-          ctest --output-on-failure --parallel $BUILD_THREADS
+          ctest --output-on-failure --parallel $BUILD_THREADS -R cli
 
       - name: Upload test logs on failure
         if: failure()
