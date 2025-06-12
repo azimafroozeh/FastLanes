@@ -1,0 +1,91 @@
+name: COMPRESSION RATIO
+run-name: >-
+  ${{ github.workflow }} on ${{ github.ref_name }} (#${{ github.run_number }}) — ${{ github.event.pull_request.title || github.event.head_commit.message }}
+
+on:
+  push:
+  pull_request:
+    branches: [ main, dev ]
+
+jobs:
+  cli:
+    runs-on: ubuntu-latest
+    env:
+      BUILD_THREADS: ${{ runner.cores }}
+
+    steps:
+      - name: Checkout current commit
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - name: Install LLVM
+        uses: ./.github/actions/install-llvm
+
+      - name: Clone dev branch
+        run: |
+          git clone --branch dev https://github.com/${{ github.repository }} code-dev
+
+      - name: Build & extract baseline CSV
+        id: baseline
+        run: |
+          cd code-dev
+          mkdir -p build && cd build
+          cmake -G Ninja \
+            -DCMAKE_BUILD_TYPE=Release \
+            -DCMAKE_C_COMPILER=clang \
+            -DCMAKE_CXX_COMPILER=clang++ \
+            -DFLS_BUILD_CLI=OFF \
+            -DFLS_BUILD_TESTING=OFF \
+            -DFLS_BUILD_BENCHMARKING=ON \
+            -DFLS_ENABLE_INSTALL=OFF \
+            ..
+          cmake --build . --parallel $BUILD_THREADS --target benchmark_compression_ratio
+          # copy the repo-written CSV into workspace
+          cp benchmark/result/compression_ratio/tpch/fastlanes.csv $GITHUB_WORKSPACE/dev-compression.csv
+
+      - name: Build & extract current CSV
+        id: current
+        run: |
+          cd $GITHUB_WORKSPACE
+          mkdir -p build && cd build
+          cmake -G Ninja \
+            -DCMAKE_BUILD_TYPE=Release \
+            -DCMAKE_C_COMPILER=clang \
+            -DCMAKE_CXX_COMPILER=clang++ \
+            -DFLS_BUILD_CLI=OFF \
+            -DFLS_BUILD_TESTING=OFF \
+            -DFLS_BUILD_BENCHMARKING=ON \
+            -DFLS_ENABLE_INSTALL=OFF \
+            ..
+          cmake --build . --parallel $BUILD_THREADS --target benchmark_compression_ratio
+          cp benchmark/result/compression_ratio/tpch/fastlanes.csv $GITHUB_WORKSPACE/curr-compression.csv
+
+      - name: Upload raw CSVs
+        if: failure() || github.event_name == 'pull_request'
+        uses: actions/upload-artifact@v4
+        with:
+          name: compression-csvs
+          path:
+            - dev-compression.csv
+            - curr-compression.csv
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.x'
+
+      - name: Generate compression report
+        run: |
+          python .github/scripts/compression_report.py \
+            --baseline dev-compression.csv \
+            --current  curr-compression.csv \
+            --out      report.md
+
+      - name: Comment compression regression table
+        if: ${{ github.event_name == 'pull_request' }}
+        uses: peter-evans/create-or-update-comment@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          issue-number: ${{ github.event.pull_request.number }}
+          body-file: report.md
