@@ -6,11 +6,11 @@ add_library(FastLanes::benchmarker ALIAS fastlanes_benchmarker)
 add_executable(bench_compression_ratio bench_compression_ratio.cpp)
 target_link_libraries(bench_compression_ratio PUBLIC FastLanes FastLanes::benchmarker)
 
-add_executable(benchmark_decompression_time benchmark_decompression_time.cpp)
-target_link_libraries(benchmark_decompression_time PUBLIC FastLanes FastLanes::benchmarker)
+add_executable(bench_decompression_time bench_decompression_time.cpp)
+target_link_libraries(bench_decompression_time PUBLIC FastLanes FastLanes::benchmarker)
 
-add_executable(benchmark_random_access benchmark_random_access.cpp)
-target_link_libraries(benchmark_random_access PUBLIC FastLanes FastLanes::benchmarker)
+add_executable(bench_random_access bench_random_access.cpp)
+target_link_libraries(bench_random_access PUBLIC FastLanes FastLanes::benchmarker)
 
 add_executable(bench_decoding_ffor bench_decoding_ffor.cpp)
 target_link_libraries(bench_decoding_ffor PUBLIC FastLanes FastLanes::benchmarker)

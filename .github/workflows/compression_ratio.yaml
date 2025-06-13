@@ -42,12 +42,10 @@ jobs:
             -DCMAKE_BUILD_TYPE=Release \
             -DCMAKE_C_COMPILER=clang \
             -DCMAKE_CXX_COMPILER=clang++ \
-            -DFLS_BUILD_CLI=OFF \
-            -DFLS_BUILD_TESTING=OFF \
             -DFLS_BUILD_BENCHMARKING=ON \
             -DFLS_ENABLE_INSTALL=OFF \
             ..
-          cmake --build . --parallel $BUILD_THREADS --target benchmark_compression_ratio
+          cmake --build . --parallel $BUILD_THREADS --target bench_compression_ratio
           cp benchmark/result/compression_ratio/tpch/fastlanes.csv $GITHUB_WORKSPACE/dev-compression.csv
 
       # 6) Build & extract current (this commit)
