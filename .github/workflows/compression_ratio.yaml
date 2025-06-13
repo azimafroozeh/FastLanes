@@ -48,8 +48,8 @@ jobs:
           cmake --build . --parallel $BUILD_THREADS --target bench_compression_ratio
           cp benchmark/result/compression_ratio/tpch/fastlanes.csv $GITHUB_WORKSPACE/dev-compression.csv
 
-      # 6) Build & extract current (this commit)
-      - name: Build & extract current (this commit)
+      # 6) Build, run & extract current (this commit)
+      - name: Build, run & extract current (this commit)
         id: current
         run: |
           cd $GITHUB_WORKSPACE
@@ -63,7 +63,11 @@ jobs:
             -DFLS_BUILD_BENCHMARKING=ON \
             -DFLS_ENABLE_INSTALL=OFF \
             ..
+          # build the benchmark executable
           cmake --build . --parallel $BUILD_THREADS --target bench_compression_ratio
+          # now actually run it to produce the CSV
+          ./benchmark/bench_compression_ratio
+          # copy the generated CSV out for comparison
           cp benchmark/result/compression_ratio/tpch/fastlanes.csv $GITHUB_WORKSPACE/curr-compression.csv
 
       # 7) Upload raw CSVs for artifacts or failure inspection
