@@ -63,7 +63,7 @@ jobs:
             -DFLS_BUILD_BENCHMARKING=ON \
             -DFLS_ENABLE_INSTALL=OFF \
             ..
-          cmake --build . --parallel $BUILD_THREADS --target benchmark_compression_ratio
+          cmake --build . --parallel $BUILD_THREADS --target bench_compression_ratio
           cp benchmark/result/compression_ratio/tpch/fastlanes.csv $GITHUB_WORKSPACE/curr-compression.csv
 
       # 7) Upload raw CSVs for artifacts or failure inspection
