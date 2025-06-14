@@ -72,6 +72,7 @@ private:
 
 // Create instances for colored output streams
 inline ColorStream green_cout(std::cout, Color::GREEN);
+inline ColorStream blue_cout(std::cout, Color::BLUE);
 inline ColorStream yellow_cout(std::cout, Color::YELLOW);
 inline ColorStream magenta_cout(std::cout, Color::MAGENTA);
 inline ColorStream cyan_cout(std::cout, Color::CYAN);

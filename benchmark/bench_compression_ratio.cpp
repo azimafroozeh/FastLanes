@@ -3,60 +3,65 @@
 using namespace fastlanes; // NOLINT
 
 struct BenchmarkCase {
+	std::string    name;
 	dataset_view_t dataset;
 	std::string    result_file_path;
 	std::string    detailed_result_file_path;
 };
 
 BenchmarkCase public_bi_case {
+    "public_bi",
     public_bi::dataset,
     std::string(FLS_CMAKE_SOURCE_DIR) + "/benchmark/result/compression_ratio/public_bi/fastlanes.csv",
     std::string(FLS_CMAKE_SOURCE_DIR) + "/benchmark/result/compression_ratio/public_bi/fastlanes_detailed.csv"};
 
 BenchmarkCase fannie_mae_case {
+    "fannie_mae",
     fannie_mae::dataset,
     std::string(FLS_CMAKE_SOURCE_DIR) + "/benchmark/result/compression_ratio/fannie_mae/fastlanes.csv",
     std::string(FLS_CMAKE_SOURCE_DIR) + "/benchmark/result/compression_ratio/fannie_mae/fastlanes_detailed.csv"};
 
 BenchmarkCase sdrbnech_case {
+    "sdrbnech",
     sdrbnech::dataset,
     std::string(FLS_CMAKE_SOURCE_DIR) + "/benchmark/result/compression_ratio/sdrbnech/fastlanes.csv",
     std::string(FLS_CMAKE_SOURCE_DIR) + "/benchmark/result/compression_ratio/sdrbnech/fastlanes_detailed.csv"};
 
 BenchmarkCase fc_bench_case {
+    "fc_bench",
     fc_bench::dataset,
     std::string(FLS_CMAKE_SOURCE_DIR) + "/benchmark/result/compression_ratio/fc_bench/fastlanes.csv",
     std::string(FLS_CMAKE_SOURCE_DIR) + "/benchmark/result/compression_ratio/fc_bench/fastlanes_detailed.csv"};
 
 BenchmarkCase nextia_jd_case {
+    "nextia_jd",
     NextiaJD::dataset,
     std::string(FLS_CMAKE_SOURCE_DIR) + "/benchmark/result/compression_ratio/nextia_jd/fastlanes.csv",
     std::string(FLS_CMAKE_SOURCE_DIR) + "/benchmark/result/compression_ratio/nextia_jd/fastlanes_detailed.csv"};
 
-BenchmarkCase tpch_case {Tpch::dataset,
+BenchmarkCase tpch_case {"tpch",
+                         Tpch::dataset,
                          std::string(FLS_CMAKE_SOURCE_DIR) + "/benchmark/result/compression_ratio/tpch/fastlanes.csv",
                          std::string(FLS_CMAKE_SOURCE_DIR) +
                              "/benchmark/result/compression_ratio/tpch/fastlanes_detailed.csv"};
 
 void run_compression_ratio_benchmark(const BenchmarkCase& benchmark_case) {
+	// Starting message in blue
+	az_printer::blue_cout << "=== Starting benchmark case: " << benchmark_case.name << " ===" << std::endl;
+
 	const auto& result_file_path          = benchmark_case.result_file_path;
 	const auto  detailed_result_file_path = benchmark_case.detailed_result_file_path;
 	const auto& dataset                   = benchmark_case.dataset;
 
-	// Prepare a path for the new summary of compression ratios
 	auto ratio_file_path = std::filesystem::path(result_file_path).parent_path() / "compression_summary.csv";
-
-	// Ensure the output directory exists
 	create_directories(std::filesystem::path(result_file_path).parent_path());
 
-	// Containers for results to be sorted later
 	std::vector<std::tuple<std::string, n_t, uint64_t>>                                         main_results;
 	std::vector<std::tuple<std::string, n_t, std::string, DataType, n_t, RPNT, double, double>> detailed_results;
-
-	std::mutex                     results_mutex;
-	std::mutex                     dirs_mutex;
-	std::vector<path>              thread_specific_dirs;
-	std::vector<std::future<void>> futures;
+	std::mutex                                                                                  results_mutex;
+	std::mutex                                                                                  dirs_mutex;
+	std::vector<path>                                                                           thread_specific_dirs;
+	std::vector<std::future<void>>                                                              futures;
 	futures.reserve(dataset.size());
 
 	for (const auto& [table_name, file_path] : dataset) {
@@ -70,8 +75,7 @@ void run_compression_ratio_benchmark(const BenchmarkCase& benchmark_case) {
 				thread_specific_dirs.push_back(fls_dir);
 			}
 
-			auto fls_size = benchmarker.bench(file_path, fls_dir);
-			// Determine CSV file path by scanning the directory for the .csv file
+			auto                  fls_size = benchmarker.bench(file_path, fls_dir);
 			std::filesystem::path csv_file_path;
 			for (auto& entry : std::filesystem::directory_iterator(file_path)) {
 				if (entry.path().extension() == ".csv") {
@@ -107,8 +111,9 @@ void run_compression_ratio_benchmark(const BenchmarkCase& benchmark_case) {
 				}
 			}
 
-			az_printer::green_cout << "-- Table " << table_name << " bench in " << fls_dir << ", FLS size=" << fls_size
-			                       << ", CSV size=" << csv_size << std::endl;
+			// Per-table progress in yellow
+			az_printer::yellow_cout << "-- Table " << table_name << " bench in " << fls_dir << ", FLS size=" << fls_size
+			                        << ", CSV size=" << csv_size << std::endl;
 		}));
 	}
 	for (auto& f : futures)
@@ -122,6 +127,7 @@ void run_compression_ratio_benchmark(const BenchmarkCase& benchmark_case) {
 		return std::get<0>(a) < std::get<0>(b);
 	});
 
+	// Summary outputs in yellow
 	{
 		std::ofstream out(result_file_path);
 		out << "table_name,version,file_size\n";
@@ -129,7 +135,6 @@ void run_compression_ratio_benchmark(const BenchmarkCase& benchmark_case) {
 			out << table << "," << Info::get_version() << "," << fls_sz << "\n";
 		}
 	}
-
 	{
 		std::ofstream out(detailed_result_file_path);
 		out << "compression,version,table_name,id,name,data_type,size(bytes),expression,bytes_per_value,bits_per_"
@@ -141,12 +146,10 @@ void run_compression_ratio_benchmark(const BenchmarkCase& benchmark_case) {
 			    << "\n";
 		}
 	}
-
 	{
 		std::ofstream out(ratio_file_path);
-		if (!out.is_open()) {
+		if (!out.is_open())
 			throw std::runtime_error("Failed to open compression summary file");
-		}
 		out << "table_name,version,csv_size,fls_size,compression_ratio\n";
 		for (auto& [table, fls_sz, csv_sz] : main_results) {
 			double ratio = double(csv_sz) / double(fls_sz);
@@ -157,15 +160,29 @@ void run_compression_ratio_benchmark(const BenchmarkCase& benchmark_case) {
 
 	for (auto& dir : thread_specific_dirs) {
 		std::filesystem::remove_all(dir);
-		az_printer::green_cout << "-- Removed " << dir << std::endl;
+		// cleanup logs in yellow
+		az_printer::yellow_cout << "-- Removed " << dir << std::endl;
 	}
 
-	az_printer::green_cout << "-- Results written to " << result_file_path << std::endl;
-	az_printer::green_cout << "-- Detailed results to " << detailed_result_file_path << std::endl;
-	az_printer::green_cout << "-- Summary to " << ratio_file_path << std::endl;
+	// Final summary in yellow
+	az_printer::yellow_cout << "-- Results written to " << result_file_path << std::endl;
+	az_printer::yellow_cout << "-- Detailed results to " << detailed_result_file_path << std::endl;
+	az_printer::yellow_cout << "-- Summary to " << ratio_file_path << std::endl;
+
+	// Finished message in green
+	az_printer::green_cout << "=== Finished benchmark case: " << benchmark_case.name << " ===" << std::endl;
 }
 
 int main() {
-	run_compression_ratio_benchmark(public_bi_case);
+	std::vector<BenchmarkCase> cases = {public_bi_case, //
+	                                                    // fannie_mae_case, fix this
+	                                    sdrbnech_case,
+	                                    fc_bench_case,
+	                                    nextia_jd_case,
+	                                    tpch_case};
+
+	for (auto& bc : cases) {
+		run_compression_ratio_benchmark(bc);
+	}
 	return EXIT_SUCCESS;
 }
