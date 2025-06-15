@@ -1,4 +1,3 @@
-#pragma once
 #ifndef PROCESS_HPP
 #define PROCESS_HPP
 
@@ -39,7 +38,7 @@ inline fs::path process_jpeg(const fs::path& src, const fs::path& outDir) {
 
 	JDIMENSION W = dinfo.output_width;
 	JDIMENSION H = dinfo.output_height;
-	int        C = dinfo.output_components; // <- changed type
+	int        C = dinfo.output_components;
 
 	std::size_t raw_size = static_cast<std::size_t>(W) * static_cast<std::size_t>(H) * static_cast<std::size_t>(C);
 
@@ -124,7 +123,9 @@ inline fs::path process_jpeg(const fs::path& src, const fs::path& outDir) {
 		double d = double(raw[i]) - double(raw2[i]);
 		mse += d * d;
 	}
-	mse /= raw_size;
+	// Fixed: cast raw_size to double
+	mse /= static_cast<double>(raw_size);
+
 	double psnr = (mse == 0.0) ? std::numeric_limits<double>::infinity() : 10.0 * std::log10((255.0 * 255.0) / mse);
 
 	JpegMeta A, B;
@@ -133,8 +134,10 @@ inline fs::path process_jpeg(const fs::path& src, const fs::path& outDir) {
 	print_meta_table(
 	    src.filename().string(), A, detect_jpeg_process(src), dst.filename().string(), B, detect_jpeg_process(dst));
 	std::cout << "PSNR: " << psnr << " dB\n\n";
+
 	return dst;
 }
 
 } // namespace jpeg_tools
-#endif
+
+#endif // PROCESS_HPP

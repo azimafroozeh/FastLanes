@@ -1,0 +1,5 @@
+{
+  "columns": [
+    { "name": "zigzag_coeffs", "type": "smallint" }
+  ]
+}
