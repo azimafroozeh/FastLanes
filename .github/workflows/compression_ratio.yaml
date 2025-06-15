@@ -13,26 +13,35 @@ jobs:
     runs-on: macos-latest
 
     steps:
-      # 1) Check out this commit
+      # --------------------------------------------------------------------
+      # 1) Checkout this commit
+      # --------------------------------------------------------------------
       - name: Checkout current commit
         uses: actions/checkout@v3
         with:
           fetch-depth: 0
 
-      # 2) Install LLVM toolchain
+      # --------------------------------------------------------------------
+      # 2) Toolchain
+      # --------------------------------------------------------------------
       - name: Install LLVM
         uses: ./.github/actions/install-llvm
 
-      # 3) Clone the dev branch for baseline
+      # --------------------------------------------------------------------
+      # 3) Clone baseline (dev)
+      # --------------------------------------------------------------------
       - name: Clone dev branch
-        run: |
-          git clone --branch dev https://github.com/${{ github.repository }} code-dev
+        run: git clone --branch dev https://github.com/${{ github.repository }} code-dev
 
+      # --------------------------------------------------------------------
       # 4) Detect CPU count
+      # --------------------------------------------------------------------
       - name: Detect CPU count
-        run: echo "BUILD_THREADS=$(nproc)" >> "$GITHUB_ENV"
+        run: echo "BUILD_THREADS=$(nproc)" >>"$GITHUB_ENV"
 
-      # 5) Build & run the baseline (dev)
+      # --------------------------------------------------------------------
+      # 5) Build & run baseline
+      # --------------------------------------------------------------------
       - name: Build & extract baseline (dev)
         run: |
           cd code-dev
@@ -45,16 +54,23 @@ jobs:
             -DFLS_ENABLE_INSTALL=OFF \
             ..
           cmake --build . --parallel "$BUILD_THREADS" --target bench_compression_ratio
-          # Merge every compression_summary.csv into one file
-          { \
-            first=1; \
-            for f in $(find benchmark/result/compression_ratio -name compression_summary.csv); do \
-              if [ $first -eq 1 ]; then cat "$f" > "$GITHUB_WORKSPACE/dev-compression.csv"; first=0; \
-              else tail -n +2 "$f" >> "$GITHUB_WORKSPACE/dev-compression.csv"; fi; \
-            done; \
-          }
+          
+          # Pick compression_summary.csv if present, otherwise fall back to fastlanes.csv
+          out="$GITHUB_WORKSPACE/dev-compression.csv"
+          first=1
+          for f in $(find benchmark/result/compression_ratio -name compression_summary.csv); do
+            if [ $first -eq 1 ]; then cat "$f" >"$out"; first=0; else tail -n +2 "$f" >>"$out"; fi
+          done
+          # If we didn't find any compression_summary.csv, use fastlanes.csv
+          if [ $first -eq 1 ]; then
+            for f in $(find benchmark/result/compression_ratio -name fastlanes.csv); do
+              if [ $first -eq 1 ]; then cat "$f" >"$out"; first=0; else tail -n +2 "$f" >>"$out"; fi
+            done
+          fi
 
-      # 6) Build & run the benchmarks for this commit
+      # --------------------------------------------------------------------
+      # 6) Build & run current commit
+      # --------------------------------------------------------------------
       - name: Build & extract current (this commit)
         run: |
           cd "$GITHUB_WORKSPACE"
@@ -69,15 +85,21 @@ jobs:
             -DFLS_ENABLE_INSTALL=OFF \
             ..
           cmake --build . --parallel "$BUILD_THREADS" --target bench_compression_ratio
-          { \
-            first=1; \
-            for f in $(find benchmark/result/compression_ratio -name compression_summary.csv); do \
-              if [ $first -eq 1 ]; then cat "$f" > "$GITHUB_WORKSPACE/curr-compression.csv"; first=0; \
-              else tail -n +2 "$f" >> "$GITHUB_WORKSPACE/curr-compression.csv"; fi; \
-            done; \
-          }
+          
+          out="$GITHUB_WORKSPACE/curr-compression.csv"
+          first=1
+          for f in $(find benchmark/result/compression_ratio -name compression_summary.csv); do
+            if [ $first -eq 1 ]; then cat "$f" >"$out"; first=0; else tail -n +2 "$f" >>"$out"; fi
+          done
+          if [ $first -eq 1 ]; then
+            for f in $(find benchmark/result/compression_ratio -name fastlanes.csv); do
+              if [ $first -eq 1 ]; then cat "$f" >"$out"; first=0; else tail -n +2 "$f" >>"$out"; fi
+            done
+          fi
 
-      # 7) Upload raw CSVs for inspection
+      # --------------------------------------------------------------------
+      # 7) Upload raw CSVs
+      # --------------------------------------------------------------------
       - name: Upload raw CSVs
         if: ${{ failure() || github.event_name == 'pull_request' }}
         uses: actions/upload-artifact@v4
@@ -87,21 +109,27 @@ jobs:
             dev-compression.csv
             curr-compression.csv
 
-      # 8) Python for the Makefile post-processing
+      # --------------------------------------------------------------------
+      # 8) Python (for Makefile recipe)
+      # --------------------------------------------------------------------
       - name: Set up Python
         uses: actions/setup-python@v4
         with:
           python-version: '3.x'
 
-      # 9) Generate the Markdown regression report
+      # --------------------------------------------------------------------
+      # 9) Generate Markdown report
+      # --------------------------------------------------------------------
       - name: Generate compression report via Makefile
         run: |
           make -f mk/compression_report.mk \
-            BASELINE="$GITHUB_WORKSPACE/dev-compression.csv" \
-            CURRENT="$GITHUB_WORKSPACE/curr-compression.csv" \
+            BASELINE=dev-compression.csv \
+            CURRENT=curr-compression.csv \
             REPORT=report.md
 
-      # 10) Comment the regression table back to the PR
+      # --------------------------------------------------------------------
+      # 10) Comment back to PR
+      # --------------------------------------------------------------------
       - name: Comment compression regression table
         if: ${{ github.event_name == 'pull_request' }}
         uses: peter-evans/create-or-update-comment@v4
