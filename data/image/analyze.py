@@ -7,8 +7,10 @@ Casts each numeric column to int16 (smallint) and computes:
   - min / max (and flags if OUT_OF_RANGE)
   - percentage of zeros
   - number of unique values
+Also computes the overall percentage of zeros across all numeric entries.
 Prints all results in a single ASCII table with borders.
-Assumes pipe-delimited input ("|") and assigns proper column names even if the file lacks a header.
+Assumes pipe-delimited input ("|") and assigns proper column names
+even if the file lacks a header.
 """
 
 import pandas as pd
@@ -57,6 +59,16 @@ def analyze_csv(path: str):
     cols = ['component', 'block_row', 'block_col'] + [f'COL{k}' for k in range(num_cols - 3)]
     df.columns = cols
 
+    # --- NEW: compute overall zero percentage across all numeric cells ---
+    numeric_df = df.select_dtypes(include=[np.number])
+    total_numeric = numeric_df.size
+    zero_count = (numeric_df == 0).sum().sum()
+    overall_zero_pct = zero_count / total_numeric * 100
+
+    print(f"\nOverall zeros: {zero_count} / {total_numeric} "
+          f"→ {overall_zero_pct:.2f}% of all numeric values are zero.\n")
+
+    # Prepare per-column summary
     summary = []
     int16_min = np.iinfo(np.int16).min
     int16_max = np.iinfo(np.int16).max
@@ -65,7 +77,6 @@ def analyze_csv(path: str):
         rec = {'column': col}
         series = df[col]
 
-        # Count unique values for all columns
         unique_count = series.nunique()
 
         if not pd.api.types.is_numeric_dtype(series):
@@ -98,5 +109,5 @@ def analyze_csv(path: str):
 
 
 if __name__ == "__main__":
-    csv_path = "5547758_eea9edfd54_n_rec_dct.csv"
+    csv_path = "raw64/5547758_eea9edfd54_n.csv"
     analyze_csv(csv_path)
