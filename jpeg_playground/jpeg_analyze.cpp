@@ -44,16 +44,20 @@ int main() {
 	fs::path outDir = root / "jpeg_playground" / "../data/image";
 
 	// all five extractor variants
-	const Config cfgs[] = {// zig-zag, 64-column
-	                       {"zigzag64", schema64, dct_extractor::extract_dct_to_csv_64cols},
-	                       // zig-zag, quoted single-field
-	                       {"zigzag_blocks", schemaStream, dct_extractor::extract_zigzag_blocks_csv},
-	                       // zig-zag, stream 64 rows
-	                       {"zigzag_stream", schemaStream, dct_extractor::extract_zigzag_stream_64rows},
-	                       // raw, natural-order 64-column
-	                       {"raw64", schema64, dct_extractor::extract_raw_dct_to_csv_64cols},
-	                       // raw, stream 64 rows
-	                       {"raw_stream", schemaStream, dct_extractor::extract_raw_stream_64rows}};
+	const Config cfgs[] = {
+	    // zig-zag, 64-column
+	    {"zigzag64", schema64, dct_extractor::extract_dct_to_csv_64cols},
+	    // zig-zag, quoted single-field
+	    {"zigzag_blocks", schemaStream, dct_extractor::extract_zigzag_blocks_csv},
+	    // zig-zag, stream 64 rows
+	    {"zigzag_stream", schemaStream, dct_extractor::extract_zigzag_stream_64rows},
+	    // raw, natural-order 64-column
+	    {"raw64", schema64, dct_extractor::extract_raw_dct_to_csv_64cols},
+	    // raw, stream 64 rows
+	    {"raw_stream", schemaStream, dct_extractor::extract_raw_stream_64rows},
+	    {"zigzag_index_stream", schemaStream, dct_extractor::extract_zigzag_cols_stream},
+	    {"raw_index", schemaStream, dct_extractor::extract_raw_index_stream},
+	};
 
 	// create each config sub-dir + write its schema.json once
 	for (auto const& cfg : cfgs) {

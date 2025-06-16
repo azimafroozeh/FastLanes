@@ -1,5 +1,7 @@
 table_name,version,csv_size,fls_size,compression_ratio
-raw64,0.1.4,473723,76142,6.22
-raw_stream,0.1.4,473723,151015,3.14
-zigzag64,0.1.4,473723,76142,6.22
-zigzag_stream,0.1.4,473723,152931,3.10
+raw64,0.1.4,473723,67601,7.01
+raw_index,0.1.4,473723,70572,6.71
+raw_stream,0.1.4,473723,101654,4.66
+zigzag64,0.1.4,473723,67601,7.01
+zigzag_index_stream,0.1.4,473723,75130,6.31
+zigzag_stream,0.1.4,473723,101679,4.66
