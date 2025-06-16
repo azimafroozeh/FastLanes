@@ -55,8 +55,14 @@ int main() {
 	    {"raw64", schema64, dct_extractor::extract_raw_dct_to_csv_64cols},
 	    // raw, stream 64 rows
 	    {"raw_stream", schemaStream, dct_extractor::extract_raw_stream_64rows},
+	    //
 	    {"zigzag_index_stream", schemaStream, dct_extractor::extract_zigzag_cols_stream},
+	    //
 	    {"raw_index", schemaStream, dct_extractor::extract_raw_index_stream},
+	    //
+	    {"raw_nonzero", schemaStream, dct_extractor::extract_raw_stream_nonzero},
+	    //
+	    {"zigzag_nonzero", schemaStream, dct_extractor::extract_zigzag_stream_nonzero},
 	};
 
 	// create each config sub-dir + write its schema.json once

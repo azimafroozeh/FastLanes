@@ -1,7 +1,9 @@
 table_name,version,file_size
-raw64,0.1.4,67601
-raw_index,0.1.4,70572
-raw_stream,0.1.4,101654
-zigzag64,0.1.4,67601
-zigzag_index_stream,0.1.4,75130
-zigzag_stream,0.1.4,101679
+raw64,0.1.4,76142
+raw_index,0.1.4,80610
+raw_nonzero,0.1.4,41640
+raw_stream,0.1.4,151015
+zigzag64,0.1.4,76142
+zigzag_index_stream,0.1.4,77813
+zigzag_nonzero,0.1.4,41640
+zigzag_stream,0.1.4,152931

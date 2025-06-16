@@ -490,6 +490,135 @@ inline bool extract_raw_index_stream(const fs::path& jpg, const fs::path& csv) {
 	return true;
 }
 
+/**
+ * extract_raw_stream_nonzero
+ * --------------------------
+ * Natural-order (0…63) scan of each 8×8 block, but **skip zeros**.
+ * Emits one line per non-zero coefficient, no separators.
+ *
+ * Useful for sparsity analysis or non-zero histogramming.
+ */
+inline bool extract_raw_stream_nonzero(const fs::path& jpg, const fs::path& csv) {
+	// 1) libjpeg setup
+	jpeg_decompress_struct dinfo;
+	jpeg_error_mgr         jerr;
+	dinfo.err = jpeg_std_error(&jerr);
+	jpeg_create_decompress(&dinfo);
+	FILE* fp = std::fopen(jpg.string().c_str(), "rb");
+	if (!fp) {
+		perror("fopen");
+		jpeg_destroy_decompress(&dinfo);
+		return false;
+	}
+	jpeg_stdio_src(&dinfo, fp);
+	if (jpeg_read_header(&dinfo, TRUE) != JPEG_HEADER_OK) {
+		std::cerr << "jpeg_read_header failed\n";
+		fclose(fp);
+		jpeg_destroy_decompress(&dinfo);
+		return false;
+	}
+	jvirt_barray_ptr* coef = jpeg_read_coefficients(&dinfo);
+
+	// 2) open output CSV
+	std::ofstream out(csv);
+	if (!out) {
+		std::cerr << "Cannot open " << csv << "\n";
+		jpeg_finish_decompress(&dinfo);
+		fclose(fp);
+		jpeg_destroy_decompress(&dinfo);
+		return false;
+	}
+
+	// 3) iterate components, blocks, natural-order coefficients
+	for (int c = 0; c < dinfo.num_components; ++c) {
+		auto*    ci = &dinfo.comp_info[c];
+		unsigned Wb = ci->width_in_blocks, Hb = ci->height_in_blocks;
+
+		for (unsigned br = 0; br < Hb; ++br) {
+			// fetch this row of blocks
+			JBLOCKARRAY row = dinfo.mem->access_virt_barray((j_common_ptr)&dinfo, coef[c], br, 1, FALSE);
+
+			for (unsigned bc = 0; bc < Wb; ++bc) {
+				JCOEFPTR blk = row[0][bc];
+				// emit only non-zero coefficients
+				for (int k = 0; k < 64; ++k) {
+					if (blk[k] != 0)
+						out << blk[k] << '\n';
+				}
+			}
+		}
+	}
+
+	// 4) cleanup
+	out.close();
+	jpeg_finish_decompress(&dinfo);
+	fclose(fp);
+	jpeg_destroy_decompress(&dinfo);
+	return true;
+}
+
+/**
+ * extract_zigzag_stream_nonzero
+ * ------------------------------
+ * Zig-zag order (0..63) per block, but emit only non-zero values.
+ * One line per non-zero coefficient, no separators.
+ */
+inline bool extract_zigzag_stream_nonzero(const fs::path& jpg, const fs::path& csv) {
+	// 1) JPEG setup
+	jpeg_decompress_struct dinfo;
+	jpeg_error_mgr         jerr;
+	dinfo.err = jpeg_std_error(&jerr);
+	jpeg_create_decompress(&dinfo);
+	FILE* fp = std::fopen(jpg.string().c_str(), "rb");
+	if (!fp) {
+		perror("fopen");
+		jpeg_destroy_decompress(&dinfo);
+		return false;
+	}
+	jpeg_stdio_src(&dinfo, fp);
+	if (jpeg_read_header(&dinfo, TRUE) != JPEG_HEADER_OK) {
+		std::cerr << "jpeg_read_header failed\n";
+		fclose(fp);
+		jpeg_destroy_decompress(&dinfo);
+		return false;
+	}
+	jvirt_barray_ptr* coef = jpeg_read_coefficients(&dinfo);
+
+	// 2) Open CSV
+	std::ofstream out(csv);
+	if (!out) {
+		std::cerr << "Cannot open " << csv << "\n";
+		jpeg_finish_decompress(&dinfo);
+		fclose(fp);
+		jpeg_destroy_decompress(&dinfo);
+		return false;
+	}
+
+	// 3) Iterate all blocks, zig-zag each and emit only non-zero
+	for (int c = 0; c < dinfo.num_components; ++c) {
+		auto*    ci = &dinfo.comp_info[c];
+		unsigned Wb = ci->width_in_blocks, Hb = ci->height_in_blocks;
+		for (unsigned br = 0; br < Hb; ++br) {
+			JBLOCKARRAY row = dinfo.mem->access_virt_barray((j_common_ptr)&dinfo, coef[c], br, 1, FALSE);
+			for (unsigned bc = 0; bc < Wb; ++bc) {
+				JCOEFPTR blk = row[0][bc];
+				for (int zz = 0; zz < 64; ++zz) {
+					int v = blk[zigzag_map[zz]];
+					if (v != 0)
+						out << v << '\n';
+				}
+			}
+		}
+	}
+
+	// 4) Cleanup
+	out.close();
+	jpeg_finish_decompress(&dinfo);
+	fclose(fp);
+	jpeg_destroy_decompress(&dinfo);
+	return true;
+}
+
 } // namespace dct_extractor
 
 #endif // DCT_EXTRACTOR_HPP
