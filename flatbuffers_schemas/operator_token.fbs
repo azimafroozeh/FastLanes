@@ -198,4 +198,5 @@ enum OperatorToken : ushort {
   EXP_DICT_FLT_FFOR_SLPATCH_U32      = 143,
   EXP_DICT_U08_U08 = 144,
   EXP_DICT_FLT_U08 = 145,
+  EXP_LIST = 146,
 }

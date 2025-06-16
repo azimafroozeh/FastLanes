@@ -1,8 +1,8 @@
 # ─────────────────────────────────────────────────────────────
 # Generate FlatBuffers C++ code for footer schema (with DataType)
 # ─────────────────────────────────────────────────────────────
+# Relative path of this Makefile: mk/flatbuffers.mk
 
-# Determine the directory of this Makefile (mk/), then compute the project root
 MK_DIR      := $(dir $(lastword $(MAKEFILE_LIST)))
 PROJECT_ROOT:= $(abspath $(MK_DIR)/..)
 
@@ -23,25 +23,25 @@ generate_footer:
 	  echo "❌ '$(FBS_DIR)/footer.fbs' not found."; exit 1; \
 	fi
 
-        @echo "📦 Generating FlatBuffers C++ (footer + datatype)…"
-        @command -v flatc >/dev/null || { \
-            echo "❌ 'flatc' not found. Please install the FlatBuffers compiler."; \
-            exit 1; \
-        }
-        @mkdir -p "$(FBS_OUT)"
+	@echo "📦 Generating FlatBuffers C++ (footer + datatype)…"
+	@command -v flatc >/dev/null || { \
+	  echo "❌ 'flatc' not found. Please install the FlatBuffers compiler."; \
+	  exit 1; \
+	}
+	@mkdir -p "$(FBS_OUT)"
 	@flatc --cpp \
 	       --gen-object-api \
 	       --scoped-enums \
 	       --no-emit-min-max-enum-values \
 	       -I "$(FBS_DIR)" \
 	       -o "$(FBS_OUT)" \
-		   "$(FBS_DIR)/datatype.fbs" \
-		   "$(FBS_DIR)/decimal_type.fbs" \
-		   "$(FBS_DIR)/footer.fbs" \
-		   "$(FBS_DIR)/operator_token.fbs" \
-		   "$(FBS_DIR)/rpn.fbs" \
-		   "$(FBS_DIR)/column_descriptor.fbs" \
-		   "$(FBS_DIR)/rowgroup_descriptor.fbs" \
-		   "$(FBS_DIR)/table_descriptor.fbs"
+	       "$(FBS_DIR)/datatype.fbs" \
+	       "$(FBS_DIR)/decimal_type.fbs" \
+	       "$(FBS_DIR)/footer.fbs" \
+	       "$(FBS_DIR)/operator_token.fbs" \
+	       "$(FBS_DIR)/rpn.fbs" \
+	       "$(FBS_DIR)/column_descriptor.fbs" \
+	       "$(FBS_DIR)/rowgroup_descriptor.fbs" \
+	       "$(FBS_DIR)/table_descriptor.fbs"
 
 	@echo "✅ FlatBuffers C++ generated in $(FBS_OUT)"
