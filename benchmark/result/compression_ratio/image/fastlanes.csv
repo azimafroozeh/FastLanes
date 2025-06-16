@@ -1,0 +1,5 @@
+table_name,version,file_size
+raw64,0.1.4,76142
+raw_stream,0.1.4,151015
+zigzag64,0.1.4,76142
+zigzag_stream,0.1.4,152931

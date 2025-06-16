@@ -9,16 +9,20 @@
 namespace dct_extractor {
 namespace fs = std::filesystem;
 
-/* ── JPEG zig-zag map: zig-zag index → natural coefficient index ───────── */
+/* ──────────────────────────────────────────────────────────────
+ * JPEG zig-zag map: zig-zag index → natural block index
+ * ──────────────────────────────────────────────────────────── */
 static constexpr int zigzag_map[64] = {0,  1,  5,  6,  14, 15, 27, 28, 2,  4,  7,  13, 16, 26, 29, 42,
                                        3,  8,  12, 17, 25, 30, 41, 43, 9,  11, 18, 24, 31, 40, 44, 53,
                                        10, 19, 23, 32, 39, 45, 52, 54, 20, 22, 33, 38, 46, 51, 55, 60,
                                        21, 34, 37, 47, 50, 56, 59, 61, 35, 36, 48, 49, 57, 58, 62, 63};
 
 /* =======================================================================
- * 1. 64-column CSV, zig-zag order, pipe-delimited
+ * 1. extract_dct_to_csv_64cols
+ *    Zig-zag order, 64 columns, pipe-delimited
  * ===================================================================== */
 inline bool extract_dct_to_csv_64cols(const fs::path& jpg, const fs::path& csv) {
+	// libjpeg setup
 	jpeg_decompress_struct dinfo;
 	jpeg_error_mgr         jerr;
 	dinfo.err = jpeg_std_error(&jerr);
@@ -38,15 +42,17 @@ inline bool extract_dct_to_csv_64cols(const fs::path& jpg, const fs::path& csv) 
 	}
 	jvirt_barray_ptr* coef = jpeg_read_coefficients(&dinfo);
 
+	// open CSV
 	std::ofstream out(csv);
 	if (!out) {
-		std::cerr << "Cannot open " << csv << '\n';
+		std::cerr << "Cannot open " << csv << "\n";
 		jpeg_finish_decompress(&dinfo);
 		fclose(fp);
 		jpeg_destroy_decompress(&dinfo);
 		return false;
 	}
 
+	// iterate components, blocks
 	for (int c = 0; c < dinfo.num_components; ++c) {
 		auto* ci = &dinfo.comp_info[c];
 		for (unsigned br = 0; br < ci->height_in_blocks; ++br) {
@@ -55,13 +61,15 @@ inline bool extract_dct_to_csv_64cols(const fs::path& jpg, const fs::path& csv) 
 				JCOEFPTR blk = row[0][bc];
 				for (int zz = 0; zz < 64; ++zz) {
 					if (zz)
-						out << '|';
+						out << '|'; // pipe delimiter
 					out << blk[zigzag_map[zz]];
 				}
 				out << '\n';
 			}
 		}
 	}
+
+	// cleanup
 	out.close();
 	jpeg_finish_decompress(&dinfo);
 	fclose(fp);
@@ -70,7 +78,8 @@ inline bool extract_dct_to_csv_64cols(const fs::path& jpg, const fs::path& csv) 
 }
 
 /* =======================================================================
- * 2. Quoted single-field CSV, zig-zag order, internal pipes
+ * 2. extract_zigzag_blocks_csv
+ *    Zig-zag order, single quoted field, internal pipes
  * ===================================================================== */
 inline bool extract_zigzag_blocks_csv(const fs::path& jpg, const fs::path& csv) {
 	jpeg_decompress_struct dinfo;
@@ -94,7 +103,7 @@ inline bool extract_zigzag_blocks_csv(const fs::path& jpg, const fs::path& csv) 
 
 	std::ofstream out(csv);
 	if (!out) {
-		std::cerr << "Cannot open " << csv << '\n';
+		std::cerr << "Cannot open " << csv << "\n";
 		jpeg_finish_decompress(&dinfo);
 		fclose(fp);
 		jpeg_destroy_decompress(&dinfo);
@@ -113,10 +122,11 @@ inline bool extract_zigzag_blocks_csv(const fs::path& jpg, const fs::path& csv) 
 						out << '|';
 					out << blk[zigzag_map[zz]];
 				}
-				out << "\"" << '\n';
+				out << '"' << '\n';
 			}
 		}
 	}
+
 	out.close();
 	jpeg_finish_decompress(&dinfo);
 	fclose(fp);
@@ -125,7 +135,8 @@ inline bool extract_zigzag_blocks_csv(const fs::path& jpg, const fs::path& csv) 
 }
 
 /* =======================================================================
- * 3. Zig-zag stream: 64 lines per block (no blank separator)
+ * 3. extract_zigzag_stream_64rows
+ *    Zig-zag order, 64 lines per block, no blank separator
  * ===================================================================== */
 inline bool extract_zigzag_stream_64rows(const fs::path& jpg, const fs::path& csv) {
 	jpeg_decompress_struct dinfo;
@@ -149,7 +160,7 @@ inline bool extract_zigzag_stream_64rows(const fs::path& jpg, const fs::path& cs
 
 	std::ofstream out(csv);
 	if (!out) {
-		std::cerr << "Cannot open " << csv << '\n';
+		std::cerr << "Cannot open " << csv << "\n";
 		jpeg_finish_decompress(&dinfo);
 		fclose(fp);
 		jpeg_destroy_decompress(&dinfo);
@@ -162,11 +173,13 @@ inline bool extract_zigzag_stream_64rows(const fs::path& jpg, const fs::path& cs
 			JBLOCKARRAY row = dinfo.mem->access_virt_barray((j_common_ptr)&dinfo, coef[c], br, 1, FALSE);
 			for (unsigned bc = 0; bc < ci->width_in_blocks; ++bc) {
 				JCOEFPTR blk = row[0][bc];
-				for (int zz = 0; zz < 64; ++zz)
+				for (int zz = 0; zz < 64; ++zz) {
 					out << blk[zigzag_map[zz]] << '\n';
+				}
 			}
 		}
 	}
+
 	out.close();
 	jpeg_finish_decompress(&dinfo);
 	fclose(fp);
@@ -175,7 +188,8 @@ inline bool extract_zigzag_stream_64rows(const fs::path& jpg, const fs::path& cs
 }
 
 /* =======================================================================
- * 4. RAW 64-column CSV, natural order, pipe-delimited
+ * 4. extract_raw_dct_to_csv_64cols
+ *    Natural order (0–63), 64 columns, pipe-delimited
  * ===================================================================== */
 inline bool extract_raw_dct_to_csv_64cols(const fs::path& jpg, const fs::path& csv) {
 	jpeg_decompress_struct dinfo;
@@ -199,7 +213,7 @@ inline bool extract_raw_dct_to_csv_64cols(const fs::path& jpg, const fs::path& c
 
 	std::ofstream out(csv);
 	if (!out) {
-		std::cerr << "Cannot open " << csv << '\n';
+		std::cerr << "Cannot open " << csv << "\n";
 		jpeg_finish_decompress(&dinfo);
 		fclose(fp);
 		jpeg_destroy_decompress(&dinfo);
@@ -221,6 +235,7 @@ inline bool extract_raw_dct_to_csv_64cols(const fs::path& jpg, const fs::path& c
 			}
 		}
 	}
+
 	out.close();
 	jpeg_finish_decompress(&dinfo);
 	fclose(fp);
@@ -229,7 +244,8 @@ inline bool extract_raw_dct_to_csv_64cols(const fs::path& jpg, const fs::path& c
 }
 
 /* =======================================================================
- * 5. RAW stream: natural order, 64 lines per block (no blank line)
+ * 5. extract_raw_stream_64rows
+ *    Natural order (0–63), 64 lines per block, no blank separator
  * ===================================================================== */
 inline bool extract_raw_stream_64rows(const fs::path& jpg, const fs::path& csv) {
 	jpeg_decompress_struct dinfo;
@@ -253,7 +269,7 @@ inline bool extract_raw_stream_64rows(const fs::path& jpg, const fs::path& csv) 
 
 	std::ofstream out(csv);
 	if (!out) {
-		std::cerr << "Cannot open " << csv << '\n';
+		std::cerr << "Cannot open " << csv << "\n";
 		jpeg_finish_decompress(&dinfo);
 		fclose(fp);
 		jpeg_destroy_decompress(&dinfo);
@@ -266,11 +282,13 @@ inline bool extract_raw_stream_64rows(const fs::path& jpg, const fs::path& csv) 
 			JBLOCKARRAY row = dinfo.mem->access_virt_barray((j_common_ptr)&dinfo, coef[c], br, 1, FALSE);
 			for (unsigned bc = 0; bc < ci->width_in_blocks; ++bc) {
 				JCOEFPTR blk = row[0][bc];
-				for (int k = 0; k < 64; ++k)
+				for (int k = 0; k < 64; ++k) {
 					out << blk[k] << '\n';
+				}
 			}
 		}
 	}
+
 	out.close();
 	jpeg_finish_decompress(&dinfo);
 	fclose(fp);

@@ -14,7 +14,7 @@
 
 namespace fastlanes {
 
-static constexpr uint64_t LOCAL_EXC_LIMIT_C = 200; // between 5 and 10 percent
+static constexpr uint64_t LOCAL_EXC_LIMIT_C = 20; // between 5 and 10 percent
 
 template <typename T>
 class Option {

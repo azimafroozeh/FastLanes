@@ -5,16 +5,20 @@
 #include <array>
 
 namespace fastlanes {
-using IMAGE_DS_DATASET_dataset_t = std::array<std::pair<string_view, string_view>, 2>;
+using IMAGE_DS_DATASET_dataset_t = std::array<std::pair<string_view, string_view>, 4>;
 
 class IMAGE_DS {
 public:
 	static constexpr string_view zigzag64 {FLS_CMAKE_SOURCE_DIR "/data/image/zigzag64"};
 	static constexpr string_view zigzag_stream {FLS_CMAKE_SOURCE_DIR "/data/image/zigzag_stream"};
+	static constexpr string_view raw64 {FLS_CMAKE_SOURCE_DIR "/data/image/raw64"};
+	static constexpr string_view raw_stream {FLS_CMAKE_SOURCE_DIR "/data/image/raw_stream"};
 
 	static constexpr IMAGE_DS_DATASET_dataset_t dataset = {{
 	    {"zigzag64", zigzag64},
 	    {"zigzag_stream", zigzag_stream},
+	    {"raw64", raw64},
+	    {"raw_stream", raw_stream},
 	}};
 };
 } // namespace fastlanes
