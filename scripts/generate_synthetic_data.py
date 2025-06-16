@@ -31,6 +31,7 @@ ROW_GROUP_SIZE = 64 * VEC_SIZE
 # ---------------------------
 from generator_helpers.date_generator import generate_date
 from generator_helpers.timestamp_generator import generate_timestamp
+from generator_helpers.struct_generator import *
 
 
 # ---------------------------
@@ -181,19 +182,6 @@ def generate_equality_fls_dbl(_faker, row_id):
 def generate_equality_fls_str(_faker, row_id):
     """Generates a list of floating-point numbers for equality checks."""
     return [map_value(row_id, "str") for _ in range(10)]
-
-
-def generate_struct(_faker, row_id):
-    """Generates a structured JSON object with one column containing five fields."""
-    return {
-        'COLUMN_0': {
-            'FIELD_0': row_id + 0000000000,
-            'FIELD_1': row_id + 1000000000,
-            'FIELD_2': row_id + 2000000000,
-            'FIELD_3': row_id + 3000000000,
-            'FIELD_4': row_id + 4000000000,
-        }
-    }
 
 
 def generate_fls_i64(_faker, row_id):
@@ -390,11 +378,6 @@ def equality_fls_dbl():
 def equality_fls_str():
     file = Path.cwd() / '..' / 'data' / 'generated' / 'equality' / 'fls_str'
     write_csv(file, generate_equality_fls_str, ROW_GROUP_SIZE)
-
-
-def struct():
-    file = Path.cwd() / '..' / 'data' / 'generated' / 'struct'
-    write_jsonl(file, generate_struct, 1024)
 
 
 def write_fls_i64_to_file(sub_path, generator, size):
