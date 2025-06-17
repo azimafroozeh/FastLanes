@@ -9,7 +9,6 @@ class GENERATED {
 public:
 	static constexpr string_view CCC_ONE_TO_ONE_MAP {FLS_CMAKE_SOURCE_DIR "/data/generated/one_to_one"};
 	static constexpr string_view ALL_CONSTANT {FLS_CMAKE_SOURCE_DIR "/data/generated/all_constant"};
-	static constexpr string_view STRUCT {FLS_CMAKE_SOURCE_DIR "/data/generated/struct"};
 
 	// SINGLE COLUMN
 	static constexpr string_view SINGLE_COLUMN_I64PT {FLS_CMAKE_SOURCE_DIR "/data/generated/single_columns/fls_i64"};
@@ -68,6 +67,10 @@ public:
 
 	// SUBNORMAL
 	static constexpr string_view SUBNORMALS {FLS_CMAKE_SOURCE_DIR "/data/generated/subnormals"};
+
+	// NESTED
+	static constexpr string_view STRUCT {FLS_CMAKE_SOURCE_DIR "/data/generated/struct"};
+	static constexpr string_view LIST {FLS_CMAKE_SOURCE_DIR "/data/generated/list"};
 };
 
 } // namespace fastlanes

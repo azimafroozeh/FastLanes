@@ -9,9 +9,7 @@ Exports:
   • `struct`          – writer that materialises JSONL output as before
 """
 
-import json
-import logging
-from pathlib import Path
+from .common import *
 
 from faker import Faker
 
