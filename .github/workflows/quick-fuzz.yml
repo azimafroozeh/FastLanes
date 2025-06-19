@@ -7,7 +7,7 @@ on:
   push:
     branches: [ '**' ]
   pull_request:
-    # only PRs that merge into dev trigger the bump step
+    # only PRs that merge into dev trigger the failure comment step
     branches: [ dev ]
     paths:
       - '**/*.cpp'
@@ -21,7 +21,6 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
-          # we need the PR branch to be writeable for the bump
           token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Install build deps
@@ -36,7 +35,8 @@ jobs:
       - name: Test
         run: ctest --test-dir build --output-on-failure | tee ctest.log
 
-      # Save artefacts if tests fail
+      # ---------------------------------------------------------------------
+      # Save artifacts if tests fail
       - name: Upload failure artefacts
         if: failure()
         uses: actions/upload-artifact@v4
@@ -46,28 +46,23 @@ jobs:
             tmp/fls_quick_fuzz/**
             ctest.log
 
-      # --- Seed bump inside the PR branch ----------------------------------
-      - name: Bump base_seed in PR branch
-        if: |
-          success() && github.event_name == 'pull_request' && github.base_ref == 'dev'
+      # ---------------------------------------------------------------------
+      # Comment on the PR when tests fail, linking to artifacts, schema, and log snippet
+      - name: Comment on failure
+        if: ${{ failure() && github.event_name == 'pull_request' && github.base_ref == 'dev' }}
         env:
-          CONFIG: test/src/quick_fuzz_tests/fuzz_config.json
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          RUN_ID: ${{ github.run_id }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+          CONFIG_PATH: test/src/quick_fuzz_tests/fuzz_config.json
         run: |
-          # Stop if we already bumped in this PR (commit msg contains [seed bump])
-          git log -1 --pretty=%s | grep -q '\[seed bump\]' && {
-            echo "Seed already bumped in latest commit – skipping.";
-            exit 0;
-          }
+          # Construct URLs
+          ARTIFACTS_PAGE="https://${{ github.server_url }}/${{ github.repository }}/actions/runs/${RUN_ID}/artifacts"
+          SCHEMA_URL="https://${{ github.server_url }}/${{ github.repository }}/blob/${{ github.sha }}/${CONFIG_PATH}"
+          ERROR_SNIPPET=$(tail -n 20 ctest.log | sed 's/"/\\"/g')
 
-          git config --global user.name  "CI Bot"
-          git config --global user.email "ci@users.noreply.github.com"
-
-          BASE=$(jq '.base_seed' "$CONFIG")
-          NEXT=$((BASE + 1))
-          echo "Bumping seed $BASE → $NEXT"
-
-          jq --argjson seed $NEXT '.base_seed = $seed' "$CONFIG" > "$CONFIG.tmp" && mv "$CONFIG.tmp" "$CONFIG"
-
-          git add "$CONFIG"
-          git commit -m "CI: bump quick-fuzz base_seed → $NEXT [seed bump] [skip ci]"
-          git push origin HEAD:${{ github.head_ref }}
+          # Post a comment on the PR
+          gh pr comment $PR_NUMBER --body $'## ❌ Quick-Fuzz CI Failed\n\n'\
+  $'**Download failure artifacts:** [Logs & CSV]('"$ARTIFACTS_PAGE"')\n\n'\
+  $'**Fuzz config schema:** ['"$CONFIG_PATH"']('"$SCHEMA_URL"')\n\n'\
+  $'**Last 20 lines of test log:**\n```\n'"$ERROR_SNIPPET"$'\n```'
