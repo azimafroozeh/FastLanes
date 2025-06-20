@@ -12,7 +12,7 @@ fls_enable_sanitizers(quick_fuzz_test)
 
 gtest_discover_tests(
         quick_fuzz_test
-        DISCOVERY_MODE POST_BUILD
+        DISCOVERY_MODE PRE_TEST
         DISCOVERY_TIMEOUT 120
         WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
 )

@@ -42,10 +42,10 @@ jobs:
         continue-on-error: true
         run: |
           ctest --test-dir build \
-                -R QuickFuzz \
-                --parallel $(nproc) \
-                --output-on-failure \
-                -V | tee ctest.log
+          -R quick_fuzz_test \     # <- match the wrapper
+          --parallel "$(nproc)" \
+          --output-on-failure \
+          -V | tee ctest.log
 
       # 6) Upload artifacts if the Quick-Fuzz step failed
       - name: Upload failure artefacts
