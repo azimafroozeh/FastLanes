@@ -16,13 +16,13 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      # 1) Checkout PR head (not the merge commit)
+      # 1) Checkout PR head
       - uses: actions/checkout@v4
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           ref: ${{ github.event.pull_request.head.sha }}
 
-      # 2) Install toolchain
+      # 2) Toolchain
       - name: Install build deps
         run: |
           sudo apt-get update
@@ -32,25 +32,30 @@ jobs:
       - name: Configure
         run: |
           cmake -S . -B build -G Ninja \
-                -DCMAKE_BUILD_TYPE=Release \
-                -DFLS_BUILD_TESTING=ON
+            -DCMAKE_BUILD_TYPE=Release \
+            -DFLS_BUILD_TESTING=ON
 
       # 4) Build
       - name: Build
         run: cmake --build build -- -j$(nproc)
 
-      # 5) Run Quick-Fuzz — allow it to fail and turn the job red
+      # 5) Run Quick-Fuzz (capture real rc, never stop the job here)
       - name: Run Quick-Fuzz
+        id: quick_fuzz
+        continue-on-error: true
         run: |
+          set -o pipefail
           ctest --test-dir build \
                 -R quick_fuzz_test \
                 --parallel $(nproc) \
                 --output-on-failure \
                 -V | tee ctest.log
+          rc=${PIPESTATUS[0]}
+          echo "rc=$rc" >> "$GITHUB_OUTPUT"
 
-      # 6) Upload artefacts only when the previous step failed
+      # 6) Upload artefacts on failure
       - name: Upload failure artefacts
-        if: failure()          # runs only when any prior step failed
+        if: steps.quick_fuzz.outputs.rc != '0'
         uses: actions/upload-artifact@v4
         with:
           name: quick-fuzz-failure-${{ github.run_id }}
@@ -58,9 +63,9 @@ jobs:
             tmp/fls_quick_fuzz/**
             ctest.log
 
-      # 7) Comment on the PR when Quick-Fuzz failed
+      # 7) Comment on PR on failure
       - name: Comment on failure
-        if: failure() &&
+        if: steps.quick_fuzz.outputs.rc != '0' &&
           github.event_name == 'pull_request' &&
           github.base_ref == 'dev'
         env:
@@ -68,19 +73,18 @@ jobs:
         run: |
           PR=${{ github.event.pull_request.number }}
           RUN=${{ github.run_id }}
-          CONFIG_PATH='test/src/quick_fuzz_tests/fuzz_config.json'
-          ARTIFACTS_URL="${{ github.server_url }}/${{ github.repository }}/actions/runs/${RUN}/artifacts"
-          SCHEMA_URL="${{ github.server_url }}/${{ github.repository }}/blob/${{ github.sha }}/${CONFIG_PATH}"
-          SNIPPET=$(tail -n 20 ctest.log)
+          CONFIG='test/src/quick_fuzz_tests/fuzz_config.json'
+          ARTIFACTS="${{ github.server_url }}/${{ github.repository }}/actions/runs/${RUN}/artifacts"
+          SCHEMA="${{ github.server_url }}/${{ github.repository }}/blob/${{ github.sha }}/${CONFIG}"
+          SNIP=$(tail -n 20 ctest.log)
           
           gh pr comment "$PR" --body "$(printf '%s\n' \
-            '## ❌ Quick-Fuzz CI Failed' \
-            '' \
-            "**Download failure artefacts:** [Logs & CSV](${ARTIFACTS_URL})" \
-            '' \
-            "**Fuzz config:** [${CONFIG_PATH}](${SCHEMA_URL})" \
-            '' \
-            '**Last 20 lines of test log:**' \
-            '```' \
-            "${SNIPPET}" \
-            '```')"
+            '## ❌ Quick-Fuzz CI Failed' '' \
+            "**Download artefacts:** [Logs & CSV](${ARTIFACTS})" '' \
+            "**Fuzz config:** [${CONFIG}](${SCHEMA})" '' \
+            '**Last 20 lines of test log:**' '```' "${SNIP}" '```')"
+
+      # 8) Fail the workflow if Quick-Fuzz failed
+      - name: Fail job if Quick-Fuzz failed
+        if: steps.quick_fuzz.outputs.rc != '0'
+        run: exit 1
