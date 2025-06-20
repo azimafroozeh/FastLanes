@@ -1,4 +1,3 @@
-// quick_fuzz_test.cpp
 #include "fls/connection.hpp"
 #include "fls/csv/csv-parser/parser.hpp"
 #include "fls/json/nlohmann/json.hpp"
@@ -81,34 +80,31 @@ inline Settings load() {
 
 // ------------------------------------------------------------------
 // One round-trip: generate CSV+schema, round-trip through FastLanes.
-// Column types chosen as rng()%3 (portable), then if no JPEG at all,
+// Column types chosen with rng()%3 (portable), then if no JPEG at all,
 // we force one—so every run triggers the missing-type failure.
 // ------------------------------------------------------------------
 static bool run_roundtrip(int seed, int case_idx, char delim) {
 	using fs::path;
 	std::mt19937 rng(seed);
 
-	std::uniform_int_distribution<int> col_dist(1, 6);
-	std::uniform_int_distribution<int> len_dist(1, 8);
-	std::uniform_int_distribution<int> char_dist('a', 'z');
-	std::uniform_int_distribution<int> int_dist(0, 1000);
-	std::uniform_int_distribution<int> null_dist(0, 9); // 10% NULL
-	std::uniform_int_distribution<int> byte_dist(0, 255);
+	// Use rng()%N everywhere for portability
+	auto uniform = [&](int a, int b) {
+		return a + static_cast<int>(rng() % (b - a + 1));
+	};
 
-	const int cols = col_dist(rng);
+	const int cols = uniform(1, 6);
 
-	// 0 = integer, 1 = string, 2 = jpeg (binary)
+	// 0 = integer, 1 = string, 2 = jpeg
 	std::vector<int> col_type(cols);
 	bool             saw_jpeg = false;
 	for (int c = 0; c < cols; ++c) {
-		col_type[c] = static_cast<int>(rng() % 3); // portable
+		col_type[c] = static_cast<int>(rng() % 3);
 		if (col_type[c] == 2)
 			saw_jpeg = true;
 	}
-	// If we never got a jpeg, force one spot to be JPEG
+	// Guarantee at least one jpeg column
 	if (!saw_jpeg) {
-		int idx       = static_cast<int>(rng() % cols);
-		col_type[idx] = 2;
+		col_type[static_cast<int>(rng() % cols)] = 2;
 	}
 
 	// Build JSON schema
@@ -133,10 +129,10 @@ static bool run_roundtrip(int seed, int case_idx, char delim) {
 	path schema_p = case_d / "schema.json";
 	path fls_p    = case_d / "data.fls";
 
-	// Write schema file
+	// Write schema
 	{ std::ofstream(schema_p) << schema.dump(2); }
 
-	// Write CSV
+	// Write CSV rows
 	std::ofstream csv(csv_p);
 	for (int row = 0; row < 100; ++row) {
 		std::ostringstream ss;
@@ -145,20 +141,20 @@ static bool run_roundtrip(int seed, int case_idx, char delim) {
 				ss << delim;
 			switch (col_type[c]) {
 			case 0: // integer
-				if (null_dist(rng) == 0)
+				if ((rng() % 10) == 0)
 					ss << "NULL";
 				else
-					ss << int_dist(rng);
+					ss << uniform(0, 1000);
 				break;
 			case 1: { // string
-				int len = len_dist(rng);
-				for (int i = 0; i < len; ++i)
-					ss << static_cast<char>(char_dist(rng));
+				int L = uniform(1, 8);
+				for (int i = 0; i < L; ++i)
+					ss << static_cast<char>(uniform('a', 'z'));
 			} break;
 			case 2: { // jpeg
 				std::vector<uint8_t> img;
 				img.push_back(0xFF);
-				img.push_back(0xD8);
+				img.push_back(0xD8); // SOI
 				const uint8_t hdr[] = {0xFF,
 				                       0xE0,
 				                       0x00,
@@ -178,34 +174,36 @@ static bool run_roundtrip(int seed, int case_idx, char delim) {
 				                       0x00,
 				                       0x00};
 				img.insert(img.end(), std::begin(hdr), std::end(hdr));
-				int plen = len_dist(rng) * 4;
-				for (int i = 0; i < plen; ++i)
-					img.push_back(static_cast<uint8_t>(byte_dist(rng)));
+				int PL = uniform(1, 8) * 4;
+				for (int i = 0; i < PL; ++i)
+					img.push_back(static_cast<uint8_t>(rng() % 256));
 				img.push_back(0xFF);
-				img.push_back(0xD9);
-				// optional dump for inspection
+				img.push_back(0xD9); // EOI
+
+				// Dump to file for inspection
 				std::string fn = "img_r" + std::to_string(row) + "_c" + std::to_string(c) + ".jpg";
 				std::ofstream(img_d / fn, std::ios::binary).write(reinterpret_cast<char*>(img.data()), img.size());
+
 				ss << base64_encode(img);
 			} break;
 			}
 		}
-		csv << ss.str() << '\n';
+		csv << ss.str() << "\n";
 	}
 
-	// Preview case 0
-	if (case_idx == 0) {
-		std::cout << "==== Case 0 Preview ====\n"
-		          << "Schema:\n"
-		          << schema.dump(2) << "\n---\n"
-		          << "First CSV line:\n";
+	// Preview every case to stderr
+	{
 		std::ifstream in(csv_p);
-		std::string   line;
-		std::getline(in, line);
-		std::cout << line << "\n";
+		std::string   first;
+		std::getline(in, first);
+		std::cerr << "==== Case " << case_idx << " Preview ====\n"
+		          << "Schema:\n"
+		          << schema.dump(2) << "\n"
+		          << "First CSV line:\n"
+		          << first << "\n\n";
 	}
 
-	// Round-trip
+	// Round-trip through FastLanes
 	Connection con1;
 	con1.set_n_vectors_per_rowgroup(1).read_csv(case_d).to_fls(fls_p);
 	const auto& tbl1 = con1.get_table();
@@ -220,14 +218,14 @@ static bool run_roundtrip(int seed, int case_idx, char delim) {
 // GTest driver
 // ------------------------------------------------------------------
 TEST(QuickFuzz, RandomRoundTripsWithConfig) {
-	const cfg::Settings s      = cfg::load();
+	const cfg::Settings S      = cfg::load();
 	bool                all_ok = true;
-	for (int i = 0; i < s.num_cases; ++i) {
-		all_ok &= run_roundtrip(s.base_seed + i, i, s.delim);
+	for (int i = 0; i < S.num_cases; ++i) {
+		all_ok &= run_roundtrip(S.base_seed + i, i, S.delim);
 	}
 	EXPECT_TRUE(all_ok);
 
-	// cleanup
+	// Cleanup
 	using fs::path;
 	fs::remove_all(path(FLS_CMAKE_SOURCE_DIR) / "tmp" / "fls_quick_fuzz");
 }
