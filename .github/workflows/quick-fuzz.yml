@@ -7,8 +7,8 @@ on:
   push:
     branches: [ '**' ]
   pull_request:
-    branches: [ dev ]                # PRs into dev
-    paths: # …that touch these files
+    branches: [ dev ]
+    paths:
       - '**/*.cpp'
       - 'test/src/quick_fuzz_tests/fuzz_config.json'
       - '.github/workflows/quick-fuzz.yml'
@@ -29,15 +29,21 @@ jobs:
 
       # 3) Configure
       - name: Configure
-        run: cmake -S . -B build -G Ninja -DCMAKE_BUILD_TYPE=Release
+        run: |
+          cmake -S . -B build \
+            -G Ninja \
+            -DCMAKE_BUILD_TYPE=Release \
+            -DDFLS_BUILD_TESTING=ON
 
       # 4) Build
       - name: Build
         run: cmake --build build
 
-      # 5) Test (capture log)
-      - name: Test
-        run: ctest --test-dir build --output-on-failure | tee ctest.log
+      # 5) Test (only the QuickFuzz test)
+      - name: Run Quick-Fuzz Only
+        run: |
+          # Only run tests whose name matches "QuickFuzz"
+          ctest --test-dir build -R QuickFuzz --output-on-failure | tee ctest.log
 
       # 6) Upload artifacts on failure
       - name: Upload failure artefacts
