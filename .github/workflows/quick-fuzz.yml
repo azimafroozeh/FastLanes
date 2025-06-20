@@ -7,9 +7,8 @@ on:
   push:
     branches: [ '**' ]
   pull_request:
-    # only PRs that merge into dev trigger the failure comment step
-    branches: [ dev ]
-    paths:
+    branches: [ dev ]                # PRs into dev
+    paths: # …that touch these files
       - '**/*.cpp'
       - 'test/src/quick_fuzz_tests/fuzz_config.json'
       - '.github/workflows/quick-fuzz.yml'
@@ -19,16 +18,16 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      # 1) Checkout with write-permissions (for later artifact upload)
+      # 1) Checkout
       - uses: actions/checkout@v4
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
 
-      # 2) Install dependencies
+      # 2) Dependencies
       - name: Install build deps
         run: sudo apt-get update && sudo apt-get install -y clang cmake ninja-build jq
 
-      # 3) Configure the build
+      # 3) Configure
       - name: Configure
         run: cmake -S . -B build -G Ninja -DCMAKE_BUILD_TYPE=Release
 
@@ -36,11 +35,11 @@ jobs:
       - name: Build
         run: cmake --build build
 
-      # 5) Run tests (capture output)
+      # 5) Test (capture log)
       - name: Test
         run: ctest --test-dir build --output-on-failure | tee ctest.log
 
-      # 6) On failure, upload the artifacts for manual inspection
+      # 6) Upload artifacts on failure
       - name: Upload failure artefacts
         if: failure()
         uses: actions/upload-artifact@v4
@@ -50,34 +49,31 @@ jobs:
             tmp/fls_quick_fuzz/**
             ctest.log
 
-      # 7) On failure in a PR to dev, post a comment linking artifacts & logs
+      # 7) Comment on the PR when tests fail
       - name: Comment on failure
         if: ${{ failure() && github.event_name == 'pull_request' && github.base_ref == 'dev' }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          RUN_ID:        ${{ github.run_id }}
-          PR_NUMBER:     ${{ github.event.pull_request.number }}
-          CONFIG_PATH:   test/src/quick_fuzz_tests/fuzz_config.json
         run: |
-          # Build URLs
-          ARTIFACTS_PAGE="https://${{ github.server_url }}/${{ github.repository }}/actions/runs/${RUN_ID}/artifacts"
-          SCHEMA_URL="https://${{ github.server_url }}/${{ github.repository }}/blob/${{ github.sha }}/${CONFIG_PATH}"
+          set -e
+          PR_NUMBER='${{ github.event.pull_request.number }}'
+          RUN_ID='${{ github.run_id }}'
+          CONFIG_PATH='test/src/quick_fuzz_tests/fuzz_config.json'
+
+          ARTIFACTS_PAGE="${{ github.server_url }}/${{ github.repository }}/actions/runs/${RUN_ID}/artifacts"
+          SCHEMA_URL="${{ github.server_url }}/${{ github.repository }}/blob/${{ github.sha }}/${CONFIG_PATH}"
           ERROR_SNIPPET=$(tail -n 20 ctest.log)
 
-          # Prepare the comment body via heredoc
-          body=$(cat <<EOF
-## ❌ Quick-Fuzz CI Failed
+          body=$(printf '%s\n' \
+            '## ❌ Quick-Fuzz CI Failed' \
+            '' \
+            "**Download failure artifacts:** [Logs & CSV](${ARTIFACTS_PAGE})" \
+            '' \
+            "**Fuzz config schema:** [${CONFIG_PATH}](${SCHEMA_URL})" \
+            '' \
+            '**Last 20 lines of test log:**' \
+            '```' \
+            "${ERROR_SNIPPET}" \
+            '```')
 
-  **Download failure artifacts:** [Logs & CSV]($ARTIFACTS_PAGE)
-
-  **Fuzz config schema:** [$CONFIG_PATH]($SCHEMA_URL)
-
-  **Last 20 lines of test log:**
-  \`\`\`
-  $ERROR_SNIPPET
-  \`\`\`
-  EOF
-  )
-  
-  # Post comment
-  gh pr comment $PR_NUMBER --body "$body"
+          gh pr comment "${PR_NUMBER}" --body "${body}"
