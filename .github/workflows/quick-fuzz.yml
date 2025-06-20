@@ -17,7 +17,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      # 1) Checkout PR head (not merge)
+      # 1) Checkout the PR **head** (not the merge commit)
       - uses: actions/checkout@v4
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
@@ -33,14 +33,14 @@ jobs:
       - name: Configure
         run: |
           cmake -S . -B build -G Ninja \
-            -DCMAKE_BUILD_TYPE=Release \
-            -DFLS_BUILD_TESTING=ON
+                -DCMAKE_BUILD_TYPE=Release \
+                -DFLS_BUILD_TESTING=ON
 
       # 4) Build
       - name: Build
         run: cmake --build build -- -j$(nproc)
 
-      # 5) Run Quick-Fuzz – fail job if it fails
+      # 5) Run Quick-Fuzz — job will turn red if it fails
       - name: Run Quick-Fuzz
         run: |
           set -o pipefail
@@ -50,8 +50,9 @@ jobs:
                 --output-on-failure \
                 -V | tee ctest.log
 
-      # 6) Upload artefacts if any previous step failed
+      # 6) Upload artefacts *only* when Quick-Fuzz failed
       - name: Upload failure artefacts
+        id: upload
         if: failure()
         uses: actions/upload-artifact@v4
         with:
@@ -60,7 +61,7 @@ jobs:
             tmp/fls_quick_fuzz/**
             ctest.log
 
-      # 7) Comment on the PR when Quick-Fuzz failed
+      # 7) Comment on the PR with deep link to the ZIP
       - name: Comment on failure
         if: failure() &&
           github.event_name == 'pull_request' &&
@@ -70,23 +71,22 @@ jobs:
         run: |
           PR=${{ github.event.pull_request.number }}
           RUN=${{ github.run_id }}
-          HEAD_SHA=${{ github.event.pull_request.head.sha }}   # correct commit
+          ART_ID=${{ steps.upload.outputs.artifact-id }}       # single-ZIP id
+          HEAD_SHA=${{ github.event.pull_request.head.sha }}
           CONFIG_PATH='test/src/quick_fuzz_tests/fuzz_config.json'
           
-          ARTIFACTS_URL="${{ github.server_url }}/${{ github.repository }}/actions/runs/${RUN}/artifacts"
+          ZIP_URL="${{ github.server_url }}/${{ github.repository }}/actions/runs/${RUN}/artifacts/${ART_ID}"
           CONFIG_URL="${{ github.server_url }}/${{ github.repository }}/blob/${HEAD_SHA}/${CONFIG_PATH}"
           SNIPPET=$(tail -n 20 ctest.log)
           
-          body=$(printf '%s\n' \
+          gh pr comment "$PR" --body "$(printf '%s\n' \
             '## ❌ Quick-Fuzz CI Failed' \
             '' \
-            "[**Download artefacts (Logs & CSV)**](${ARTIFACTS_URL})" \
+            "[**⬇ Download artefact ZIP**](${ZIP_URL})" \
             '' \
             "[**Fuzz config**](${CONFIG_URL})" \
             '' \
             '**Last 20 lines of test log:**' \
             '```' \
             "${SNIPPET}" \
-            '```')
-          
-          gh pr comment "$PR" --body "$body"
+            '```')"
