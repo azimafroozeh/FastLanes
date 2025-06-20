@@ -33,7 +33,7 @@ jobs:
           cmake -S . -B build \
             -G Ninja \
             -DCMAKE_BUILD_TYPE=Release \
-            -DDFLS_BUILD_TESTING=ON
+            -DFLS_BUILD_TESTING=ON
 
       # 4) Build (all cores)
       - name: Build
