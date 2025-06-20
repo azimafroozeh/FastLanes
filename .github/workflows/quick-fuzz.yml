@@ -14,14 +14,15 @@ on:
 jobs:
   build-test:
     runs-on: ubuntu-latest
+
     steps:
-      # 1) Checkout PR head
+      # 1) Checkout PR head (not the merge)
       - uses: actions/checkout@v4
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           ref: ${{ github.event.pull_request.head.sha }}
 
-      # 2) Install deps
+      # 2) Install build deps
       - name: Install build deps
         run: |
           sudo apt-get update
@@ -29,34 +30,30 @@ jobs:
 
       # 3) Configure
       - name: Configure
-        run: cmake -S . -B build -G Ninja \
-          -DCMAKE_BUILD_TYPE=Release \
-          -DFLS_BUILD_TESTING=ON
+        run: |
+          cmake -S . -B build \
+                -G Ninja \
+                -DCMAKE_BUILD_TYPE=Release \
+                -DFLS_BUILD_TESTING=ON
 
       # 4) Build
       - name: Build
         run: cmake --build build -- -j$(nproc)
 
-      # 5) Run Quick-Fuzz, record exit code
+      # 5) Run Quick-Fuzz (allow failure)
       - name: Run Quick-Fuzz
         id: quick_fuzz
+        continue-on-error: true
         run: |
-          set -eo pipefail
           ctest --test-dir build \
                 -R quick_fuzz_test \
                 --parallel $(nproc) \
                 --output-on-failure \
                 -V | tee ctest.log
-        continue-on-error: true
-      - name: Capture exit code
-        if: always()
-        run: |
-          echo "::set-output name=rc::${{ steps.quick_fuzz.outcome == 'success' && steps.quick_fuzz.conclusion == 'success' && steps.quick_fuzz.exit_code == 0 && 0 || 1 }}"
-        id: rc
 
-      # 6) Upload artifacts if rc != 0
+      # 6) Upload artifacts if Quick-Fuzz failed
       - name: Upload failure artefacts
-        if: steps.rc.outputs.rc != '0'
+        if: steps.quick_fuzz.conclusion == 'failure'
         uses: actions/upload-artifact@v4
         with:
           name: quick-fuzz-failure-${{ github.run_id }}
@@ -64,9 +61,11 @@ jobs:
             tmp/fls_quick_fuzz/**
             ctest.log
 
-      # 7) Comment on PR if rc != 0
+      # 7) Comment on PR if Quick-Fuzz failed
       - name: Comment on failure
-        if: steps.rc.outputs.rc != '0'
+        if: steps.quick_fuzz.conclusion == 'failure' &&
+          github.event_name == 'pull_request' &&
+          github.base_ref == 'dev'
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
@@ -88,3 +87,10 @@ jobs:
             '```' \
             "${SNIPPET}" \
             '```')"
+
+      # 8) Finally: mark the job as failed if Quick-Fuzz failed
+      - name: Fail if Quick-Fuzz failed
+        if: steps.quick_fuzz.conclusion == 'failure'
+        run: |
+          echo "::error Quick-Fuzz detected failure; failing job"
+          exit 1
