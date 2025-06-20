@@ -45,11 +45,15 @@ jobs:
         id: quick_fuzz
         continue-on-error: true
         run: |
-          ctest --test-dir build -R quick_fuzz_test --parallel $(nproc) --output-on-failure -V | tee ctest.log
+          ctest --test-dir build \
+                -R quick_fuzz_test \
+                --parallel $(nproc) \
+                --output-on-failure \
+                -V | tee ctest.log
 
       # 6) Upload artefacts if Quick-Fuzz failed
       - name: Upload failure artefacts
-        if: steps.quick_fuzz.outcome == 'failure'
+        if: steps.quick_fuzz.conclusion == 'failure'
         uses: actions/upload-artifact@v4
         with:
           name: quick-fuzz-failure-${{ github.run_id }}
@@ -59,7 +63,7 @@ jobs:
 
       # 7) Comment on PR if Quick-Fuzz failed
       - name: Comment on failure
-        if: steps.quick_fuzz.outcome == 'failure' &&
+        if: steps.quick_fuzz.conclusion == 'failure' &&
           github.event_name == 'pull_request' &&
           github.base_ref == 'dev'
         env:
