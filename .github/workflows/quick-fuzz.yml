@@ -17,11 +17,8 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      # 1) Checkout the PR **head** (not the merge commit)
+      # 1) Checkout the PR
       - uses: actions/checkout@v4
-        with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-          ref: ${{ github.event.pull_request.head.sha }}
 
       # 2) Tool-chain
       - name: Install build deps
