@@ -4,18 +4,16 @@ add_executable(quick_fuzz_test
 
 target_link_libraries(quick_fuzz_test
         PRIVATE
-        gtest_main
+        GTest::gtest_main
         FastLanes
 )
 
 fls_enable_sanitizers(quick_fuzz_test)
 
-add_test(
-        NAME quick_fuzz_test
-        COMMAND quick_fuzz_test
-        --gtest_filter=QuickFuzz.*   # only run your fuzz suite
-)
-set_tests_properties(quick_fuzz_test PROPERTIES
+gtest_discover_tests(quick_fuzz_test
+        EXTRA_ARGS --gtest_filter=QuickFuzz.*
+        PROPERTIES
         WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
         TIMEOUT 120
+        DISCOVERY_TIMEOUT 30
 )

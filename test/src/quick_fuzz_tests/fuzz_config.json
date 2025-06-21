@@ -1,5 +1,9 @@
 {
   "num_cases": 10,
-  "base_seed": 43,
-  "delimiter": "|"
+  "base_seed": 123,
+  "delimiter": "|",
+  "min_cols": 50,
+  "max_cols": 100,
+  "min_rows": 65536,
+  "max_rows": 65536100
 }
