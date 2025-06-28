@@ -60,14 +60,6 @@ jobs:
       - name: Install LLVM
         uses: ./.github/actions/install-llvm
 
-      # ──── NEW STEP ────
-      - name: Setup LLVM 19 (Windows)
-        if: runner.os == 'Windows'
-        uses: llvm/clang/setup@v1
-        with:
-          version: "19.0.0"
-      # ──────────────────
-
       - name: Print clang/clang-tidy version
         run: |
           clang --version
@@ -172,14 +164,6 @@ jobs:
 
       - name: Install LLVM
         uses: ./.github/actions/install-llvm
-
-      # ──── NEW STEP ────
-      - name: Setup LLVM 19 (Windows)
-        if: runner.os == 'Windows'
-        uses: llvm/clang/setup@v1
-        with:
-          version: "19.0.0"
-      # ──────────────────
 
       - name: Configure example
         run: |
@@ -297,14 +281,6 @@ jobs:
       # Use the same LLVM toolchain as the other jobs
       - name: Install LLVM toolchain
         uses: ./.github/actions/install-llvm
-
-      # ──── NEW STEP ────
-      - name: Setup LLVM 19 (Windows)
-        if: runner.os == 'Windows'
-        uses: llvm/clang/setup@v1
-        with:
-          version: "19.0.0"
-      # ──────────────────
 
       - name: Configure + build + install
         shell: bash
