@@ -152,13 +152,11 @@ static bool run_roundtrip(int seed, int case_idx, char delim) {
 		                                                 : "jpeg"}});
 	}
 
-	// prepare directories
+	// prepare directories (images dir removed; no image files are produced)
 	fs::path root   = FLS_CMAKE_SOURCE_DIR;
 	fs::path case_d = root / "tmp" / "fls_quick_fuzz" / ("case_" + std::to_string(case_idx));
 	fs::remove_all(case_d);
 	fs::create_directories(case_d);
-	fs::path img_d = case_d / "images";
-	fs::create_directories(img_d);
 
 	fs::path csv_p    = case_d / "generated.csv";
 	fs::path schema_p = case_d / "schema.json";
@@ -167,7 +165,7 @@ static bool run_roundtrip(int seed, int case_idx, char delim) {
 	// write schema.json
 	std::ofstream(schema_p) << schema.dump(2);
 
-	// write CSV
+	// write CSV (JPEG blobs are embedded directly; no files are touched)
 	{
 		std::ofstream csv(csv_p);
 		for (int row = 0; row < rows; ++row) {
@@ -187,7 +185,7 @@ static bool run_roundtrip(int seed, int case_idx, char delim) {
 						ss << char(uniform('a', 'z'));
 				} break;
 
-				case 2: { // jpeg (tiny, random)
+				case 2: { // jpeg (tiny, random) kept fully in memory
 					std::vector<uint8_t>     img {0xFF, 0xD8};
 					static constexpr uint8_t hdr[] = {0xFF,
 					                                  0xE0,
@@ -214,11 +212,7 @@ static bool run_roundtrip(int seed, int case_idx, char delim) {
 					img.push_back(0xFF);
 					img.push_back(0xD9);
 
-					// save for inspection
-					std::string fn = "img_r" + std::to_string(row) + "_c" + std::to_string(c) + ".jpg";
-					std::ofstream(img_d / fn, std::ios::binary)
-					    .write(reinterpret_cast<const char*>(img.data()), img.size());
-
+					// Embed directly in CSV via Base64; no disk I/O.
 					ss << base64_encode(img);
 				} break;
 				default:;
