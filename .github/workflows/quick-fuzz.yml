@@ -49,7 +49,7 @@ jobs:
         run: |
           set -o pipefail
           ctest --test-dir build \
-                -R quick_fuzz_test \
+                -R QuickFuzz \
                 --parallel $(nproc) \
                 --output-on-failure \
                 -V | tee ctest.log
