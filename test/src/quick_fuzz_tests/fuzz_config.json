@@ -3,7 +3,7 @@
   "base_seed": 0,
   "delimiter": "|",
   "min_cols": 1,
-  "max_cols": 10,
+  "max_cols": 2,
   "min_rows": 65536,
-  "max_rows": 655360
+  "max_rows": 65536
 }

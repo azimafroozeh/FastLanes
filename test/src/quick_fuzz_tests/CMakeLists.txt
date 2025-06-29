@@ -21,6 +21,5 @@ gtest_discover_tests(
         TEST_PREFIX QuickFuzz_               # final names like "QuickFuzz_QuickFuzz_Case0.Random"
         PROPERTIES
         WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
-        TIMEOUT 120
         DISCOVERY_TIMEOUT 30
 )

@@ -1,10 +1,10 @@
 name: Install LLVM Toolchain
-description: Cross-platform LLVM installer for macOS, Ubuntu and Windows runners
+description: Cross-platform LLVM installer for macOS, Ubuntu and Windows
 
 inputs:
-  version: # major or full version string, e.g. “20” or “19.0.0”
-    description: "LLVM/Clang version to install"
-    default: "20"
+  version:
+    description: "Exact LLVM/Clang version to install, e.g. 20.1.7 or 19.1.7"
+    default: "20.1.7"
 
 runs:
   using: "composite"
@@ -18,7 +18,6 @@ runs:
         echo "🟣 Installing LLVM/Clang ${VERSION} on ${{ runner.os }}"
 
         if [[ "${{ runner.os }}" == "macOS" ]]; then
-          # Homebrew keeps every major release in a separate formula
           brew install llvm@${MAJOR}
           echo "/opt/homebrew/opt/llvm@${MAJOR}/bin" >> "$GITHUB_PATH"
 
@@ -44,14 +43,12 @@ runs:
           echo "/usr/lib/llvm-${MAJOR}/bin" >> "$GITHUB_PATH"
 
         elif [[ "${{ runner.os }}" == "Windows" ]]; then
-          # Chocolatey currently carries LLVM 13-19; use 19 if caller asked for <19, else MAJOR
-          CHOCO_VER="${VERSION}"
-          if [[ "${MAJOR}" -lt 19 ]]; then
-            CHOCO_VER="19.0.0"
-          fi
-          choco install llvm --version=${CHOCO_VER} -y --no-progress
-          echo "/c/Program Files/LLVM/bin" | sed 's# #\\ #g' >> "$GITHUB_PATH"
+          echo "→ chocolatey upgrade llvm --version=${VERSION}"
+          choco upgrade llvm --version="${VERSION}" -y --no-progress --allow-downgrade
+
+          # Add to PATH; quoting keeps the space intact
+          echo 'C:\Program Files\LLVM\bin' >> "$GITHUB_PATH"
 
         else
-          echo "::warning ::LLVM installation not supported on ${{ runner.os }}"
+          echo "::warning ::LLVM install not supported on ${{ runner.os }}"
         fi

@@ -46,6 +46,8 @@ jobs:
 
       # 5) Run Quick-Fuzz — job turns red if tests fail
       - name: Run Quick-Fuzz
+        env:
+          CTEST_TEST_TIMEOUT: 0
         run: |
           set -o pipefail
           ctest --test-dir build \

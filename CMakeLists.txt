@@ -174,6 +174,9 @@ if (true)
     message("-- FLS: Building FastLanes Lib.")
 
     # Source: ----------------------------------------------------------------------------------------------------------
+    if (FLS_BUILD_SHARED_LIBS)
+        message("-- FLS: Shared is enabled!")
+    endif ()
     add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/src)
 
 endif ()
