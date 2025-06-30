@@ -1003,47 +1003,51 @@ bool checkMappingImpl(const up<FLSStrColumn>& left_col, const up<FLSStrColumn>& 
 }
 
 struct col_map_1t1_visitor {
+
 	template <typename FIRST_PT, typename SECOND_PT>
 	bool operator()(const up<TypedCol<FIRST_PT>>& left_col, const up<TypedCol<SECOND_PT>>& right_col) {
-		unordered_map<FIRST_PT, SECOND_PT> forward_map; // Maps from col_1 to col_2
-		unordered_map<SECOND_PT, FIRST_PT> reverse_map; // Maps from col_2 to col_1
 
-		for (n_t row_idx {0}; row_idx < left_col->data.size(); ++row_idx) {
+		/* ── added: safety guard (5 lines) ─────────────────────────────── */
+		if (!left_col || !right_col)
+			return false;
+		const n_t rows = left_col->data.size();
+		if (rows != right_col->data.size() || rows != left_col->null_map_arr.size() ||
+		    rows != right_col->null_map_arr.size())
+			return false;
+		/* ──────────────────────────────────────────────────────────────── */
+
+		unordered_map<FIRST_PT, SECOND_PT> forward_map; // col_1 → col_2
+		unordered_map<SECOND_PT, FIRST_PT> reverse_map; // col_2 → col_1
+
+		for (n_t row_idx {0}; row_idx < rows; ++row_idx) { // ← used rows
 			const auto& left_val  = left_col->data[row_idx];
 			const auto& right_val = right_col->data[row_idx];
 
-			const auto& is_left_val_null  = left_col->null_map_arr[row_idx];
-			const auto& is_right_val_null = right_col->null_map_arr[row_idx];
+			const bool is_left_val_null  = left_col->null_map_arr[row_idx];
+			const bool is_right_val_null = right_col->null_map_arr[row_idx];
 
-			if (is_left_val_null != is_right_val_null) {
+			if (is_left_val_null != is_right_val_null)
 				return false;
-			}
-			if (is_left_val_null) {
+			if (is_left_val_null)
 				continue;
-			}
 
-			// Check the forward mapping (tuple1 -> tuple2)
-			if (forward_map.contains(left_val)) {
-				const auto& pair = forward_map.find(left_val);
-				if (pair->second != right_val) {
+			/* forward mapping check */
+			if (auto it = forward_map.find(left_val); it != forward_map.end()) {
+				if (it->second != right_val)
 					return false;
-				}
 			} else {
 				forward_map.emplace(left_val, right_val);
 			}
 
-			// Check the reverse mapping (tuple2 -> tuple1)
-			if (reverse_map.contains(right_val)) {
-				const auto& pair = reverse_map.find(right_val);
-				if (pair->second != left_val) {
+			/* reverse mapping check */
+			if (auto it = reverse_map.find(right_val); it != reverse_map.end()) {
+				if (it->second != left_val)
 					return false;
-				}
 			} else {
 				reverse_map.emplace(right_val, left_val);
 			}
 		}
-
-		return true; // If no conflicts, the mapping is bijective
+		return true;
 	}
 
 	template <typename PT>
@@ -1063,7 +1067,6 @@ struct col_map_1t1_visitor {
 	bool operator()(std::monostate&, std::monostate&) {
 		FLS_UNREACHABLE();
 	}
-
 	bool operator()(auto&, auto&) {
 		return false;
 	}
