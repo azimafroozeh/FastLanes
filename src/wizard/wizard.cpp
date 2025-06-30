@@ -202,10 +202,7 @@ struct col_equality_visitor {
 	template <typename PT>
 	bool operator()(const up<TypedCol<PT>>& first_col, const up<TypedCol<PT>>& second_col) const {
 		for (n_t idx {0}; idx < first_col->data.size(); ++idx) {
-			const auto& tuple_1 = first_col->data[idx];
-			const auto& tuple_2 = second_col->data[idx];
-
-			if (tuple_1 != tuple_2) {
+			if (first_col->data[idx] != second_col->data[idx]) {
 				return false;
 			}
 		}
@@ -221,11 +218,22 @@ struct col_equality_visitor {
 		return true;
 	}
 
-	bool operator()(const std::monostate&, const std::monostate&) const {
-		FLS_UNREACHABLE();
-		return false; // ensures return type is valid for dispatch table
+	// 🔧 Add explicit overloads for List and Struct to prevent vtable holes
+	bool operator()(const up<List>&, const up<List>&) const {
+		return false;
 	}
 
+	bool operator()(const up<Struct>&, const up<Struct>&) const {
+		return false;
+	}
+
+	// ✅ Still treat monostate explicitly, but return a valid bool
+	bool operator()(const std::monostate&, const std::monostate&) const {
+		FLS_UNREACHABLE();
+		return false; // ensures type correctness
+	}
+
+	// ✅ Catch-all fallback for mismatched variant combinations
 	template <typename A, typename B>
 	bool operator()(const A&, const B&) const {
 		return false;
