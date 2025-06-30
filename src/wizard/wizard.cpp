@@ -200,17 +200,8 @@ void null_check(const rowgroup_pt& rowgroup, vector<up<ColumnDescriptorT>>& colu
 /*--------------------------------------------------------------------------------------------------------------------*/
 struct col_equality_visitor {
 	template <typename PT>
-	bool operator()(const up<TypedCol<PT>>& first_col, const up<TypedCol<PT>>& second_col) {
+	bool operator()(const up<TypedCol<PT>>& first_col, const up<TypedCol<PT>>& second_col) const {
 		for (n_t idx {0}; idx < first_col->data.size(); ++idx) {
-			// const auto& is_value_1_null = typed_vec_1->nullmap_span[idx];
-			// const auto& is_value_2_null = typed_vec_2->nullmap_span[idx];
-			//
-			// // if either of values are null, it is equal
-			// if (is_value_1_null || is_value_2_null) {
-			// 	//
-			// 	return true;
-			// }
-
 			const auto& tuple_1 = first_col->data[idx];
 			const auto& tuple_2 = second_col->data[idx];
 
@@ -221,21 +212,21 @@ struct col_equality_visitor {
 		return true;
 	}
 
-	bool operator()(const up<FLSStrColumn>& first_col, const up<FLSStrColumn>& second_col) {
+	bool operator()(const up<FLSStrColumn>& first_col, const up<FLSStrColumn>& second_col) const {
 		for (n_t index {0}; index < first_col->ofs_arr.size(); ++index) {
-			const bool columns_are_equal = Str::Equal(*first_col, *second_col, index, index);
-			if (!columns_are_equal) { //
+			if (!Str::Equal(*first_col, *second_col, index, index)) {
 				return false;
 			}
 		}
 		return true;
 	}
 
-	bool operator()(std::monostate&, std::monostate&) {
+	bool operator()(const std::monostate&, const std::monostate&) const {
 		FLS_UNREACHABLE();
 	}
 
-	bool operator()(auto&, auto&) {
+	template <typename A, typename B>
+	bool operator()(const A&, const B&) const {
 		return false;
 	}
 };

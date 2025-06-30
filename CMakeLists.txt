@@ -264,13 +264,22 @@ if (FLS_BUILD_TESTING)
     message("-- FLS: Build Testing.")
     include_directories(${CMAKE_CURRENT_SOURCE_DIR}/test/include)
 
-    # Helper to apply sanitizer flags only on non-Windows platforms
     function(fls_enable_sanitizers target)
         if (NOT WIN32)
-            target_compile_options(${target}
-                    PRIVATE -fsanitize=address -fsanitize=undefined)
-            target_link_options(${target}
-                    PRIVATE -fsanitize=address -fsanitize=undefined)
+            # AddressSanitizer + UndefinedBehavior + vptr/function to catch null‐vtable dispatch
+            target_compile_options(${target} PRIVATE
+                    -fsanitize=address
+                    -fsanitize=undefined
+                    -fsanitize=vptr
+                    -fsanitize=function
+                    -fno-sanitize-recover=all
+            )
+            target_link_options(${target} PRIVATE
+                    -fsanitize=address
+                    -fsanitize=undefined
+                    -fsanitize=vptr
+                    -fsanitize=function
+            )
         endif ()
     endfunction()
 
