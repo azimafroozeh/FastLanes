@@ -199,43 +199,48 @@ void null_check(const rowgroup_pt& rowgroup, vector<up<ColumnDescriptorT>>& colu
 }
 /*--------------------------------------------------------------------------------------------------------------------*/
 struct col_equality_visitor {
+
+	/* ---- Primitive columns ------------------------------------------- */
 	template <typename PT>
-	bool operator()(const up<TypedCol<PT>>& first_col, const up<TypedCol<PT>>& second_col) const {
-		for (n_t idx {0}; idx < first_col->data.size(); ++idx) {
-			if (first_col->data[idx] != second_col->data[idx]) {
+	bool operator()(const up<TypedCol<PT>>& lhs, const up<TypedCol<PT>>& rhs) const noexcept {
+		if (!lhs || !rhs)
+			return false;
+		if (lhs->data.size() != rhs->data.size())
+			return false;
+
+		return std::equal(lhs->data.begin(), lhs->data.end(), rhs->data.begin());
+	}
+
+	/* ---- String columns ---------------------------------------------- */
+	bool operator()(const up<FLSStrColumn>& lhs, const up<FLSStrColumn>& rhs) const noexcept {
+		if (!lhs || !rhs)
+			return false;
+		if (lhs->ofs_arr.size() != rhs->ofs_arr.size())
+			return false;
+
+		for (n_t i = 0; i < lhs->ofs_arr.size(); ++i)
+			if (!Str::Equal(*lhs, *rhs, i, i))
 				return false;
-			}
-		}
 		return true;
 	}
 
-	bool operator()(const up<FLSStrColumn>& first_col, const up<FLSStrColumn>& second_col) const {
-		for (n_t index {0}; index < first_col->ofs_arr.size(); ++index) {
-			if (!Str::Equal(*first_col, *second_col, index, index)) {
-				return false;
-			}
-		}
+	/* ---- Complex columns (placeholder comparison) ------------------- */
+	bool operator()(const up<List>& lhs, const up<List>& rhs) const noexcept {
+		return lhs == rhs;
+	}
+
+	bool operator()(const up<Struct>& lhs, const up<Struct>& rhs) const noexcept {
+		return lhs == rhs;
+	}
+
+	/* ---- Valueless state --------------------------------------------- */
+	bool operator()(const std::monostate&, const std::monostate&) const noexcept {
 		return true;
 	}
 
-	// 🔧 Add explicit overloads for List and Struct to prevent vtable holes
-	bool operator()(const up<List>&, const up<List>&) const {
-		return false;
-	}
-
-	bool operator()(const up<Struct>&, const up<Struct>&) const {
-		return false;
-	}
-
-	// ✅ Still treat monostate explicitly, but return a valid bool
-	bool operator()(const std::monostate&, const std::monostate&) const {
-		FLS_UNREACHABLE();
-		return false; // ensures type correctness
-	}
-
-	// ✅ Catch-all fallback for mismatched variant combinations
+	/* ---- Mismatched alternatives ------------------------------------- */
 	template <typename A, typename B>
-	bool operator()(const A&, const B&) const {
+	bool operator()(const A&, const B&) const noexcept {
 		return false;
 	}
 };
