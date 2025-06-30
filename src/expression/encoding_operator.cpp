@@ -60,16 +60,18 @@ void enc_dict_map_opr<VALUE_PT, INDEX_PT>::PointTo(n_t vec_idx) {
 
 template <typename VALUE_PT, typename INDEX_PT>
 void enc_dict_map_opr<VALUE_PT, INDEX_PT>::Map() {
-	auto* stats = typed_column_view.GetStats();
-	if (stats == nullptr) {
-		// no stats available—either bail out or build them on the fly
-		return;
+	const auto* stats = typed_column_view.GetStats();
+	if (!stats) {
+		throw std::runtime_error("typed_column_view.GetStats() returned null");
 	}
-	const auto& bimap_frequency = stats->bimap_frequency;
+
+	[[maybe_unused]] const auto& bimap_frequency = stats->bimap_frequency;
 
 	const auto* value_p = typed_column_view.Data();
-	for (size_t idx = 0; idx < CFG::VEC_SZ; ++idx) {
-		index_arr[idx] = static_cast<INDEX_PT>(bimap_frequency.get_key(value_p[idx]));
+
+	for (auto idx = 0; idx < CFG::VEC_SZ; ++idx) {
+		const auto value = value_p[idx];
+		index_arr[idx]   = static_cast<INDEX_PT>(bimap_frequency.get_key(value));
 	}
 }
 
