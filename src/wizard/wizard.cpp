@@ -223,6 +223,7 @@ struct col_equality_visitor {
 
 	bool operator()(const std::monostate&, const std::monostate&) const {
 		FLS_UNREACHABLE();
+		return false; // ensures return type is valid for dispatch table
 	}
 
 	template <typename A, typename B>
