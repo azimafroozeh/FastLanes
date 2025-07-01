@@ -283,7 +283,7 @@ jobs:
           cmake --build "test_build_${LIB_LABEL}" -j $BUILD_THREADS
 
       - name: Run tests
-        working-directory: "test_build_${LIB_LABEL}"
+        working-directory: "test_build_${{ env.LIB_LABEL }}"
         run: |
           # Exclude Quick-Fuzz tests from the normal suite
           ctest -j $BUILD_THREADS \
