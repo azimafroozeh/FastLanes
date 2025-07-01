@@ -21,7 +21,7 @@ else
 endif
 
 .DEFAULT_GOAL := help
-.PHONY: help venv install generate clean venv-clean
+.PHONY: help venv install generate clean-embeddings venv-clean
 
 help:
 	@echo "Targets:"
@@ -43,7 +43,7 @@ venv:
 install: venv
 	$(PIP) install --upgrade pip
 	$(PIP) install torch torchvision numpy pandas pyarrow \
-	    --index-url https://download.pytorch.org/whl/cpu
+	    --extra-index-url https://download.pytorch.org/whl/cpu
 
 # 3️⃣  Generate embeddings (single absolute command)
 generate: install
