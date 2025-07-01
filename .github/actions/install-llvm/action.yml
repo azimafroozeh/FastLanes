@@ -1,10 +1,11 @@
+# .github/actions/install-llvm-toolchain/action.yml
 name: Install LLVM Toolchain
 description: Cross-platform LLVM installer for macOS, Ubuntu and Windows
 
 inputs:
   version:
-    description: "Exact LLVM/Clang version to install, e.g. 20.1.7 or 19.1.7"
-    default: "20.1.7"
+    description: "Exact LLVM/Clang version to install, e.g. 18.1.4 or 18"
+    default: "18.1.4"
 
 runs:
   using: "composite"
@@ -18,10 +19,19 @@ runs:
         echo "🟣 Installing LLVM/Clang ${VERSION} on ${{ runner.os }}"
 
         if [[ "${{ runner.os }}" == "macOS" ]]; then
-          brew install llvm@${MAJOR}
-          echo "/opt/homebrew/opt/llvm@${MAJOR}/bin" >> "$GITHUB_PATH"
+          # ── macOS: try llvm@<MAJOR>; if absent, fall back to latest llvm ──
+          if brew info "llvm@${MAJOR}" > /dev/null 2>&1; then
+            brew install "llvm@${MAJOR}"
+            LLVM_PREFIX="$(brew --prefix "llvm@${MAJOR}")"
+          else
+            echo "::warning ::llvm@${MAJOR} formula not found – installing latest 'llvm' instead"
+            brew install llvm
+            LLVM_PREFIX="$(brew --prefix llvm)"
+          fi
+          echo "${LLVM_PREFIX}/bin" >> "$GITHUB_PATH"
 
         elif [[ "${{ runner.os }}" == "Linux" ]]; then
+          # ── Ubuntu LTS ────────────────────────────────────────────────────────
           sudo apt-get update -y
           sudo apt-get install -y wget gnupg lsb-release software-properties-common
           wget -O - https://apt.llvm.org/llvm-snapshot.gpg.key | \
@@ -43,6 +53,7 @@ runs:
           echo "/usr/lib/llvm-${MAJOR}/bin" >> "$GITHUB_PATH"
 
         elif [[ "${{ runner.os }}" == "Windows" ]]; then
+          # ── Windows Server 2022 ──────────────────────────────────────────────
           echo "→ chocolatey upgrade llvm --version=${VERSION}"
           choco upgrade llvm --version="${VERSION}" -y --no-progress --allow-downgrade
 

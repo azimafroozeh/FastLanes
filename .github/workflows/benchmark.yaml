@@ -25,7 +25,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        platform: [ ubuntu-latest, macos-latest, windows-latest ]
+        platform: [ ubuntu-latest, macos-latest ]
 
     defaults:
       run:
@@ -49,6 +49,7 @@ jobs:
                 -B build_benchmarks \
                 -G "$CMAKE_GENERATOR" \
                 -DFLS_ENABLE_VERBOSE_OUTPUT=ON \
+                -DFLS_BUILD_BENCHMARKING=ON \
                 -DCMAKE_BUILD_TYPE=Release \
                 -DCMAKE_C_COMPILER=clang \
                 -DCMAKE_CXX_COMPILER=clang++
