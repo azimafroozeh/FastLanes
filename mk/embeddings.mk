@@ -42,7 +42,8 @@ venv:
 # 2️⃣  Install required packages
 install: venv
 	$(PIP) install --upgrade pip
-	$(PIP) install torch torchvision numpy pandas pyarrow
+	$(PIP) install torch torchvision numpy pandas pyarrow \
+	    --index-url https://download.pytorch.org/whl/cpu
 
 # 3️⃣  Generate embeddings (single absolute command)
 generate: install
