@@ -223,8 +223,16 @@ jobs:
         with:
           submodules: recursive
 
+      # Map the boolean shared_lib into a human-friendly label
+      - name: Determine lib label
+        run: |
+          if [[ "${{ matrix.shared_lib }}" == "true" ]]; then
+            echo "LIB_LABEL=shared" >> $GITHUB_ENV
+          else
+            echo "LIB_LABEL=static" >> $GITHUB_ENV
+          fi
+
       - name: Detect CPU count
-        shell: bash
         run: make detect-cpu | tee -a "$GITHUB_ENV"
 
       - name: Generate synthetic dataset
@@ -235,9 +243,11 @@ jobs:
 
       - name: Configure tests
         run: |
+          # Build directory uses our human-friendly label
+          BUILD_DIR="test_build_${LIB_LABEL}"
           CMAKE_ARGS=(
             -S "${{ github.workspace }}"
-            -B "test_build_${{ matrix.shared_lib }}"
+            -B "${BUILD_DIR}"
             -DFLS_BUILD_TESTING=ON
             -DFLS_ENABLE_VERBOSE_OUTPUT=ON
             -DCMAKE_BUILD_TYPE=${{ matrix.build_type }}
@@ -253,12 +263,14 @@ jobs:
           cmake "${CMAKE_ARGS[@]}"
 
       - name: Build tests
-        run: cmake --build "test_build_${{ matrix.shared_lib }}" -j $BUILD_THREADS
+        run: |
+          # Use the same labeled build directory
+          cmake --build "test_build_${LIB_LABEL}" -j $BUILD_THREADS
 
       - name: Run tests
-        working-directory: "test_build_${{ matrix.shared_lib }}"
+        working-directory: "test_build_${LIB_LABEL}"
         run: |
-          # ↓ exclude Quick-Fuzz tests from the normal suite
+          # Exclude Quick-Fuzz tests from the normal suite
           ctest -j $BUILD_THREADS \
                 --stop-on-failure \
                 --output-on-failure \
