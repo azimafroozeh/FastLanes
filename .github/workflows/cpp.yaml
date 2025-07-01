@@ -128,6 +128,7 @@ jobs:
   # 4️⃣  Synthetic-dataset generator (Python, cached pip)
   # ──────────────────────────────────────────────────────────────────────────────
   generate_dataset:
+    needs: build
     strategy:
       matrix:
         platform:
@@ -214,6 +215,7 @@ jobs:
   # 6️⃣  Tests (Linux + macOS, Release only)
   # ──────────────────────────────────────────────────────────────────────────────
   test:
+    needs: build
     name: test (${{ matrix.platform }}, ${{ matrix.build_type }}, ${{ matrix.shared_lib && 'shared' || 'static' }})
     strategy:
       matrix:
