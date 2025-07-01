@@ -265,24 +265,23 @@ if (FLS_BUILD_TESTING)
     include_directories(${CMAKE_CURRENT_SOURCE_DIR}/test/include)
 
     function(fls_enable_sanitizers target)
-        if (NOT WIN32)
-            # AddressSanitizer + UndefinedBehavior + vptr/function to catch null‐vtable dispatch
-            target_compile_options(${target} PRIVATE
+        if (NOT WIN32)                         # keep Windows path as-is
+            # unified list of sanitizers
+            set(_san_flags
                     -fsanitize=address
                     -fsanitize=undefined
                     -fsanitize=vptr
                     -fsanitize=function
+                    -fsanitize=null               # ← NEW: catch nullptr deref everywhere
                     -fno-sanitize-recover=all
             )
-            target_link_options(${target} PRIVATE
-                    -fsanitize=address
-                    -fsanitize=undefined
-                    -fsanitize=vptr
-                    -fsanitize=function
-            )
+
+            target_compile_options(${target} PRIVATE ${_san_flags})
+            # link flags must repeat the same -fsanitize switches
+            # (linker strips unknown ones, so passing all is easiest)
+            target_link_options(${target} PRIVATE ${_san_flags})
         endif ()
     endfunction()
-
 
     add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/test)
 
