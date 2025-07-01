@@ -200,6 +200,7 @@ jobs:
   # 6️⃣  Tests (Linux + macOS, Release only)
   # ──────────────────────────────────────────────────────────────────────────────
   test:
+    name: test (${{ matrix.platform }}, ${{ matrix.build_type }}, ${{ matrix.shared_lib && 'shared' || 'static' }})
     strategy:
       matrix:
         platform:
