@@ -37,7 +37,7 @@ venv:
 		echo ".venv already exists."; \
 	fi
 
-# 2️⃣  Install (and auto-repair if the venv was built with Python 3.13)
+# 2️⃣  Install deps (and auto-repair if venv was built with Python 3.13)
 install: venv
 	@if [ -f "$(VENV_DIR)/pyvenv.cfg" ] && \
 	    grep -qE '^version = 3\.13' "$(VENV_DIR)/pyvenv.cfg"; then \
@@ -46,8 +46,14 @@ install: venv
 	    python -m venv "$(VENV_DIR)"; \
 	fi
 
+	# ── 1. upgrade pip ────────────────────────────────────────────
 	"$(VENV_PY)" -m pip install --upgrade pip
-	"$(VENV_PY)" -m pip install torch torchvision numpy pandas pyarrow \
+
+	# ── 2. install NumPy-1.x (+ pandas / pyarrow versions still built on it)
+	"$(VENV_PY)" -m pip install "numpy<2" "pandas<2.3" "pyarrow<16"
+
+	# ── 3. install PyTorch / torchvision from the official wheel index
+	"$(VENV_PY)" -m pip install torch torchvision \
 	              --extra-index-url https://download.pytorch.org/whl/cpu
 
 # 3️⃣  Generate embeddings
