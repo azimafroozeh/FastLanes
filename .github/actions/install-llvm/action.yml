@@ -5,7 +5,7 @@ description: Cross-platform LLVM installer for macOS, Ubuntu and Windows
 inputs:
   version:
     description: "Exact LLVM/Clang version to install, e.g. 18.1.4 or 18"
-    default: "18.1.4"
+    default: "18.1.4"   # fine for macOS/Linux; Windows will auto-bump if too old
 
 runs:
   using: "composite"
@@ -54,6 +54,14 @@ runs:
 
         elif [[ "${{ runner.os }}" == "Windows" ]]; then
           # ── Windows Server 2022 ──────────────────────────────────────────────
+          # MSVC STL (VS 2022 17.11+) requires Clang ≥19. If caller asked for less,
+          # silently upgrade to 20.1.7 so the build won’t fail with STL1000.
+          if [[ "${MAJOR}" -lt 19 ]]; then
+            echo "::notice ::Requested LLVM ${VERSION} is older than MSVC STL accepts; upgrading to LLVM 20.1.7"
+            VERSION="20.1.7"
+            MAJOR="20"
+          fi
+
           echo "→ chocolatey upgrade llvm --version=${VERSION}"
           choco upgrade llvm --version="${VERSION}" -y --no-progress --allow-downgrade
 
