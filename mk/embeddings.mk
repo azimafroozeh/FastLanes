@@ -45,7 +45,7 @@ install: venv
 	$(PIP) install torch torchvision numpy pandas pyarrow \
 	    --extra-index-url https://download.pytorch.org/whl/cpu
 
-# 3️⃣  Generate embeddings (single absolute command)
+# 3️⃣  Generate embeddings
 generate: install
 	@echo "Running generate_embedding.py inside $(VENV_DIR)…"
 	"$(PYTHON)" "$(SCRIPT)"
