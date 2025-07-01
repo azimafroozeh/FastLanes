@@ -5,9 +5,9 @@ run-name: >-
 
 on:
   push:
-    branches: [ * ]
+    branches: [ '*' ]
   pull_request:
-    branches: [ main, dev ]
+    branches: [ '*' ]
 
 # Cancel any in-flight benchmark runs on the same branch/PR
 concurrency:
@@ -78,4 +78,3 @@ jobs:
               ./${exe}
             fi
           done
-
