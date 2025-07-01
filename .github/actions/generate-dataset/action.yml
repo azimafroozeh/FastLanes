@@ -1,3 +1,4 @@
+# .github/actions/generate_dataset/action.yml
 name: Generate Synthetic Dataset
 
 description: Generate synthetic data and embeddings using Makefile targets
@@ -8,7 +9,7 @@ runs:
     - name: Set up Python
       uses: actions/setup-python@v5
       with:
-        python-version: "3.11"
+        python-version: "3.12"
 
     - name: Generate synthetic data
       working-directory: mk
@@ -16,5 +17,6 @@ runs:
       run: make -f data.mk generate_synthetic_data
 
     - name: Generate embeddings
+      working-directory: mk
       shell: bash
-      run: make -f mk/embeddings.mk generate
+      run: make -f embeddings.mk generate
