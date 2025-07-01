@@ -57,6 +57,11 @@ jobs:
       - name: Build benchmarks
         run: cmake --build build_benchmarks -j $BUILD_THREADS
 
+      - name: List build output
+        run: |
+          cd build_benchmarks
+          ls -l
+
       - name: Run benchmarks
         run: |
           cd build_benchmarks
