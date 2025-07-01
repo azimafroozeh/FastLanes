@@ -12,13 +12,10 @@ VENV_DIR     := $(PROJECT_ROOT)/.venv
 SCRIPTS_DIR  := $(PROJECT_ROOT)/scripts
 SCRIPT       := $(abspath $(SCRIPTS_DIR)/generate_embedding.py)
 
-# Virtual-env executables (they don’t exist until the venv is created)
 ifeq ($(OS),Windows_NT)
-  VENV_PY  := $(VENV_DIR)/Scripts/python.exe
-  VENV_PIP := $(VENV_DIR)/Scripts/pip.exe
+  VENV_PY := $(VENV_DIR)/Scripts/python.exe
 else
-  VENV_PY  := $(VENV_DIR)/bin/python
-  VENV_PIP := $(VENV_DIR)/bin/pip
+  VENV_PY := $(VENV_DIR)/bin/python
 endif
 
 .DEFAULT_GOAL := help
@@ -31,7 +28,7 @@ help:
 	@echo "  make clean       – delete __pycache__"
 	@echo "  make venv-clean  – remove .venv"
 
-# 1️⃣  Create virtual-env if missing, using *whatever* ‘python’ is first on PATH
+# 1️⃣  Create virtual-env if missing (uses the interpreter first on PATH)
 venv:
 	@if [ ! -d "$(VENV_DIR)" ]; then \
 		echo "Creating virtualenv with interpreter: $$(python --version)"; \
@@ -40,12 +37,8 @@ venv:
 		echo ".venv already exists."; \
 	fi
 
-# 2️⃣  Install required packages
+# 2️⃣  Install (and auto-repair if the venv was built with Python 3.13)
 install: venv
-	# ────────────────────────────────────────────────────────────────
-	# If the venv was built with an *unsupported* Python (3.13 today),
-	# blow it away and rebuild with the interpreter on PATH (3.12).
-	# ────────────────────────────────────────────────────────────────
 	@if [ -f "$(VENV_DIR)/pyvenv.cfg" ] && \
 	    grep -qE '^version = 3\.13' "$(VENV_DIR)/pyvenv.cfg"; then \
 	    echo "⚠️  .venv uses Python 3.13 — recreating with ‘python’ on PATH"; \
@@ -53,13 +46,13 @@ install: venv
 	    python -m venv "$(VENV_DIR)"; \
 	fi
 
-	$(VENV_PIP) install --upgrade pip
-	$(VENV_PIP) install torch torchvision numpy pandas pyarrow \
-	    --extra-index-url https://download.pytorch.org/whl/cpu
+	"$(VENV_PY)" -m pip install --upgrade pip
+	"$(VENV_PY)" -m pip install torch torchvision numpy pandas pyarrow \
+	              --extra-index-url https://download.pytorch.org/whl/cpu
 
 # 3️⃣  Generate embeddings
 generate: install
-	@echo "Running generate_embedding.py with $$( $(VENV_PY) --version ) …"
+	@echo "Running generate_embedding.py with $$( "$(VENV_PY)" --version ) …"
 	"$(VENV_PY)" "$(SCRIPT)"
 
 # 4️⃣  House-keeping helpers
