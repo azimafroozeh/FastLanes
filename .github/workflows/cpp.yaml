@@ -155,7 +155,7 @@ jobs:
   # 5️⃣  Example build & run
   # ──────────────────────────────────────────────────────────────────────────────
   example:
-    needs: build
+#    needs: build
     strategy:
       matrix:
         platform: [ ubuntu-latest, macos-latest, windows-latest ]
@@ -215,7 +215,7 @@ jobs:
   # 6️⃣  Tests (Linux + macOS, Release only)
   # ──────────────────────────────────────────────────────────────────────────────
   test:
-    needs: build
+#    needs: build
     name: test (${{ matrix.platform }}, ${{ matrix.build_type }}, ${{ matrix.shared_lib && 'shared' || 'static' }})
     strategy:
       matrix:
