@@ -306,11 +306,13 @@ std::string timestamp_formatter(int64_t micros) {
 	int second = static_cast<int>(rem / K_MICROS_PER_SECOND);
 	int micro  = static_cast<int>(rem % K_MICROS_PER_SECOND);
 
-	// Build the ISO-8601 string
-	char buf[32]; // enough for YYYY-MM-DDThh:mm:ss.ffffff
+	// Build ISO-8601 string
+	char buf[32]; // enough
 	int  len = std::snprintf(buf, sizeof(buf), "%04d-%02u-%02uT%02d:%02d:%02d", year, month, day, hour, minute, second);
-	if (micro) {
-		std::snprintf(buf + len, sizeof(buf) - len, ".%06d", micro);
+
+	if (micro != 0) {
+		std::size_t remaining = sizeof(buf) - static_cast<std::size_t>(len);
+		std::snprintf(buf + len, remaining, ".%06d", micro);
 	}
 	return std::string(buf);
 }
