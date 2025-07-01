@@ -1,0 +1,78 @@
+name: Benchmarker CI
+
+on:
+  push:
+    branches: [ * ]
+  pull_request:
+    branches: [ main, dev ]
+
+# Cancel any in-flight benchmark runs on the same branch/PR
+concurrency:
+  group: Benchmarker CI-${{ github.ref }}
+  cancel-in-progress: true
+
+# use Ninja by default
+env:
+  CMAKE_GENERATOR: Ninja
+
+jobs:
+  benchmark:
+    name: Run benchmarks (${{ matrix.platform }})
+    runs-on: ${{ matrix.platform }}
+    strategy:
+      fail-fast: false
+      matrix:
+        platform: [ ubuntu-latest, macos-latest, windows-latest ]
+
+    defaults:
+      run:
+        shell: bash
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - name: Detect CPU count
+        run: make detect-cpu | tee -a "$GITHUB_ENV"
+
+      - name: Install LLVM
+        uses: ./.github/actions/install-llvm
+
+      - name: Configure
+        run: |
+          cmake -S "${{ github.workspace }}" \
+                -B build_benchmarks \
+                -G "$CMAKE_GENERATOR" \
+                -DFLS_ENABLE_VERBOSE_OUTPUT=ON \
+                -DCMAKE_BUILD_TYPE=Release \
+                -DCMAKE_C_COMPILER=clang \
+                -DCMAKE_CXX_COMPILER=clang++
+
+      - name: Build benchmarks
+        run: cmake --build build_benchmarks -j $BUILD_THREADS
+
+      - name: Run benchmarks
+        run: |
+          cd build_benchmarks
+          benchmarks=(
+            bench_compression_ratio
+            benchmark_decompression_time
+            benchmark_random_access
+            bench_decoding_ffor
+            micro_benchmark_decompression
+            bench_sample_size
+            bench_accuracy_over_rowgroups
+            bench_share_schema
+            bench_compression_time
+          )
+          for exe in "${benchmarks[@]}"; do
+            echo "=== Running $exe ==="
+            if [[ "${{ runner.os }}" == "Windows" ]]; then
+              ./${exe}.exe
+            else
+              ./${exe}
+            fi
+          done
+
