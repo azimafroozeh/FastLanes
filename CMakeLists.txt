@@ -40,6 +40,7 @@ include(CMakePrintHelpers)
 set_property(GLOBAL PROPERTY CTEST_TARGETS_ADDED 1)
 include(CTest)
 include(GNUInstallDirs)
+include(enable_sanitizer)
 
 # Checks : -------------------------------------------------------------------------------------------------------
 if (NOT "${CMAKE_CXX_COMPILER_ID}" MATCHES "Clang")
