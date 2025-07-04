@@ -22,10 +22,9 @@
 #   macOS-14   | ✅ ASan       | ❌ Abort at startup
 #   macOS-15   | ✅ ASan       | ❌ Abort at startup
 #
-#
 
 function(fls_enable_sanitizers target)
-    # If this is a fully static build on Apple, ASan will abort.
+    # 1) Skip on static macOS
     if (APPLE AND NOT FLS_BUILD_SHARED_LIBS)
         message(STATUS
                 "[Sanitizers] Skipping sanitizers for '${target}' "
@@ -33,7 +32,9 @@ function(fls_enable_sanitizers target)
         return()
     endif ()
 
+    # 2) Apply on all other platforms
     if (NOT WIN32)
+        # unified list of sanitizers
         set(_san_flags
                 -fsanitize=address
                 -fsanitize=undefined
@@ -43,6 +44,12 @@ function(fls_enable_sanitizers target)
                 -fno-sanitize-recover=all
                 -fno-omit-frame-pointer
         )
+
+        # Log exactly what flags we’re about to add
+        string(REPLACE ";" " " _san_flags_str "${_san_flags}")
+        message(STATUS
+                "[Sanitizers] Enabling sanitizers for '${target}': ${_san_flags_str}")
+
         target_compile_options(${target} PRIVATE ${_san_flags})
         target_link_options(${target} PRIVATE ${_san_flags})
     endif ()
