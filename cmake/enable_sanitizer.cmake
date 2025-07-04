@@ -2,7 +2,8 @@
 #
 # Defines fls_enable_sanitizers(<target>) to apply
 # AddressSanitizer, UBSan, and related checks on all builds
-# *except* fully‐static macOS executables, which are unsupported.
+# *except* fully‐static macOS executables, which are unsupported,
+# and on Win32 where Clang’s sanitizers aren’t reliably supported.
 #
 # RATIONALE:
 #   • ASan on Apple platforms is provided only as a dynamic
@@ -14,6 +15,12 @@
 #     startup (you see the shadow-byte legend then “ABORTING”).
 #   • Linux “static” builds still load the dynamic libasan,
 #     so only macOS static+ASan fails.
+#   • On **Win32**, neither MSVC nor Clang-on-Windows reliably
+#     supports the standard `-fsanitize=` flags by default:
+#       – MSVC uses a different sanitization framework
+#         (AddressSanitizer on Windows is still experimental).
+#       – ODR-use of sanitizers can break the CRT linkage.
+#     Disabling on Win32 avoids build errors and linkage issues.
 #
 # IMPACT ON CI:
 #   OS         | Shared        | Static
@@ -21,6 +28,7 @@
 #   Ubuntu     | ✅ ASan       | ✅ ASan
 #   macOS-14   | ✅ ASan       | ❌ Abort at startup
 #   macOS-15   | ✅ ASan       | ❌ Abort at startup
+#   Windows    | 🚫 Sanitizers | 🚫 Sanitizers
 #
 
 function(fls_enable_sanitizers target)
@@ -32,25 +40,29 @@ function(fls_enable_sanitizers target)
         return()
     endif ()
 
-    # 2) Apply on all other platforms
-    if (NOT WIN32)
-        # unified list of sanitizers
-        set(_san_flags
-                -fsanitize=address
-                -fsanitize=undefined
-                -fsanitize=vptr
-                -fsanitize=function
-                -fsanitize=null
-                -fno-sanitize-recover=all
-                -fno-omit-frame-pointer
-        )
-
-        # Log exactly what flags we’re about to add
-        string(REPLACE ";" " " _san_flags_str "${_san_flags}")
+    # 2) Skip on Win32 due to lack of reliable -fsanitize support
+    if (WIN32)
         message(STATUS
-                "[Sanitizers] Enabling sanitizers for '${target}': ${_san_flags_str}")
-
-        target_compile_options(${target} PRIVATE ${_san_flags})
-        target_link_options(${target} PRIVATE ${_san_flags})
+                "[Sanitizers] Skipping sanitizers for '${target}' "
+                "(sanitizer flags not supported on Win32 toolchains)")
+        return()
     endif ()
+
+    # 3) Apply on all other platforms
+    set(_san_flags
+            -fsanitize=address
+            -fsanitize=undefined
+            -fsanitize=vptr
+            -fsanitize=function
+            -fsanitize=null
+            -fno-sanitize-recover=all
+            -fno-omit-frame-pointer
+    )
+
+    string(REPLACE ";" " " _san_flags_str "${_san_flags}")
+    message(STATUS
+            "[Sanitizers] Enabling sanitizers for '${target}': ${_san_flags_str}")
+
+    target_compile_options(${target} PRIVATE ${_san_flags})
+    target_link_options(${target} PRIVATE ${_san_flags})
 endfunction()
