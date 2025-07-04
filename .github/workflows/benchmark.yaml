@@ -46,7 +46,7 @@ jobs:
       - name: Configure
         run: |
           cmake -S "${{ github.workspace }}" \
-                -B build_benchmarks \
+                -B build \
                 -G "$CMAKE_GENERATOR" \
                 -DFLS_ENABLE_VERBOSE_OUTPUT=ON \
                 -DFLS_BUILD_BENCHMARKING=ON \
@@ -55,16 +55,16 @@ jobs:
                 -DCMAKE_CXX_COMPILER=clang++
 
       - name: Build benchmarks
-        run: cmake --build build_benchmarks -j $BUILD_THREADS
+        run: cmake --build build -j $BUILD_THREADS
 
       - name: List build output
         run: |
-          cd build_benchmarks
+          cd build/benchmark
           ls -l
 
       - name: Run benchmarks
         run: |
-          cd build_benchmarks
+          cd build/benchmark
           benchmarks=(
             bench_compression_ratio
             benchmark_decompression_time
