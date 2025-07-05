@@ -11,7 +11,7 @@ public:
 	[[nodiscard]] double bench(const path& dir_path) const {
 		Connection conn;
 
-		auto fls_reader            = conn.reset().read_fls(dir_path);
+		auto fls_reader            = conn.reset().read_fls(dir_path / "data.fls");
 		auto first_rowgroup_reader = fls_reader->get_rowgroup_reader(0);
 
 		auto start = std::chrono::high_resolution_clock::now();
@@ -29,6 +29,16 @@ public:
 public:
 	n_t n_repetitions {0};
 };
+
+void clear_directory(const fs::path& dir) {
+	if (!fs::exists(dir) || !fs::is_directory(dir))
+		return; // nothing to do
+
+	for (auto& entry : fs::directory_iterator(dir)) {
+		// remove files or entire subtrees
+		fs::remove_all(entry.path());
+	}
+}
 
 void bench_decompression(dataset_view_t dataset_view) {
 	const std::string result_file_path =
@@ -60,6 +70,10 @@ void bench_decompression(dataset_view_t dataset_view) {
 		                       << " is benchmarked with time(ms): " << decompression_time_ms << std::endl;
 
 		main_results.emplace_back(table_name, decompression_time_ms);
+		// Cleanup: Remove the thread-specific directory
+		clear_directory(thread_specific_fls_dir_path);
+		az_printer::green_cout << "-- Removed directory: " << thread_specific_fls_dir_path << std::endl;
+		az_printer::green_cout << "-- Decompression times written to " << result_file_path << '\n';
 	}
 
 	// Sort main results by table name
@@ -85,11 +99,6 @@ void bench_decompression(dataset_view_t dataset_view) {
 
 	// Print the total sum to the console
 	az_printer::bold_magenta_cout << "-- Total decompression time (ms): " << total_decompression_time_ms << std::endl;
-
-	// Cleanup: Remove the thread-specific directory
-	remove_all(thread_specific_fls_dir_path);
-	az_printer::green_cout << "-- Removed directory: " << thread_specific_fls_dir_path << std::endl;
-	az_printer::green_cout << "-- Decompression times written to " << result_file_path << '\n';
 }
 
 int main() {

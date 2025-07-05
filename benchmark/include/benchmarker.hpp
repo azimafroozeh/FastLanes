@@ -50,8 +50,10 @@ public:
 
 		// Original rowgroup
 		Connection con1;
+		// Original rowgroup
+		const auto thread_specific_fls_file_path = thread_specific_fls_dir_path / "data.fls";
 		con1.reset().read_csv(dir_path).project(idxs);
-		con1.to_fls(thread_specific_fls_dir_path);
+		con1.to_fls(thread_specific_fls_file_path);
 	}
 	// Method to write a table's data to a thread-specific FLS directory
 	void Write(const string_view file_path, const path& thread_specific_fls_dir_path, n_t sample_size) const {
@@ -62,8 +64,9 @@ public:
 
 		// Original rowgroup
 		Connection con1;
+		const auto thread_specific_fls_file_path = thread_specific_fls_dir_path / "data.fls";
 		con1.reset().read_csv(dir_path);
-		con1.set_sample_size(sample_size).to_fls(thread_specific_fls_dir_path);
+		con1.set_sample_size(sample_size).to_fls(thread_specific_fls_file_path);
 	}
 	// Method to write a table's data to a thread-specific FLS directory
 	void Write(const string_view            file_path,
@@ -76,8 +79,9 @@ public:
 
 		// Original rowgroup
 		Connection con1;
+		const auto thread_specific_fls_file_path = thread_specific_fls_dir_path / "data.fls";
 		con1.reset().read_csv(dir_path);
-		con1.force_schema(operator_tokens).to_fls(thread_specific_fls_dir_path);
+		con1.force_schema(operator_tokens).to_fls(thread_specific_fls_file_path);
 	}
 
 	// Method to get the footer for the thread-specific directory

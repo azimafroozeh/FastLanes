@@ -8,7 +8,7 @@ public:
 	    : n_repetitions(n_repetitions) {
 	}
 
-	double bench(const path& dir_path) const {
+	[[nodiscard]] double bench(const path& dir_path) const {
 		Connection conn;
 
 		auto fls_reader            = conn.reset().read_fls(dir_path);
@@ -26,7 +26,8 @@ public:
 		return elapsed.count();
 	}
 	// Method to write a table's data to a thread-specific FLS directory
-	double bench_compression_time(const string_view file_path, const path& thread_specific_fls_dir_path) const {
+	[[nodiscard]] double bench_compression_time(const string_view file_path,
+	                                            const path&       thread_specific_fls_dir_path) const {
 		const path dir_path = fastlanes_repo_data_path / string(file_path);
 
 		// Ensure the thread-specific directory exists
