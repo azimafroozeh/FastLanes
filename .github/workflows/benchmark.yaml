@@ -9,12 +9,10 @@ on:
   pull_request:
     branches: [ '*' ]
 
-# Cancel any in-flight benchmark runs on the same branch/PR
 concurrency:
   group: Benchmarker CI-${{ github.ref }}
   cancel-in-progress: true
 
-# use Ninja by default
 env:
   CMAKE_GENERATOR: Ninja
 
@@ -62,25 +60,29 @@ jobs:
           cd build/benchmark
           ls -l
 
-      - name: Run benchmarks
-        run: |
-          cd build/benchmark
-          benchmarks=(
-            bench_compression_ratio
-            benchmark_decompression_time
-            benchmark_random_access
-            bench_decoding_ffor
-            micro_benchmark_decompression
-            bench_sample_size
-            bench_accuracy_over_rowgroups
-            bench_share_schema
-            bench_compression_time
-          )
-          for exe in "${benchmarks[@]}"; do
-            echo "=== Running $exe ==="
-            if [[ "${{ runner.os }}" == "Windows" ]]; then
-              ./${exe}.exe
-            else
-              ./${exe}
-            fi
-          done
+      - name: Run bench_compression_ratio
+        run: build/benchmark/bench_compression_ratio
+
+      - name: Run benchmark_decompression_time
+        run: build/benchmark/benchmark_decompression_time
+
+      - name: Run benchmark_random_access
+        run: build/benchmark/benchmark_random_access
+
+      - name: Run bench_decoding_ffor
+        run: build/benchmark/bench_decoding_ffor
+
+      - name: Run micro_benchmark_decompression
+        run: build/benchmark/micro_benchmark_decompression
+
+      - name: Run bench_sample_size
+        run: build/benchmark/bench_sample_size
+
+      - name: Run bench_accuracy_over_rowgroups
+        run: build/benchmark/bench_accuracy_over_rowgroups
+
+      - name: Run bench_share_schema
+        run: build/benchmark/bench_share_schema
+
+      - name: Run bench_compression_time
+        run: build/benchmark/bench_compression_time

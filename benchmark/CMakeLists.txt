@@ -10,7 +10,7 @@ target_link_libraries(bench_compression_ratio PUBLIC FastLanes::benchmarker)
 add_executable(benchmark_decompression_time bench_decompression_time.cpp)
 target_link_libraries(benchmark_decompression_time PUBLIC FastLanes::benchmarker)
 
-add_executable(benchmark_random_access benchmark_random_access.cpp)
+add_executable(benchmark_random_access bench_random_access.cpp)
 target_link_libraries(benchmark_random_access PUBLIC FastLanes::benchmarker)
 
 add_executable(bench_decoding_ffor bench_decoding_ffor.cpp)
