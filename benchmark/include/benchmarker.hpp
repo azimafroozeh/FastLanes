@@ -16,6 +16,17 @@
 #include <vector>
 
 namespace fastlanes {
+
+inline void clear_directory(const fs::path& dir) {
+	if (!fs::exists(dir) || !fs::is_directory(dir))
+		return; // nothing to do
+
+	for (auto& entry : fs::directory_iterator(dir)) {
+		// remove files or entire subtrees
+		fs::remove_all(entry.path());
+	}
+}
+
 struct DetailedTableView {
 	std::string_view table_name;
 	std::string_view path;

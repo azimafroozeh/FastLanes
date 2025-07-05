@@ -30,16 +30,6 @@ public:
 	n_t n_repetitions {0};
 };
 
-void clear_directory(const fs::path& dir) {
-	if (!fs::exists(dir) || !fs::is_directory(dir))
-		return; // nothing to do
-
-	for (auto& entry : fs::directory_iterator(dir)) {
-		// remove files or entire subtrees
-		fs::remove_all(entry.path());
-	}
-}
-
 void bench_decompression(dataset_view_t dataset_view) {
 	const std::string result_file_path =
 	    std::string(FLS_CMAKE_SOURCE_DIR) + "/benchmark/result/decompression_time/public_bi/fastlanes.csv";
@@ -60,6 +50,9 @@ void bench_decompression(dataset_view_t dataset_view) {
 
 	// Iterate over all tables in the dataset and process them in parallel
 	for (const auto& [table_name, file_path] : dataset_view) {
+		// Cleanup: Remove the thread-specific directory
+		clear_directory(thread_specific_fls_dir_path);
+
 		DecompressionTimeBenchmarker benchmarker {n_repetition};
 
 		benchmarker.Write(file_path, thread_specific_fls_dir_path);
@@ -70,10 +63,8 @@ void bench_decompression(dataset_view_t dataset_view) {
 		                       << " is benchmarked with time(ms): " << decompression_time_ms << std::endl;
 
 		main_results.emplace_back(table_name, decompression_time_ms);
-		// Cleanup: Remove the thread-specific directory
-		clear_directory(thread_specific_fls_dir_path);
+
 		az_printer::green_cout << "-- Removed directory: " << thread_specific_fls_dir_path << std::endl;
-		az_printer::green_cout << "-- Decompression times written to " << result_file_path << '\n';
 	}
 
 	// Sort main results by table name
@@ -96,6 +87,7 @@ void bench_decompression(dataset_view_t dataset_view) {
 		         << "\n";
 	}
 	csv_file.close();
+	az_printer::green_cout << "-- Decompression times written to " << result_file_path << '\n';
 
 	// Print the total sum to the console
 	az_printer::bold_magenta_cout << "-- Total decompression time (ms): " << total_decompression_time_ms << std::endl;
