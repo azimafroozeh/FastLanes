@@ -69,12 +69,10 @@ void bench_compression(dataset_view_t dataset_view) {
 	for (const auto& [table_name, file_path] : dataset_view) {
 
 		// Cleanup: Remove the thread-specific directory
-		remove_all(thread_specific_fls_dir_path);
+		clear_directory(thread_specific_fls_dir_path);
 		az_printer::green_cout << "-- Removed directory: " << thread_specific_fls_dir_path << std::endl;
 
 		CompressionTimeBenchmarker benchmarker {n_repetition};
-
-		benchmarker.Write(file_path, thread_specific_fls_dir_path);
 		auto compression_time_ms = benchmarker.bench_compression_time(file_path, thread_specific_fls_dir_path);
 
 		az_printer::green_cout << "-- Table " << table_name << " is benchmarked with time(ms): " << compression_time_ms

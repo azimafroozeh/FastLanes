@@ -78,11 +78,11 @@ jobs:
       - name: Run bench_sample_size
         run: build/benchmark/bench_sample_size
 
-      - name: Run bench_accuracy_over_rowgroups
-        run: build/benchmark/bench_accuracy_over_rowgroups
-
-      - name: Run bench_share_schema
-        run: build/benchmark/bench_share_schema
+      #      - name: Run bench_accuracy_over_rowgroups
+      #        run: build/benchmark/bench_accuracy_over_rowgroups
+      #
+      #      - name: Run bench_share_schema
+      #        run: build/benchmark/bench_share_schema
 
       - name: Run bench_compression_time
         run: build/benchmark/bench_compression_time

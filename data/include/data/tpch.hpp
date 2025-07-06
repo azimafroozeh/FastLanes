@@ -1,8 +1,8 @@
 #ifndef DATA_TPCH_HPP
 #define DATA_TPCH_HPP
 
-#include <string>
 #include <array>
+#include <string>
 
 namespace fastlanes {
 
