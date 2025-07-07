@@ -1,4 +1,5 @@
 #include "benchmarker.hpp"
+#include "benchmark_utils.hpp"
 
 using namespace fastlanes; // NOLINT
 
@@ -37,38 +38,16 @@ void bench_decompression(dataset_view_t dataset_view) {
 	// Ensure the output directory exists
 	create_directories(std::filesystem::path(result_file_path).parent_path());
 
-	// Containers for results to be sorted later
-	std::vector<std::pair<std::string, double>> main_results;
+        const n_t n_repetition {1000};
 
-	// Vector to store thread-specific directories for cleanup
-	const n_t n_repetition {1000};
-
-	// Generate a thread-specific directory path
-	std::ostringstream thread_id_stream;
-	thread_id_stream << std::this_thread::get_id();
-	path thread_specific_fls_dir_path = fastlanes_repo_data_path / "data" / "fls" / thread_id_stream.str();
-
-	// Iterate over all tables in the dataset and process them in parallel
-	for (const auto& [table_name, file_path] : dataset_view) {
-		// Cleanup: Remove the thread-specific directory
-		clear_directory(thread_specific_fls_dir_path);
-
-		DecompressionTimeBenchmarker benchmarker {n_repetition};
-
-		benchmarker.Write(file_path, thread_specific_fls_dir_path);
-		auto        decompression_time_ms = benchmarker.bench(thread_specific_fls_dir_path);
-		const auto& footer_up             = benchmarker.GetTableDescriptor(thread_specific_fls_dir_path);
-
-		az_printer::green_cout << "-- Table " << table_name
-		                       << " is benchmarked with time(ms): " << decompression_time_ms << std::endl;
-
-		main_results.emplace_back(table_name, decompression_time_ms);
-
-		az_printer::green_cout << "-- Removed directory: " << thread_specific_fls_dir_path << std::endl;
-	}
-
-	// Sort main results by table name
-	std::ranges::sort(main_results, [](const auto& a, const auto& b) { return a.first < b.first; });
+        auto main_results = run_dataset(dataset_view, [&](const std::string_view file_path, const path& dir) {
+                DecompressionTimeBenchmarker benchmarker {n_repetition};
+                benchmarker.Write(file_path, dir);
+                double ms = benchmarker.bench(dir);
+                az_printer::green_cout << "-- Table " << file_path
+                                       << " is benchmarked with time(ms): " << ms << std::endl;
+                return ms;
+        });
 
 	// Compute the sum of decompression times
 	double total_decompression_time_ms = 0;

@@ -1,4 +1,5 @@
 #include "benchmarker.hpp"
+#include "benchmark_utils.hpp"
 #include "cycle_counter.hpp"
 
 using namespace fastlanes; // NOLINT
@@ -42,15 +43,12 @@ void micro_benchmark_decompression(detailed_dataset_view_t dataset_view, const s
 	// Vector to store thread-specific directories for cleanup
 	const n_t n_repetition {1000};
 
-	// Generate a thread-specific directory path
-	std::ostringstream thread_id_stream;
-	thread_id_stream << std::this_thread::get_id();
-	path thread_specific_fls_dir_path = fastlanes_repo_data_path / "data" / "fls" / thread_id_stream.str();
+        // Generate a thread-specific directory path
+        path thread_specific_fls_dir_path = make_thread_specific_dir();
 
 	// Iterate over all tables in the dataset and process them in parallel
-	for (const auto& [table_name, file_path, idxs] : dataset_view) {
-		clear_directory(thread_specific_fls_dir_path);
-		az_printer::yellow_cout << "-- Removed directory: " << thread_specific_fls_dir_path << std::endl;
+        for (const auto& [table_name, file_path, idxs] : dataset_view) {
+                clear_directory(thread_specific_fls_dir_path);
 
 		DecompressionTimeBenchmarker benchmarker {n_repetition};
 
