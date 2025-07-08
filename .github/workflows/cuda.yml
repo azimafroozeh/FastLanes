@@ -4,18 +4,15 @@ run-name: >-
   — ${{ github.event.pull_request.title || github.event.head_commit.message }}
 
 on:
-  push:        # triggers on any branch
+  push:
 
 permissions:
-  contents: write  # needed to push actions
+  contents: write
 
 jobs:
   build:
     if: github.actor == 'azimafroozeh'
-    runs-on: [ self-hosted, Linux, X64 ]
-    container:
-      image: nvidia/cuda:11.8.0-devel-ubuntu22.04
-      options: --gpus all  # enable GPU support inside the container
+    runs-on: [ self-hosted, Linux, X64, GPU ]
 
     steps:
       - name: Checkout code
@@ -23,7 +20,10 @@ jobs:
         with:
           fetch-depth: 0
 
-      # CUDA is included in the container image
+      - name: Verify CUDA & GPU
+        run: |
+          nvidia-smi
+          nvcc --version
 
       - name: Configure CMake
         run: |
