@@ -1,9 +1,8 @@
 name: CUDA
-run-name: >-
-  ${{ github.workflow }} on ${{ github.ref_name }} (#${{ github.run_number }})
-  — ${{ github.event.pull_request.title || github.event.head_commit.message }}
-
 on: [ push ]
+
+permissions:
+  contents: read
 
 jobs:
   build:
@@ -28,8 +27,25 @@ jobs:
         with:
           fetch-depth: 0
 
+      - name: Debug runner environment
+        run: |
+          echo "🏷️  Hostname: $(hostname)"
+          echo "🏷️  Matrix label: ${{ matrix.runnerLabel }}"
+          echo "🔍  PATH = $PATH"
+          echo "🔍  which nvidia-smi: $(which nvidia-smi || echo 'NOT FOUND')"
+          echo "🔍  which nvcc: $(which nvcc || echo 'NOT FOUND')"
+
       - name: Verify CUDA & GPU
         run: |
+          # Fail fast if nvidia-smi or nvcc are missing
+          if ! command -v nvidia-smi >/dev/null; then
+            echo "Error: nvidia-smi not found. Make sure CUDA drivers are installed on this runner."
+            exit 1
+          fi
+          if ! command -v nvcc >/dev/null; then
+            echo "Error: nvcc not found. Make sure the CUDA toolkit is installed on this runner."
+            exit 1
+          fi
           nvidia-smi
           nvcc --version
 
@@ -41,5 +57,4 @@ jobs:
         run: cmake --build build -- -j$(nproc)
 
       - name: Run CUDA Info
-        # prints GPU properties gathered by your binary
         run: ./build/cuda_info_dummy
