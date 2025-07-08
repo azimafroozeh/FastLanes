@@ -1,4 +1,7 @@
 name: CUDA
+run-name: >-
+  ${{ github.workflow }} on ${{ github.ref_name }} (#${{ github.run_number }})
+  — ${{ github.event.pull_request.title || github.event.head_commit.message }}
 
 on:
   push:        # triggers on any branch
@@ -9,10 +12,10 @@ permissions:
 jobs:
   build:
     if: github.actor == 'azimafroozeh'
-    runs-on: [self-hosted, president, Linux, X64]
+    runs-on: [ self-hosted, Linux, X64 ]
     container:
       image: nvidia/cuda:11.8-devel-ubuntu22.04
-      options: --gpus all  # enable CUDA support inside the container
+      options: --gpus all  # enable GPU support inside the container
 
     steps:
       - name: Checkout code
@@ -25,7 +28,7 @@ jobs:
       - name: Configure CMake
         run: |
           cmake -S . -B build \
-            -DFLS_BUILD_CUDA=ON
+            -DFLS_BUILD_GPU=ON
 
       - name: Build
         run: cmake --build build -- -j$(nproc)
