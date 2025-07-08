@@ -12,8 +12,18 @@ permissions:
 jobs:
   build:
     if: github.actor == 'azimafroozeh'
-    runs-on: [ self-hosted, Linux, X64, GPU ]
+    strategy:
+      fail-fast: false
+      matrix:
+        runnerLabel: [president, ttt]
 
+    runs-on:
+      - self-hosted
+      - Linux
+      - X64
+      - ${{ matrix.runnerLabel }}
+
+    name: Build on ${{ matrix.runnerLabel }}
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
