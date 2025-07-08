@@ -1,0 +1,34 @@
+name: CUDA
+
+on:
+  push:        # triggers on any branch
+
+permissions:
+  contents: write  # needed to push actions
+
+jobs:
+  build:
+    if: github.actor == 'azimafroozeh'
+    runs-on: [self-hosted, president, Linux, X64]
+    container:
+      image: nvidia/cuda:11.8-devel-ubuntu22.04
+      options: --gpus all  # enable CUDA support inside the container
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      # CUDA is included in the container image
+
+      - name: Configure CMake
+        run: |
+          cmake -S . -B build \
+            -DFLS_BUILD_CUDA=ON
+
+      - name: Build
+        run: cmake --build build -- -j$(nproc)
+
+      - name: Run CUDA Info
+        run: ./build/cuda_info_dummy

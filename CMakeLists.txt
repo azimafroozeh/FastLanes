@@ -108,7 +108,7 @@ endif ()
 option(FLS_BUILD_TESTING "Build Test" OFF)
 option(FLS_BUILD_BENCHMARKING "Enable Benchmark Build" OFF)
 option(FLS_BUILD_EXAMPLES "Build Examples" OFF)
-option(FLS_BUILD_GPU "Build GPU" OFF)
+option(FLS_BUILD_CUDA "Build FastLanes CUDA reader" OFF)
 option(FLS_BUILD_GTEST "Build GTEST" OFF)
 option(FLS_BUILD_PYTHON "Build FastLanes Python bindings" OFF)
 option(FLS_BUILD_SHARED_LIBS "Build FastLanes library as shared" OFF)
@@ -126,7 +126,7 @@ add_compile_definitions(FLS_CMAKE_SOURCE_DIR="${CMAKE_CURRENT_SOURCE_DIR}")
 
 
 # GTEST : --------------------------------------------------------------------------------------------------------------
-if (FLS_BUILD_TESTING OR FLS_BUILD_GPU OR FLS_ENABLE_FSST_TESTING_AND_BENCHMARKING)
+if (FLS_BUILD_TESTING OR FLS_BUILD_CUDA OR FLS_ENABLE_FSST_TESTING_AND_BENCHMARKING)
     message("---------------------------------------------------------------------------------------------------------")
     message("-- FLS: Building GTEST:")
     include(GoogleTest)
@@ -285,10 +285,10 @@ if (FLS_BUILD_EXAMPLES)
 endif ()
 
 # GPU : ----------------------------------------------------------------------------------------------------------------
-if (FLS_BUILD_GPU)
+if (FLS_BUILD_CUDA)
     message("---------------------------------------------------------------------------------------------------------")
-    message("- GPU:")
-    add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/gpu)
+    message("- CUDA:")
+    add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/cuda)
 endif ()
 
 # Playground : ---------------------------------------------------------------------------------------------------------
