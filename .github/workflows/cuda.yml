@@ -1,18 +1,23 @@
-name: CUDA
-run-name: >-
-  ${{ github.workflow }} on ${{ github.ref_name }} (#${{ github.run_number }})
-  — ${{ github.event.pull_request.title || github.event.head_commit.message }}
+name: CUDA (native matrix)
 
-on:
-  push:
+# ─────────────────────────────────────────────────────────────────────────────
+# Triggers ─ any push to any branch
+# ─────────────────────────────────────────────────────────────────────────────
+on: [push]
 
+permissions:
+  contents: read        # read-only is enough for checkout
+
+# ─────────────────────────────────────────────────────────────────────────────
 jobs:
   build:
+    # Run once on “president” and once on “ttt”
     strategy:
       fail-fast: false
       matrix:
-        runnerLabel: [ president, ttt ]
+        runnerLabel: [president, ttt]
 
+    # Match the runner by its custom label
     runs-on:
       - self-hosted
       - Linux
@@ -22,37 +27,55 @@ jobs:
     name: Build on ${{ matrix.runnerLabel }}
 
     steps:
-      - name: Checkout code
+      # ───── 1. Checkout ────────────────────────────────────────────────────
+      - name: 📥 Checkout code
         uses: actions/checkout@v3
         with:
           fetch-depth: 0
 
-      - name: Debug runner environment
+      # ───── 2. Debug environment ──────────────────────────────────────────
+      - name: 🔎 Dump runner environment
+        id: envdump
         run: |
-          echo "🏷️  Hostname: $(hostname)"
-          echo "🏷️  Matrix label: ${{ matrix.runnerLabel }}"
-          echo "👥  Groups: $(groups)"
-          echo "🔍  which nvidia-smi: $(which nvidia-smi || echo 'NOT FOUND')"
-          echo "🔍  which nvcc:      $(which nvcc      || echo 'NOT FOUND')"
+          set -x
+          echo "Runner hostname : $(hostname)"
+          echo "Matrix label    : ${{ matrix.runnerLabel }}"
+          echo "Current user    : $(whoami)"
+          echo "PATH            : $PATH"
+          echo "Groups          : $(groups)"
+          
+          # Show locations (or absence) of critical tools
+          which nvidia-smi || true
+          which nvcc       || true
+          which cmake      || true
 
-      - name: Verify CUDA & GPU
+      # ───── 3. Sanity checks ───────────────────────────────────────────────
+      - name: ✅ Verify required tools exist
         run: |
-          if ! command -v nvidia-smi >/dev/null; then
-            echo "❌ nvidia-smi not found—install CUDA drivers on this runner"
-            exit 1
+          missing=""
+          for cmd in nvidia-smi nvcc cmake; do
+            if ! command -v "$cmd" >/dev/null; then
+              echo "::error::'$cmd' is missing on this runner."
+              missing="yes"
+            fi
+          done
+          if [ "$missing" = "yes" ]; then
+            echo "❌ Required tools missing. Install them on runner '${{ matrix.runnerLabel }}' and re-run."
+            exit 127
           fi
-          if ! command -v nvcc >/dev/null; then
-            echo "❌ nvcc not found—install CUDA toolkit on this runner"
-            exit 1
-          fi
+          
+          # Quick driver / compiler info
           nvidia-smi
           nvcc --version
+          cmake --version
 
-      - name: Configure CMake
+      # ───── 4. Configure & build ───────────────────────────────────────────
+      - name: ⚙️  Configure CMake
         run: cmake -S . -B build -DFLS_BUILD_GPU=ON
 
-      - name: Build
-        run: cmake --build build -- -j$(nproc)
+      - name: 🛠️  Build project
+        run: cmake --build build -- -j"$(nproc)"
 
-      - name: Run CUDA Info
+      # ───── 5. Smoke-test binary (optional) ───────────────────────────────
+      - name: 🚀 Run CUDA Info
         run: ./build/cuda_info_dummy
