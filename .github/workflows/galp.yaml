@@ -1,0 +1,80 @@
+# .github/workflows/galp.yml
+
+name: GALP
+
+run-name: >-
+  ${{ github.workflow }} on ${{ github.ref_name }} (#${{ github.run_number }})
+  — ${{ github.event.pull_request.title || github.event.head_commit.message }}
+
+on:
+  push:
+
+permissions:
+  contents: read
+
+jobs:
+  ttt-make-ci:
+    name: Makefile CI on ttt
+    runs-on:
+      - self-hosted
+      - Linux
+      - X64
+      - ttt
+    env:
+      # mirror your Makefile defaults
+      COMPUTE_CAPABILITY: 61
+      CUDA_LIBRARY_PATH: /usr/local/cuda-12.5
+      NVCOMP_INC: /usr/include/nvcomp_12/
+      NVCOMP_LIB: /usr/lib/x86_64-linux-gnu/nvcomp/12
+      CLANG_PATH: /usr/bin/clang++-14
+      GCC_PATH: /usr/bin/g++-12
+
+    steps:
+      - name: Checkout source
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - name: 🔎 Env dump
+        run: |
+          set -x
+          hostname
+          echo "Runner label: ttt"
+          echo "CUDA path: $CUDA_LIBRARY_PATH"
+          echo "NVCOMP_INC: $NVCOMP_INC"
+          echo "NVCOMP_LIB: $NVCOMP_LIB"
+          which nvidia-smi || true
+          which nvcc       || true
+          which $CLANG_PATH || true
+          which $GCC_PATH   || true
+          which make       || true
+
+      - name: ✅ Verify tools
+        run: |
+          for cmd in nvidia-smi nvcc $CLANG_PATH $GCC_PATH make; do
+            command -v "$cmd" >/dev/null || { echo "::error::$cmd missing"; exit 127; }
+          done
+          nvidia-smi
+          nvcc   --version
+          $CLANG_PATH --version
+          $GCC_PATH   --version
+          make --version
+
+      - name: 🔄 Generate code
+        run: make generate
+
+      - name: 🏗️ Build binaries
+        run: make all
+
+      - name: 🧪 Run tests
+        run: make test
+
+      - name: ⚡ Run benchmarks
+        run: |
+          make benchmark-all
+          make benchmark-compressors
+
+      - name: 🚀 Smoke-test binaries
+        run: |
+          ./bin/micro-benchmarks --help
+          ./bin/compressors-benchmarks --help
