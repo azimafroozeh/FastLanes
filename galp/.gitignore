@@ -1,0 +1,7 @@
+bin/
+compile_commands.json
+obj/
+.cache/
+data/
+.venv/
+benchmark-results/
