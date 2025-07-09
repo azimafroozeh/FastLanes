@@ -13,13 +13,13 @@ permissions:
   contents: read
 
 jobs:
-  ttt-make-ci:
-    name: Makefile CI on ttt
+  president-make-ci:
+    name: Makefile CI on president
     runs-on:
       - self-hosted
       - Linux
       - X64
-      - ttt
+      - president
     env:
       # mirror your Makefile defaults
       COMPUTE_CAPABILITY: 61
@@ -39,7 +39,7 @@ jobs:
         run: |
           set -x
           hostname
-          echo "Runner label: ttt"
+          echo "Runner label: president"
           echo "CUDA path: $CUDA_LIBRARY_PATH"
           echo "NVCOMP_INC: $NVCOMP_INC"
           echo "NVCOMP_LIB: $NVCOMP_LIB"
