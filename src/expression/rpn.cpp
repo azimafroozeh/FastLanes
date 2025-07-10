@@ -308,6 +308,14 @@ string token_to_string(OperatorToken token) {
 		return "EXP_VALIDITY_MASK"; // 147
 	case OperatorToken::EXP_FFOR_U08:
 		return "EXP_FFOR_U08"; // 148
+	case OperatorToken::EXP_FREQUENCY_U08:
+		return "EXP_FREQUENCY_U08"; // 149
+	case OperatorToken::EXP_CROSS_RLE_U08:
+		return "EXP_CROSS_RLE_U08"; // 150
+	case OperatorToken::EXP_FFOR_SLPATCH_U08:
+		return "EXP_FFOR_SLPATCH_U08"; // 151
+	case OperatorToken::EXP_RLE_U08_SLPATCH_U16:
+		return "EXP_RLE_U08_SLPATCH_U16"; // 152
 	default:
 		FLS_UNREACHABLE()
 	}

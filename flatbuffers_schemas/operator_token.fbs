@@ -204,4 +204,5 @@ enum OperatorToken : ushort {
   EXP_FREQUENCY_U08                  = 149,
   EXP_CROSS_RLE_U08                  = 150,
   EXP_FFOR_SLPATCH_U08               = 151,
+  EXP_RLE_U08_SLPATCH_U16            = 152,
 }

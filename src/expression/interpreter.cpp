@@ -876,6 +876,10 @@ sp<PhysicalExpr> Interpreter::Encoding::Interpret(ColumnDescriptorT& column_desc
 			make_enc_rle_slpatch_expr<i08_pt, u16_pt>(*physical_expr, physical_rowgroup, column_descriptor, state);
 			break;
 		}
+		case EXP_RLE_U08_SLPATCH_U16: {
+			make_enc_rle_slpatch_expr<u08_pt, u16_pt>(*physical_expr, physical_rowgroup, column_descriptor, state);
+			break;
+		}
 		case EXP_RLE_STR_SLPATCH_U16: {
 			make_enc_rle_slpatch_expr<fls_string_t, u16_pt>(
 			    *physical_expr, physical_rowgroup, column_descriptor, state);
@@ -1817,6 +1821,10 @@ void Interpreter::Decoding::Interpret(const ColumnDescriptorT& column_descriptor
 		}
 		case EXP_RLE_I08_SLPATCH_U16: {
 			make_dec_rle_slpatch_expr<i08_pt, u16_pt>(reader, physical_expr, column_view, state);
+			break;
+		}
+		case EXP_RLE_U08_SLPATCH_U16: {
+			make_dec_rle_slpatch_expr<u08_pt, u16_pt>(reader, physical_expr, column_view, state);
 			break;
 		}
 		case EXP_RLE_STR_SLPATCH_U16: {

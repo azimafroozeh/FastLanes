@@ -48,6 +48,10 @@ template struct enc_rle_map_opr<i64_pt, u16_pt>;
 template struct enc_rle_map_opr<i32_pt, u16_pt>;
 template struct enc_rle_map_opr<i16_pt, u16_pt>;
 template struct enc_rle_map_opr<i08_pt, u16_pt>;
+template struct enc_rle_map_opr<u64_pt, u16_pt>;
+template struct enc_rle_map_opr<u32_pt, u16_pt>;
+template struct enc_rle_map_opr<u16_pt, u16_pt>;
+template struct enc_rle_map_opr<u08_pt, u16_pt>;
 
 template <typename INDEX_PT>
 void enc_rle_map_opr<fls_string_t, INDEX_PT>::MoveSegments(vector<up<Segment>>& segments) {
@@ -203,6 +207,10 @@ template struct dec_rle_map_opr<i64_pt, u16_pt>;
 template struct dec_rle_map_opr<i32_pt, u16_pt>;
 template struct dec_rle_map_opr<i16_pt, u16_pt>;
 template struct dec_rle_map_opr<i08_pt, u16_pt>;
+template struct dec_rle_map_opr<u64_pt, u16_pt>;
+template struct dec_rle_map_opr<u32_pt, u16_pt>;
+template struct dec_rle_map_opr<u16_pt, u16_pt>;
+template struct dec_rle_map_opr<u08_pt, u16_pt>;
 
 template struct dec_rle_map_opr<fls_string_t, u16_pt>;
 

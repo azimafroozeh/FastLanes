@@ -602,7 +602,7 @@ vector<OperatorToken>& get_pool(const DataType data_typ) {
 		    OperatorToken::EXP_FFOR_U08,
 		    OperatorToken::EXP_FREQUENCY_U08,
 		    OperatorToken::EXP_CROSS_RLE_U08,
-		    // OperatorToken::EXP_RLE_I08_SLPATCH_U16,
+		    OperatorToken::EXP_RLE_U08_SLPATCH_U16,
 		    OperatorToken::EXP_FFOR_SLPATCH_U08,
 		    // OperatorToken::EXP_DELTA_I08,
 		    // OperatorToken::EXP_RLE_I08_U16,

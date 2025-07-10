@@ -257,6 +257,8 @@ using physical_operator = variant<std::monostate,
                                   sp<struct dec_rle_map_opr<i16_pt, u16_pt>>,
                                   sp<struct enc_rle_map_opr<i08_pt, u16_pt>>,
                                   sp<struct dec_rle_map_opr<i08_pt, u16_pt>>,
+                                  sp<struct enc_rle_map_opr<u08_pt, u16_pt>>,
+                                  sp<struct dec_rle_map_opr<u08_pt, u16_pt>>,
                                   sp<struct enc_rle_map_opr<fls_string_t, u16_pt>>,
                                   sp<struct dec_rle_map_opr<fls_string_t, u16_pt>>,
                                   // FFOR
