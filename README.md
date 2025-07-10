@@ -95,6 +95,12 @@ fn main() -> Result<()> {
 
 ---
 
+## Documentation
+
+- [Typing System](docs/typing_system.md)
+
+---
+
 ## Publications
 
 * **Azim Afroozeh & Peter Boncz**, “The FastLanes Compression Layout: Decoding > 100 Billion Integers per Second with
