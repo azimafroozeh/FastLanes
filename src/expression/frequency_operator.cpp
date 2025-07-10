@@ -77,6 +77,10 @@ template struct enc_frequency_opr<i08_pt>;
 template struct enc_frequency_opr<i16_pt>;
 template struct enc_frequency_opr<i32_pt>;
 template struct enc_frequency_opr<i64_pt>;
+template struct enc_frequency_opr<u08_pt>;
+template struct enc_frequency_opr<u16_pt>;
+template struct enc_frequency_opr<u32_pt>;
+template struct enc_frequency_opr<u64_pt>;
 
 enc_frequency_str_opr::enc_frequency_str_opr(const PhysicalExpr& expr,
                                              const col_pt&       col,
@@ -211,6 +215,10 @@ template struct dec_frequency_opr<i08_pt>;
 template struct dec_frequency_opr<i16_pt>;
 template struct dec_frequency_opr<i32_pt>;
 template struct dec_frequency_opr<i64_pt>;
+template struct dec_frequency_opr<u08_pt>;
+template struct dec_frequency_opr<u16_pt>;
+template struct dec_frequency_opr<u32_pt>;
+template struct dec_frequency_opr<u64_pt>;
 
 dec_frequency_str_opr::dec_frequency_str_opr(PhysicalExpr&     physical_expr,
                                              const ColumnView& column_view,

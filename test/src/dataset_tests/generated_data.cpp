@@ -55,7 +55,6 @@ TEST_F(FastLanesReaderTester, SINGLE_COLUMN_BYTE_ARRAY) {
 TEST_F(FastLanesReaderTester, SINGLE_COLUMN_JPEG) {
 	TestCorrectness(GENERATED::SINGLE_COLUMN_JPEG);
 }
-
 // All Constants
 TEST_F(FastLanesReaderTester, ALL_CONSTANT) {
 	const vector<n_t> constant_cols = {0, 1, 2, 3, 4};
@@ -64,12 +63,10 @@ TEST_F(FastLanesReaderTester, ALL_CONSTANT) {
 
 	AllTest(GENERATED::ALL_CONSTANT, constant_cols, equal_cols, target_column_indexes);
 }
-
 // All types
 TEST_F(FastLanesReaderTester, ALL_TYPES) {
 	TestCorrectness<FileT::JSON>(GENERATED::ALL_TYPES);
 }
-
 // TEST ONE VEC
 TEST_F(FastLanesReaderTester, ONE_VEC_I64PT) {
 	TestCorrectness(GENERATED::ONE_VEC_I64PT);

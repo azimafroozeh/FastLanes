@@ -230,6 +230,8 @@ using physical_operator = variant<std::monostate,
                                   // FREQUENCY
                                   sp<enc_frequency_opr<dbl_pt>>,
                                   sp<dec_frequency_opr<dbl_pt>>,
+                                  sp<enc_frequency_opr<u08_pt>>,
+                                  sp<dec_frequency_opr<u08_pt>>,
                                   sp<enc_frequency_opr<i08_pt>>,
                                   sp<dec_frequency_opr<i08_pt>>,
                                   sp<enc_frequency_opr<i16_pt>>,

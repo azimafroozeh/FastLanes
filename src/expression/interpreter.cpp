@@ -936,6 +936,10 @@ sp<PhysicalExpr> Interpreter::Encoding::Interpret(ColumnDescriptorT& column_desc
 			make_enc_frequency_expr<i08_pt>(*physical_expr, physical_rowgroup, column_descriptor, state);
 			break;
 		}
+		case EXP_FREQUENCY_U08: {
+			make_enc_frequency_expr<u08_pt>(*physical_expr, physical_rowgroup, column_descriptor, state);
+			break;
+		}
 		case EXP_FREQUENCY_I16: {
 			make_enc_frequency_expr<i16_pt>(*physical_expr, physical_rowgroup, column_descriptor, state);
 			break;
@@ -1868,6 +1872,10 @@ void Interpreter::Decoding::Interpret(const ColumnDescriptorT& column_descriptor
 			break;
 		}
 		case EXP_FREQUENCY_I08: {
+			make_dec_frequency_expr<i08_pt>(physical_expr, column_view, state);
+			break;
+		}
+		case EXP_FREQUENCY_U08: {
 			make_dec_frequency_expr<i08_pt>(physical_expr, column_view, state);
 			break;
 		}

@@ -599,6 +599,7 @@ vector<OperatorToken>& get_pool(const DataType data_typ) {
 		static vector<OperatorToken> U08_POOL = {
 		    OperatorToken::EXP_UNCOMPRESSED_U08, //
 		    OperatorToken::EXP_FFOR_U08,
+		    OperatorToken::EXP_FREQUENCY_U08,
 		};
 
 		static vector<OperatorToken> DBL_POOL = {
