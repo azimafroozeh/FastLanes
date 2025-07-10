@@ -330,7 +330,8 @@ DataType getSmallestSignedType(PT min, PT max) {
 
 void cast(rowgroup_pt& rowgroup, ColumnDescriptorT& column_descriptor) {
 	switch (column_descriptor.data_type) {
-	case DataType::BOOLEAN: {
+	case DataType::BOOLEAN:
+	case DataType::UINT8: {
 		return;
 	}
 	default: {

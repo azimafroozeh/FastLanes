@@ -472,6 +472,10 @@ sp<PhysicalExpr> Interpreter::Encoding::Interpret(ColumnDescriptorT& column_desc
 			make_enc_ffor_expr<i08_pt>(*physical_expr, physical_rowgroup, column_descriptor, state);
 			break;
 		}
+		case EXP_FFOR_U08: {
+			make_enc_ffor_expr<u08_pt>(*physical_expr, physical_rowgroup, column_descriptor, state);
+			break;
+		}
 		case EXP_UNCOMPRESSED_DBL: {
 			make_enc_uncompressed_expr<dbl_pt>(*physical_expr, physical_rowgroup, column_descriptor, state);
 			break;
@@ -1450,6 +1454,10 @@ void Interpreter::Decoding::Interpret(const ColumnDescriptorT& column_descriptor
 		}
 		case EXP_FFOR_I08: {
 			make_dec_ffor_expr<i08_pt>(physical_expr, column_view, state);
+			break;
+		}
+		case EXP_FFOR_U08: {
+			make_dec_ffor_expr<u08_pt>(physical_expr, column_view, state);
 			break;
 		}
 		case EXP_DICT_I64_FFOR_U32: {

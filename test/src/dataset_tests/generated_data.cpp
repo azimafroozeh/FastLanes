@@ -83,6 +83,9 @@ TEST_F(FastLanesReaderTester, ONE_VEC_STRPT) {
 TEST_F(FastLanesReaderTester, ONE_VEC_I08PT) {
 	TestCorrectness(GENERATED::ONE_VEC_I08PT);
 }
+TEST_F(FastLanesReaderTester, ONE_VEC_U08PT) {
+	TestCorrectness(GENERATED::ONE_VEC_U08PT);
+}
 TEST_F(FastLanesReaderTester, ONE_VEC_DECIMAL) {
 	TestCorrectness(GENERATED::ONE_VEC_DECIMAL);
 }

@@ -41,7 +41,7 @@ def write_fls_u08_to_file(
         "columns": [
             {
                 "name": "SYNTHETIC_DATA_U08",
-                "type": "U08"
+                "type": "UTINYINT"
             }
         ]
     }

@@ -306,6 +306,8 @@ string token_to_string(OperatorToken token) {
 		return "EXP_CONSTANT_BOOL"; // 146
 	case OperatorToken::EXP_VALIDITY_MASK:
 		return "EXP_VALIDITY_MASK"; // 147
+	case OperatorToken::EXP_FFOR_U08:
+		return "EXP_FFOR_U08"; // 148
 	default:
 		FLS_UNREACHABLE()
 	}

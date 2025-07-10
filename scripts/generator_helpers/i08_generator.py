@@ -31,7 +31,7 @@ def write_fls_i08_to_file(
     # Dump schema.json with a trailing newline
     schema = {
         "columns": [
-            {"name": "SYNTHETIC_DATA_I08", "type": "I08"}
+            {"name": "SYNTHETIC_DATA_I08", "type": "FLS_I08"}
         ]
     }
     (dir_path / "schema.json").write_text(json.dumps(schema, indent=2) + "\n")

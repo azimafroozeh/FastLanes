@@ -41,17 +41,63 @@ DataType TypeLookUp(const string& str) {
 	// 4) Static table of all the remaining fixed names (also all uppercase)
 	static const std::unordered_map<string, DataType> TABLE {
 	    // FLS types
-	    {"FLS_I64", DataType::INT64},       {"FLS_I32", DataType::INT32},   {"INT", DataType::INT32},
-	    {"FLS_I16", DataType::INT16},       {"FLS_I08", DataType::INT8},    {"FLS_U08", DataType::UINT8},
-	    {"FLS_DBL", DataType::DOUBLE},      {"FLS_STR", DataType::FLS_STR}, {"BIGINT", DataType::INT64},
-	    {"STRING", DataType::FLS_STR},      {"DOUBLE", DataType::DOUBLE},   {"LIST", DataType::LIST},
-	    {"STRUCT", DataType::STRUCT},       {"MAP", DataType::MAP},         {"FLOAT", DataType::FLOAT},
-	    {"BOOLEAN", DataType::BOOLEAN},     {"INTEGER", DataType::INT64},   {"CHAR", DataType::FLS_STR},
-	    {"BIGINT", DataType::INT64},        {"TIME", DataType::FLS_STR},    {"DATE", DataType::DATE},
-	    {"TIMESTAMP", DataType::TIMESTAMP}, {"SMALLINT", DataType::INT16},  {"BYTE_ARRAY", DataType::BYTE_ARRAY},
+	    {"FLS_I64", DataType::INT64},
+	    {"FLS_I32", DataType::INT32},
+	    {"INT", DataType::INT32},
+	    {"FLS_I16", DataType::INT16},
+	    {"FLS_I08", DataType::INT8},
+	    {"FLS_U08", DataType::UINT8},
+	    {"FLS_DBL", DataType::DOUBLE},
+	    {"FLS_STR", DataType::FLS_STR},
+	    {"BIGINT", DataType::INT64},
+	    {"STRING", DataType::FLS_STR},
+	    {"DOUBLE", DataType::DOUBLE},
+	    {"LIST", DataType::LIST},
+	    {"STRUCT", DataType::STRUCT},
+	    {"MAP", DataType::MAP},
+	    {"FLOAT", DataType::FLOAT},
+	    {"BOOLEAN", DataType::BOOLEAN},
+	    {"INTEGER", DataType::INT64},
+	    {"CHAR", DataType::FLS_STR},
+	    {"BIGINT", DataType::INT64},
+	    {"TIME", DataType::FLS_STR},
+	    {"DATE", DataType::DATE},
+	    {"TIMESTAMP", DataType::TIMESTAMP},
+	    {"SMALLINT", DataType::INT16},
+	    {"BYTE_ARRAY", DataType::BYTE_ARRAY},
 	    {"JPEG", DataType::JPEG},
 
 	    // …add any other fixed names here…
+	    // MySQL/MariaDB unsigned and additional types
+	    {"TINYINT UNSIGNED", DataType::UINT8},
+	    {"SMALLINT UNSIGNED", DataType::UINT16},
+	    {"MEDIUMINT", DataType::INT32},
+	    {"MEDIUMINT UNSIGNED", DataType::UINT32},
+	    {"INT UNSIGNED", DataType::UINT32},
+	    {"BIGINT UNSIGNED", DataType::UINT64},
+	    {"BIT", DataType::BOOLEAN}, // MySQL BIT(1)
+	    {"BIT VARYING", DataType::BYTE_ARRAY},
+	    {"JSON", DataType::FLS_STR},
+	    {"ENUM", DataType::FLS_STR},
+	    {"SET", DataType::FLS_STR},
+
+	    // MySQL/MariaDB date/time
+	    {"DATETIME", DataType::TIMESTAMP},
+	    {"TIMESTAMP", DataType::TIMESTAMP},
+	    {"YEAR", DataType::INT16},
+
+	    // DuckDB unsigned and extras
+	    {"UTINYINT", DataType::UINT8},
+	    {"UINT8", DataType::UINT8}, // alias
+	    {"USMALLINT", DataType::UINT16},
+	    {"UINT16", DataType::UINT16}, // alias
+	    {"UINTEGER", DataType::UINT32},
+	    {"UINT32", DataType::UINT32}, // alias
+	    {"UBIGINT", DataType::UINT64},
+	    {"UINT64", DataType::UINT64}, // alias
+	    {"UUID", DataType::FLS_STR},
+	    {"INTERVAL", DataType::FLS_STR},
+
 	};
 
 	const auto it = TABLE.find(s);
@@ -124,7 +170,7 @@ std::string to_string(const std::vector<std::unique_ptr<ExpressionResultT>>& pai
 	for (const auto& ptr : pairs) {
 		if (!ptr) {
 			continue;
-		}                                          // defensive: skip nulls
+		} // defensive: skip nulls
 		const auto& [operator_token, size] = *ptr; // structured-bind the pointed-to pair
 
 		if (!first) {
@@ -293,7 +339,7 @@ void from_json(const nlohmann::json& j, TableDescriptorT& table_descriptor) {
 constexpr const auto* OPERATOR_TOKEN = "1  [REQUIRED], OPERATOR_TOKEN";
 constexpr const auto* SIZE           = "2  [REQUIRED], SIZE";
 void                  to_json(nlohmann::json& j, const ExpressionResultT& expression_result) {
-	                 j = nlohmann::json {
+    j = nlohmann::json {
         //
         {OPERATOR_TOKEN, expression_result.operator_token}, //
         {SIZE, expression_result.size},                     //
