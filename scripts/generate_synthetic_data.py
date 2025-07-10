@@ -17,6 +17,7 @@ from generator_helpers.byte_array_generator import *
 from generator_helpers.jpeg_generator import *
 from generator_helpers.boolean_generator import *
 from generator_helpers.i08_generator import *
+from generator_helpers.u08_generator import *
 
 
 # ---------------------------
@@ -167,11 +168,6 @@ def generate_irregular_string_func(_faker, row_id):
         return ["Jasmin"]
     else:
         return [constant("")]
-
-
-def generate_fls_u08(_faker, row_id):
-    """Generates a list containing a single integer."""
-    return [constant_u08(row_id)]
 
 
 def generate_fls_i32(_faker, row_id):
@@ -346,11 +342,6 @@ def write_fls_i32_to_file(sub_path, generator, size):
     write_csv(file, generator, size)
 
 
-def write_fls_u08_to_file(sub_path, generator, size):
-    file = Path.cwd() / '..' / 'data' / 'generated' / sub_path
-    write_csv(file, generator, size)
-
-
 def fls_i64():
     # one rowgroup
     write_fls_i64_to_file('single_columns/fls_i64', generate_fls_i64, ROW_GROUP_SIZE)
@@ -367,11 +358,6 @@ def generate_irregular_i64():
 def generate_irregular_string():
     file = Path.cwd() / '..' / 'data' / 'generated' / 'single_columns' / 'irregular_string'
     write_csv(file, generate_irregular_string_func, ROW_GROUP_SIZE)
-
-
-def fls_u08():
-    # one rowgroup
-    write_fls_u08_to_file('single_columns/fls_u08', generate_fls_u08, ROW_GROUP_SIZE)
 
 
 def fls_i32():
