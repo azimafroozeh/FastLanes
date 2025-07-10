@@ -68,6 +68,10 @@ template struct enc_cross_rle_opr<i08_pt>;
 template struct enc_cross_rle_opr<i16_pt>;
 template struct enc_cross_rle_opr<i32_pt>;
 template struct enc_cross_rle_opr<i64_pt>;
+template struct enc_cross_rle_opr<u08_pt>;
+template struct enc_cross_rle_opr<u16_pt>;
+template struct enc_cross_rle_opr<u32_pt>;
+template struct enc_cross_rle_opr<u64_pt>;
 
 enc_cross_rle_opr<fls_string_t>::enc_cross_rle_opr(const PhysicalExpr& expr,
                                                    const col_pt&       col,
@@ -207,6 +211,10 @@ template struct dec_cross_rle_opr<i08_pt>;
 template struct dec_cross_rle_opr<i16_pt>;
 template struct dec_cross_rle_opr<i32_pt>;
 template struct dec_cross_rle_opr<i64_pt>;
+template struct dec_cross_rle_opr<u08_pt>;
+template struct dec_cross_rle_opr<u16_pt>;
+template struct dec_cross_rle_opr<u32_pt>;
+template struct dec_cross_rle_opr<u64_pt>;
 
 dec_cross_rle_opr<fls_string_t>::dec_cross_rle_opr(PhysicalExpr&     physical_expr,
                                                    const ColumnView& column_view,

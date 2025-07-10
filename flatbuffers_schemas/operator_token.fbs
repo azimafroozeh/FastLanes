@@ -202,4 +202,5 @@ enum OperatorToken : ushort {
   EXP_VALIDITY_MASK                  = 147,
   EXP_FFOR_U08                       = 148,
   EXP_FREQUENCY_U08                  = 149,
+  EXP_CROSS_RLE_U08                  = 150,
 }

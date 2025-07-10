@@ -960,6 +960,10 @@ sp<PhysicalExpr> Interpreter::Encoding::Interpret(ColumnDescriptorT& column_desc
 			make_enc_cross_rle_opr<i08_pt>(*physical_expr, physical_rowgroup, column_descriptor, state);
 			break;
 		}
+		case EXP_CROSS_RLE_U08: {
+			make_enc_cross_rle_opr<u08_pt>(*physical_expr, physical_rowgroup, column_descriptor, state);
+			break;
+		}
 		case EXP_CROSS_RLE_I16: {
 			make_enc_cross_rle_opr<i16_pt>(*physical_expr, physical_rowgroup, column_descriptor, state);
 			break;
@@ -1897,6 +1901,10 @@ void Interpreter::Decoding::Interpret(const ColumnDescriptorT& column_descriptor
 		}
 		case EXP_CROSS_RLE_I08: {
 			make_dec_cross_rle_expr<i08_pt>(physical_expr, column_view, state);
+			break;
+		}
+		case EXP_CROSS_RLE_U08: {
+			make_dec_cross_rle_expr<u08_pt>(physical_expr, column_view, state);
 			break;
 		}
 		case EXP_CROSS_RLE_I16: {

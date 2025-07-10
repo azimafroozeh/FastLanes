@@ -305,6 +305,8 @@ using physical_operator = variant<std::monostate,
                                   sp<dec_transpose_opr<i32_pt>>,
                                   sp<dec_transpose_opr<i64_pt>>,
                                   // CROSS RLE
+                                  sp<enc_cross_rle_opr<u08_pt>>,
+                                  sp<dec_cross_rle_opr<u08_pt>>,
                                   sp<enc_cross_rle_opr<i08_pt>>,
                                   sp<dec_cross_rle_opr<i08_pt>>,
                                   sp<enc_cross_rle_opr<i16_pt>>,
