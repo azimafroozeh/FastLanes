@@ -48,8 +48,10 @@ void enc_rsum_opr<PT>::MoveSegments(vector<up<Segment>>& segments) {
 	segments.push_back(std::move(bases_segment));
 }
 
+template struct enc_rsum_opr<u08_pt>;
 template struct enc_rsum_opr<u16_pt>;
 template struct enc_rsum_opr<u32_pt>;
+template struct enc_rsum_opr<u64_pt>;
 template struct enc_rsum_opr<i08_pt>;
 template struct enc_rsum_opr<i16_pt>;
 template struct enc_rsum_opr<i32_pt>;
@@ -104,8 +106,10 @@ void dec_rsum_opr<PT>::Unrsum(n_t vec_idx) {
 	::generated::rsum::fallback::scalar::rsum(deltas, idxs, bases);
 }
 
+template struct dec_rsum_opr<u08_pt>;
 template struct dec_rsum_opr<u16_pt>;
 template struct dec_rsum_opr<u32_pt>;
+template struct dec_rsum_opr<u64_pt>;
 template struct dec_rsum_opr<i08_pt>;
 template struct dec_rsum_opr<i16_pt>;
 template struct dec_rsum_opr<i32_pt>;

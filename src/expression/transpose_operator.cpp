@@ -60,8 +60,10 @@ void enc_transpose_opr<PT>::Transpose() {
 	::generated::transpose::fallback::scalar::transpose_i(data, transposed_data);
 }
 
+template struct enc_transpose_opr<u08_pt>;
 template struct enc_transpose_opr<u16_pt>;
 template struct enc_transpose_opr<u32_pt>;
+template struct enc_transpose_opr<u64_pt>;
 template struct enc_transpose_opr<i08_pt>;
 template struct enc_transpose_opr<i16_pt>;
 template struct enc_transpose_opr<i32_pt>;
@@ -105,8 +107,10 @@ void dec_transpose_opr<PT>::Materialize(n_t vec_idx, TypedCol<PT>& typed_col) {
 	generated::untranspose::fallback::scalar::untranspose_i(transposed_data, untrasposed_data_p);
 }
 
+template struct dec_transpose_opr<u08_pt>;
 template struct dec_transpose_opr<u16_pt>;
 template struct dec_transpose_opr<u32_pt>;
+template struct dec_transpose_opr<u64_pt>;
 template struct dec_transpose_opr<i08_pt>;
 template struct dec_transpose_opr<i16_pt>;
 template struct dec_transpose_opr<i32_pt>;

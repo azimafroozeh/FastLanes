@@ -316,6 +316,8 @@ string token_to_string(OperatorToken token) {
 		return "EXP_FFOR_SLPATCH_U08"; // 151
 	case OperatorToken::EXP_RLE_U08_SLPATCH_U16:
 		return "EXP_RLE_U08_SLPATCH_U16"; // 152
+	case OperatorToken::EXP_DELTA_U08:
+		return "EXP_DELTA_U08"; // 153
 	default:
 		FLS_UNREACHABLE()
 	}

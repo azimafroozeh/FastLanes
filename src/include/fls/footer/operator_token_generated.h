@@ -165,10 +165,11 @@ enum class OperatorToken : uint16_t {
 	EXP_FREQUENCY_U08                    = 149,
 	EXP_CROSS_RLE_U08                    = 150,
 	EXP_FFOR_SLPATCH_U08                 = 151,
-	EXP_RLE_U08_SLPATCH_U16              = 152
+	EXP_RLE_U08_SLPATCH_U16              = 152,
+	EXP_DELTA_U08                        = 153
 };
 
-inline const OperatorToken (&EnumValuesOperatorToken())[153] {
+inline const OperatorToken (&EnumValuesOperatorToken())[154] {
 	static const OperatorToken values[] = {OperatorToken::INVALID,
 	                                       OperatorToken::EXP_EQUAL,
 	                                       OperatorToken::EXP_CONSTANT_I64,
@@ -321,12 +322,13 @@ inline const OperatorToken (&EnumValuesOperatorToken())[153] {
 	                                       OperatorToken::EXP_FREQUENCY_U08,
 	                                       OperatorToken::EXP_CROSS_RLE_U08,
 	                                       OperatorToken::EXP_FFOR_SLPATCH_U08,
-	                                       OperatorToken::EXP_RLE_U08_SLPATCH_U16};
+	                                       OperatorToken::EXP_RLE_U08_SLPATCH_U16,
+	                                       OperatorToken::EXP_DELTA_U08};
 	return values;
 }
 
 inline const char* const* EnumNamesOperatorToken() {
-	static const char* const names[154] = {"INVALID",
+	static const char* const names[155] = {"INVALID",
 	                                       "EXP_EQUAL",
 	                                       "EXP_CONSTANT_I64",
 	                                       "EXP_CONSTANT_I32",
@@ -479,12 +481,13 @@ inline const char* const* EnumNamesOperatorToken() {
 	                                       "EXP_CROSS_RLE_U08",
 	                                       "EXP_FFOR_SLPATCH_U08",
 	                                       "EXP_RLE_U08_SLPATCH_U16",
+	                                       "EXP_DELTA_U08",
 	                                       nullptr};
 	return names;
 }
 
 inline const char* EnumNameOperatorToken(OperatorToken e) {
-	if (::flatbuffers::IsOutRange(e, OperatorToken::INVALID, OperatorToken::EXP_RLE_U08_SLPATCH_U16))
+	if (::flatbuffers::IsOutRange(e, OperatorToken::INVALID, OperatorToken::EXP_DELTA_U08))
 		return "";
 	const size_t index = static_cast<size_t>(e);
 	return EnumNamesOperatorToken()[index];

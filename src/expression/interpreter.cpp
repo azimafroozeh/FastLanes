@@ -709,6 +709,10 @@ sp<PhysicalExpr> Interpreter::Encoding::Interpret(ColumnDescriptorT& column_desc
 			make_enc_delta_expr<i08_pt>(*physical_expr, physical_rowgroup, column_descriptor, state);
 			break;
 		}
+		case EXP_DELTA_U08: {
+			make_enc_delta_expr<u08_pt>(*physical_expr, physical_rowgroup, column_descriptor, state);
+			break;
+		}
 		case EXP_FFOR_SLPATCH_I64: {
 			make_enc_ffor_slpatch_expr<i64_pt>(*physical_expr, physical_rowgroup, column_descriptor, state);
 			break;
@@ -1682,6 +1686,10 @@ void Interpreter::Decoding::Interpret(const ColumnDescriptorT& column_descriptor
 		}
 		case EXP_DELTA_I08: {
 			make_dec_delta_expr<i08_pt>(reader, physical_expr, column_view, state);
+			break;
+		}
+		case EXP_DELTA_U08: {
+			make_dec_delta_expr<u08_pt>(reader, physical_expr, column_view, state);
 			break;
 		}
 		case EXP_FFOR_SLPATCH_I64: {
