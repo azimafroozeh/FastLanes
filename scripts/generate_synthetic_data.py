@@ -16,6 +16,8 @@ from generator_helpers.write_helpers import *
 from generator_helpers.byte_array_generator import *
 from generator_helpers.jpeg_generator import *
 from generator_helpers.boolean_generator import *
+from generator_helpers.i08_generator import *
+
 
 # ---------------------------
 # Faker Providers
@@ -175,11 +177,6 @@ def generate_fls_u08(_faker, row_id):
 def generate_fls_i32(_faker, row_id):
     """Generates a list containing a single integer."""
     return [constant(row_id)]
-
-
-def generate_fls_i08(_faker, row_id):
-    """Generates a list containing a single integer."""
-    return [constant(row_id) % 128]
 
 
 def generate_fls_dbl_func(_faker, row_id):
@@ -349,11 +346,6 @@ def write_fls_i32_to_file(sub_path, generator, size):
     write_csv(file, generator, size)
 
 
-def write_fls_i08_to_file(sub_path, generator, size):
-    file = Path.cwd() / '..' / 'data' / 'generated' / sub_path
-    write_csv(file, generator, size)
-
-
 def write_fls_u08_to_file(sub_path, generator, size):
     file = Path.cwd() / '..' / 'data' / 'generated' / sub_path
     write_csv(file, generator, size)
@@ -388,14 +380,6 @@ def fls_i32():
 
     # one vec
     write_fls_i32_to_file('one_vector/fls_i32', generate_fls_i32, VEC_SIZE)
-
-
-def fls_i08():
-    # one rowgroup
-    write_fls_i08_to_file('single_columns/fls_i08', generate_fls_i08, ROW_GROUP_SIZE)
-
-    # one vec
-    write_fls_i08_to_file('one_vector/fls_i08', generate_fls_i08, VEC_SIZE)
 
 
 def generate_fls_dbl():
