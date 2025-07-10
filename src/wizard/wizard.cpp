@@ -605,7 +605,7 @@ vector<OperatorToken>& get_pool(const DataType data_typ) {
 		    OperatorToken::EXP_RLE_U08_SLPATCH_U16,
 		    OperatorToken::EXP_FFOR_SLPATCH_U08,
 		    OperatorToken::EXP_DELTA_U08,
-		    // OperatorToken::EXP_RLE_I08_U16,
+		    OperatorToken::EXP_RLE_U08_U16,
 		};
 
 		static vector<OperatorToken> DBL_POOL = {
