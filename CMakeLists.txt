@@ -281,7 +281,7 @@ endif ()
 if (FLS_ENABLE_GALP_TESTING_AND_BENCHMARKING)
     message("---------------------------------------------------------------------------------------------------------")
     message("-- FLS: Adding GALP Testing and Benchmarking.")
-    add_subdirectory(fsst)
+    add_subdirectory(galp)
 endif ()
 
 # Example : ------------------------------------------------------------------------------------------------------------
@@ -289,13 +289,6 @@ if (FLS_BUILD_EXAMPLES)
     message("---------------------------------------------------------------------------------------------------------")
     message("- Examples:")
     add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/examples)
-endif ()
-
-# GPU : ----------------------------------------------------------------------------------------------------------------
-if (FLS_BUILD_CUDA)
-    message("---------------------------------------------------------------------------------------------------------")
-    message("- CUDA:")
-    add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/cuda)
 endif ()
 
 # Playground : ---------------------------------------------------------------------------------------------------------
@@ -312,4 +305,9 @@ if (FLS_BUILD_PYTHON)
     add_subdirectory(python)   # your module’s CMakeLists.txt
 endif ()
 
-
+# GPU : ----------------------------------------------------------------------------------------------------------------
+if (FLS_BUILD_CUDA)
+    message("---------------------------------------------------------------------------------------------------------")
+    message("- CUDA:")
+    add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/cuda)
+endif ()

@@ -1,9 +1,9 @@
 
 #include <stdexcept>
 
-#include "kernel-bindings.cuh"
-#include "../engine/kernels.cuh"
-#include "../engine/multi-column-host-kernels.cuh"
+#include "generated-bindings/kernel-bindings.cuh"
+#include "engine/kernels.cuh"
+#include "engine/multi-column-host-kernels.cuh"
 
 namespace bindings{
 
