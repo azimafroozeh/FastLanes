@@ -1,10 +1,6 @@
 cmake_minimum_required(VERSION 3.18 FATAL_ERROR)
 project(cuda_info LANGUAGES CXX CUDA)
 
-# --- General CMake info ---
-message(STATUS "CMake version: ${CMAKE_VERSION}")
-message(STATUS "CMake generator: ${CMAKE_GENERATOR}")
-
 # --- CUDA compiler info via CMake ---
 message(STATUS "CMAKE_CUDA_COMPILER:         ${CMAKE_CUDA_COMPILER}")
 message(STATUS "CMAKE_CUDA_COMPILER_ID:      ${CMAKE_CUDA_COMPILER_ID}")
