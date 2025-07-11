@@ -37,7 +37,7 @@ endforeach ()
 
 # --- Point at your subdirectory source file ---
 add_executable(cuda_info_dummy
-        ${CMAKE_CURRENT_SOURCE_DIR}/src/main.cu
+        ${CMAKE_CURRENT_SOURCE_DIR}/src/cuda_reader.cu
 )
 
 # --- Link against CUDA runtime ---

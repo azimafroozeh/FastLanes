@@ -120,6 +120,7 @@ option(FLS_ENABLE_TABLE_LOG "Enable Table Log" OFF)
 option(FLS_ENABLE_VERBOSE_OUTPUT "Enable verbose output" OFF)
 option(FLS_ENABLE_DATA "Enable Data" OFF)
 option(FLS_ENABLE_FSST_TESTING_AND_BENCHMARKING "Build FSST" OFF)
+option(FLS_ENABLE_GALP_TESTING_AND_BENCHMARKING "Build GALP" OFF)
 
 # Definitions: ---------------------------------------------------------------------------------------------------------
 add_compile_definitions(FLS_CMAKE_SOURCE_DIR="${CMAKE_CURRENT_SOURCE_DIR}")
@@ -276,6 +277,12 @@ if (FLS_ENABLE_FSST_TESTING_AND_BENCHMARKING)
     add_subdirectory(fsst)
 endif ()
 
+# FSST: ----------------------------------------------------------------------------------------------------------------
+if (FLS_ENABLE_GALP_TESTING_AND_BENCHMARKING)
+    message("---------------------------------------------------------------------------------------------------------")
+    message("-- FLS: Adding GALP Testing and Benchmarking.")
+    add_subdirectory(fsst)
+endif ()
 
 # Example : ------------------------------------------------------------------------------------------------------------
 if (FLS_BUILD_EXAMPLES)
