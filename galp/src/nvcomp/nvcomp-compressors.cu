@@ -1,4 +1,4 @@
-#include "nvcomp-compressors.cuh"
+#include "nvcomp/nvcomp-compressors.cuh"
 #include <assert.h>
 #include <cstddef>
 #include <cstdint>

@@ -1,10 +1,10 @@
-#include "../fls/fls-bindings.hpp"
-#include "alp-bindings.cuh"
-#include "config.hpp"
-#include "decoder.hpp"
-#include "encoder.hpp"
-#include "falp.hpp"
-#include "rd.hpp"
+#include "alp/alp-bindings.cuh"
+#include "alp/config.hpp"
+#include "alp/decoder.hpp"
+#include "alp/encoder.hpp"
+#include "alp/falp.hpp"
+#include "alp/rd.hpp"
+#include "fls/fls-bindings.hpp"
 #include <cstddef>
 #include <cstdint>
 #include <cstdio>

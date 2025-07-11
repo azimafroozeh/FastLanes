@@ -9,11 +9,11 @@
 #ifndef NVCOMP_COMPRESSORS_H
 #define NVCOMP_COMPRESSORS_H
 
-#include "../engine/enums.cuh"
-#include "../flsgpu/flsgpu-api.cuh"
-#include "benchmark-compressors.cuh"
+#include "engine/enums.cuh"
+#include "flsgpu/flsgpu-api.cuh"
 #include "nvcomp.h"
 #include "nvcomp.hpp"
+#include "nvcomp/benchmark-compressors.cuh"
 #include "nvcomp/deflate.h"
 #include "nvcomp/deflate.hpp"
 #include "nvcomp/gdeflate.h"
