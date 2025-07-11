@@ -125,7 +125,6 @@ option(FLS_ENABLE_GALP_TESTING_AND_BENCHMARKING "Build GALP" OFF)
 # Definitions: ---------------------------------------------------------------------------------------------------------
 add_compile_definitions(FLS_CMAKE_SOURCE_DIR="${CMAKE_CURRENT_SOURCE_DIR}")
 
-
 # GTEST : --------------------------------------------------------------------------------------------------------------
 if (FLS_BUILD_TESTING OR FLS_BUILD_CUDA OR FLS_ENABLE_FSST_TESTING_AND_BENCHMARKING)
     message("---------------------------------------------------------------------------------------------------------")

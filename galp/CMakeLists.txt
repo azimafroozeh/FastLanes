@@ -1,4 +1,3 @@
-cmake_minimum_required(VERSION 3.18)
 project(GALP LANGUAGES CXX CUDA)
 
 # ────────────────────────────────────────────────
@@ -40,6 +39,9 @@ else ()
     )
     FetchContent_MakeAvailable(thrust)        # exports Thrust::Thrust
 endif ()
+
+# Definitions: ---------------------------------------------------------------------------------------------------------
+add_compile_definitions(FLS_GALP_SOURCE_DIR="${CMAKE_CURRENT_SOURCE_DIR}")
 
 # ────────────────────────────────────────────────
 # User-tunable options
