@@ -93,6 +93,9 @@ set(GALP_CORE_SOURCES
         src/fls/unffor.cpp
         src/fls/unpack.cpp
 
+        # engine
+        src/engine/enums.cu
+
         # generated-bindings
         src/generated-bindings/alp-double-decompress_column-bindings.cu
         src/generated-bindings/alp-double-query_column-bindings.cu

@@ -1,12 +1,11 @@
 #ifndef ALP_ENCODER_HPP
 #define ALP_ENCODER_HPP
 
+#include "common.hpp"
 #include "config.hpp"
 #include "constants.hpp"
 #include "decoder.hpp"
 #include "sampler.hpp"
-#include "common.hpp"
-#include "constants.hpp"
 #include <cfloat>
 #include <cmath>
 #include <cstdint>
@@ -77,7 +76,9 @@ struct encoder {
 	static ST encode_value(const PT value, const factor_idx_t factor_idx, const exponent_idx_t exponent_idx) {
 		PT tmp_encoded_value = value * Constants<PT>::EXP_ARR[exponent_idx] * Constants<PT>::FRAC_ARR[factor_idx];
 		if constexpr (SAFE) {
-			if (is_impossible_to_encode(tmp_encoded_value)) { return ENCODING_UPPER_LIMIT; }
+			if (is_impossible_to_encode(tmp_encoded_value)) {
+				return ENCODING_UPPER_LIMIT;
+			}
 		}
 		tmp_encoded_value = tmp_encoded_value + Constants<PT>::MAGIC_NUMBER - Constants<PT>::MAGIC_NUMBER;
 		return static_cast<ST>(tmp_encoded_value);
@@ -85,7 +86,9 @@ struct encoder {
 
 	template <typename UT>
 	static uint8_t count_bits(UT x) {
-		if (x == 0) { return 0; }
+		if (x == 0) {
+			return 0;
+		}
 		if constexpr (std::is_same_v<UT, uint64_t>) {
 			return 64 - __builtin_clzll(x);
 		} else {
@@ -106,8 +109,12 @@ struct encoder {
 		auto max = std::numeric_limits<ST>::min();
 
 		for (size_t i {0}; i < config::VECTOR_SIZE; i++) {
-			if (input_vector[i] < min) { min = input_vector[i]; }
-			if (input_vector[i] > max) { max = input_vector[i]; }
+			if (input_vector[i] < min) {
+				min = input_vector[i];
+			}
+			if (input_vector[i] > max) {
+				max = input_vector[i];
+			}
 		}
 
 		bit_width   = count_bits<ST>(max, min);
@@ -166,15 +173,21 @@ struct encoder {
 						const PT decoded_value = decoder<PT>::decode_value(encoded_value, factor_idx, exp_ref);
 						if (decoded_value == actual_value) {
 							non_exceptions_count++;
-							if (encoded_value > max_encoded_value) { max_encoded_value = encoded_value; }
-							if (encoded_value < min_encoded_value) { min_encoded_value = encoded_value; }
+							if (encoded_value > max_encoded_value) {
+								max_encoded_value = encoded_value;
+							}
+							if (encoded_value < min_encoded_value) {
+								min_encoded_value = encoded_value;
+							}
 						} else {
 							exceptions_count++;
 						}
 					}
 
 					// We do not take into account combinations which yield to almsot all exceptions
-					if (non_exceptions_count < 2) { continue; }
+					if (non_exceptions_count < 2) {
+						continue;
+					}
 
 					// Evaluate factor/exponent compression size (we optimize for FOR)
 					estimated_bits_per_value = count_bits<ST>(max_encoded_value, min_encoded_value);
@@ -221,7 +234,9 @@ struct encoder {
 		}
 		// We sort combinations based on times they appeared
 		std::sort(best_k_combinations.begin(), best_k_combinations.end(), compare_best_combinations);
-		if (best_k_combinations.size() < stt.k_combinations) { stt.k_combinations = best_k_combinations.size(); }
+		if (best_k_combinations.size() < stt.k_combinations) {
+			stt.k_combinations = best_k_combinations.size();
+		}
 
 		// Save k' best exp, fac combination pairs
 		for (size_t i {0}; i < stt.k_combinations; i++) {
@@ -263,8 +278,12 @@ struct encoder {
 				const ST encoded_value = encode_value(actual_value, factor_idx, exp_idx);
 				const PT decoded_value = decoder<PT>::decode_value(encoded_value, factor_idx, exp_idx);
 				if (decoded_value == actual_value) {
-					if (encoded_value > max_encoded_value) { max_encoded_value = encoded_value; }
-					if (encoded_value < min_encoded_value) { min_encoded_value = encoded_value; }
+					if (encoded_value > max_encoded_value) {
+						max_encoded_value = encoded_value;
+					}
+					if (encoded_value < min_encoded_value) {
+						min_encoded_value = encoded_value;
+					}
 				} else {
 					exception_count++;
 				}
@@ -318,7 +337,8 @@ struct encoder {
 		for (size_t i {0}; i < config::VECTOR_SIZE; i++) {
 			const auto is_special =
 			    ((tmp_input[i] & Constants<PT>::SIGN_BIT_MASK) >=
-			     Constants<PT>::EXPONENTIAL_BITS_MASK) // any NaN, +inf and -inf (https://stackoverflow.com/questions/29730530/)
+			     Constants<PT>::EXPONENTIAL_BITS_MASK) // any NaN, +inf and -inf
+			                                           // (https://stackoverflow.com/questions/29730530/)
 			    || tmp_input[i] == Constants<PT>::NEGATIVE_ZERO;
 
 			if (is_special) {

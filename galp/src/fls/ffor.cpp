@@ -1,18 +1,14 @@
 #include "fls-bindings.hpp"
 #include <cstdint>
 
-namespace fls
-{
+namespace fls {
 
-void static ffor_0bit_8ow(const uint8_t *__restrict in, uint8_t *__restrict out, const uint8_t *__restrict a_base_p)
-{
+void static ffor_0bit_8ow(const uint8_t* __restrict in, uint8_t* __restrict out, const uint8_t* __restrict a_base_p) {
 }
-void static ffor_1bit_8ow(const uint8_t *__restrict in, uint8_t *__restrict out, const uint8_t *__restrict a_base_p)
-{
+void static ffor_1bit_8ow(const uint8_t* __restrict in, uint8_t* __restrict out, const uint8_t* __restrict a_base_p) {
 	uint8_t tmp = 0U;
 	uint8_t src;
-	for (int i = 0; i < 128; i++ )
-	{
+	for (int i = 0; i < 128; i++) {
 		src = *(in + 128 * 0 + i) - *(a_base_p);
 		src = src & ((1ULL << 1) - 1);
 		tmp = src;
@@ -38,15 +34,13 @@ void static ffor_1bit_8ow(const uint8_t *__restrict in, uint8_t *__restrict out,
 		src = src & ((1ULL << 1) - 1);
 		tmp |= src << 7U;
 		*(out + i) = tmp;
-		out -= 0; 
+		out -= 0;
 	}
 }
-void static ffor_2bit_8ow(const uint8_t *__restrict in, uint8_t *__restrict out, const uint8_t *__restrict a_base_p)
-{
+void static ffor_2bit_8ow(const uint8_t* __restrict in, uint8_t* __restrict out, const uint8_t* __restrict a_base_p) {
 	uint8_t tmp = 0U;
 	uint8_t src;
-	for (int i = 0; i < 128; i++ )
-	{
+	for (int i = 0; i < 128; i++) {
 		src = *(in + 128 * 0 + i) - *(a_base_p);
 		src = src & ((1ULL << 2) - 1);
 		tmp = src;
@@ -74,15 +68,13 @@ void static ffor_2bit_8ow(const uint8_t *__restrict in, uint8_t *__restrict out,
 		src = src & ((1ULL << 2) - 1);
 		tmp |= src << 6U;
 		*(out + i) = tmp;
-		out -= 128; 
+		out -= 128;
 	}
 }
-void static ffor_3bit_8ow(const uint8_t *__restrict in, uint8_t *__restrict out, const uint8_t *__restrict a_base_p)
-{
+void static ffor_3bit_8ow(const uint8_t* __restrict in, uint8_t* __restrict out, const uint8_t* __restrict a_base_p) {
 	uint8_t tmp = 0U;
 	uint8_t src;
-	for (int i = 0; i < 128; i++ )
-	{
+	for (int i = 0; i < 128; i++) {
 		src = *(in + 128 * 0 + i) - *(a_base_p);
 		src = src & ((1ULL << 3) - 1);
 		tmp = src;
@@ -118,15 +110,13 @@ void static ffor_3bit_8ow(const uint8_t *__restrict in, uint8_t *__restrict out,
 		src = src & ((1ULL << 3) - 1);
 		tmp |= src << 5U;
 		*(out + i) = tmp;
-		out -= 256; 
+		out -= 256;
 	}
 }
-void static ffor_4bit_8ow(const uint8_t *__restrict in, uint8_t *__restrict out, const uint8_t *__restrict a_base_p)
-{
+void static ffor_4bit_8ow(const uint8_t* __restrict in, uint8_t* __restrict out, const uint8_t* __restrict a_base_p) {
 	uint8_t tmp = 0U;
 	uint8_t src;
-	for (int i = 0; i < 128; i++ )
-	{
+	for (int i = 0; i < 128; i++) {
 		src = *(in + 128 * 0 + i) - *(a_base_p);
 		src = src & ((1ULL << 4) - 1);
 		tmp = src;
@@ -158,15 +148,13 @@ void static ffor_4bit_8ow(const uint8_t *__restrict in, uint8_t *__restrict out,
 		src = src & ((1ULL << 4) - 1);
 		tmp |= src << 4U;
 		*(out + i) = tmp;
-		out -= 384; 
+		out -= 384;
 	}
 }
-void static ffor_5bit_8ow(const uint8_t *__restrict in, uint8_t *__restrict out, const uint8_t *__restrict a_base_p)
-{
+void static ffor_5bit_8ow(const uint8_t* __restrict in, uint8_t* __restrict out, const uint8_t* __restrict a_base_p) {
 	uint8_t tmp = 0U;
 	uint8_t src;
-	for (int i = 0; i < 128; i++ )
-	{
+	for (int i = 0; i < 128; i++) {
 		src = *(in + 128 * 0 + i) - *(a_base_p);
 		src = src & ((1ULL << 5) - 1);
 		tmp = src;
@@ -212,15 +200,13 @@ void static ffor_5bit_8ow(const uint8_t *__restrict in, uint8_t *__restrict out,
 		src = src & ((1ULL << 5) - 1);
 		tmp |= src << 3U;
 		*(out + i) = tmp;
-		out -= 512; 
+		out -= 512;
 	}
 }
-void static ffor_6bit_8ow(const uint8_t *__restrict in, uint8_t *__restrict out, const uint8_t *__restrict a_base_p)
-{
+void static ffor_6bit_8ow(const uint8_t* __restrict in, uint8_t* __restrict out, const uint8_t* __restrict a_base_p) {
 	uint8_t tmp = 0U;
 	uint8_t src;
-	for (int i = 0; i < 128; i++ )
-	{
+	for (int i = 0; i < 128; i++) {
 		src = *(in + 128 * 0 + i) - *(a_base_p);
 		src = src & ((1ULL << 6) - 1);
 		tmp = src;
@@ -268,15 +254,13 @@ void static ffor_6bit_8ow(const uint8_t *__restrict in, uint8_t *__restrict out,
 		src = src & ((1ULL << 6) - 1);
 		tmp |= src << 2U;
 		*(out + i) = tmp;
-		out -= 640; 
+		out -= 640;
 	}
 }
-void static ffor_7bit_8ow(const uint8_t *__restrict in, uint8_t *__restrict out, const uint8_t *__restrict a_base_p)
-{
+void static ffor_7bit_8ow(const uint8_t* __restrict in, uint8_t* __restrict out, const uint8_t* __restrict a_base_p) {
 	uint8_t tmp = 0U;
 	uint8_t src;
-	for (int i = 0; i < 128; i++ )
-	{
+	for (int i = 0; i < 128; i++) {
 		src = *(in + 128 * 0 + i) - *(a_base_p);
 		src = src & ((1ULL << 7) - 1);
 		tmp = src;
@@ -332,58 +316,57 @@ void static ffor_7bit_8ow(const uint8_t *__restrict in, uint8_t *__restrict out,
 		src = src & ((1ULL << 7) - 1);
 		tmp |= src << 1U;
 		*(out + i) = tmp;
-		out -= 768; 
+		out -= 768;
 	}
 }
-void static ffor_8bit_8ow(const uint8_t *__restrict in, uint8_t *__restrict out, const uint8_t *__restrict a_base_p)
-{
+void static ffor_8bit_8ow(const uint8_t* __restrict in, uint8_t* __restrict out, const uint8_t* __restrict a_base_p) {
 	uint8_t tmp = 0U;
 	uint8_t src;
-	for (int i = 0; i < 128; i++ )
-	{
-		src = *(in + 128 * 0 + i) - *(a_base_p);
-		tmp = src;
+	for (int i = 0; i < 128; i++) {
+		src        = *(in + 128 * 0 + i) - *(a_base_p);
+		tmp        = src;
 		*(out + i) = tmp;
 		out += 128;
-		src = *(in + 128 * 1 + i) - *(a_base_p);
-		tmp = src;
+		src        = *(in + 128 * 1 + i) - *(a_base_p);
+		tmp        = src;
 		*(out + i) = tmp;
 		out += 128;
-		src = *(in + 128 * 2 + i) - *(a_base_p);
-		tmp = src;
+		src        = *(in + 128 * 2 + i) - *(a_base_p);
+		tmp        = src;
 		*(out + i) = tmp;
 		out += 128;
-		src = *(in + 128 * 3 + i) - *(a_base_p);
-		tmp = src;
+		src        = *(in + 128 * 3 + i) - *(a_base_p);
+		tmp        = src;
 		*(out + i) = tmp;
 		out += 128;
-		src = *(in + 128 * 4 + i) - *(a_base_p);
-		tmp = src;
+		src        = *(in + 128 * 4 + i) - *(a_base_p);
+		tmp        = src;
 		*(out + i) = tmp;
 		out += 128;
-		src = *(in + 128 * 5 + i) - *(a_base_p);
-		tmp = src;
+		src        = *(in + 128 * 5 + i) - *(a_base_p);
+		tmp        = src;
 		*(out + i) = tmp;
 		out += 128;
-		src = *(in + 128 * 6 + i) - *(a_base_p);
-		tmp = src;
+		src        = *(in + 128 * 6 + i) - *(a_base_p);
+		tmp        = src;
 		*(out + i) = tmp;
 		out += 128;
-		src = *(in + 128 * 7 + i) - *(a_base_p);
-		tmp = src;
+		src        = *(in + 128 * 7 + i) - *(a_base_p);
+		tmp        = src;
 		*(out + i) = tmp;
-		out -= 896; 
+		out -= 896;
 	}
 }
-void static ffor_0bit_16ow(const uint16_t *__restrict in, uint16_t *__restrict out, const uint16_t *__restrict a_base_p)
-{
+void static ffor_0bit_16ow(const uint16_t* __restrict in,
+                           uint16_t* __restrict out,
+                           const uint16_t* __restrict a_base_p) {
 }
-void static ffor_1bit_16ow(const uint16_t *__restrict in, uint16_t *__restrict out, const uint16_t *__restrict a_base_p)
-{
+void static ffor_1bit_16ow(const uint16_t* __restrict in,
+                           uint16_t* __restrict out,
+                           const uint16_t* __restrict a_base_p) {
 	uint16_t tmp = 0U;
 	uint16_t src;
-	for (int i = 0; i < 64; i++ )
-	{
+	for (int i = 0; i < 64; i++) {
 		src = *(in + 64 * 0 + i) - *(a_base_p);
 		src = src & ((1ULL << 1) - 1);
 		tmp = src;
@@ -433,15 +416,15 @@ void static ffor_1bit_16ow(const uint16_t *__restrict in, uint16_t *__restrict o
 		src = src & ((1ULL << 1) - 1);
 		tmp |= src << 15U;
 		*(out + i) = tmp;
-		out -= 0; 
+		out -= 0;
 	}
 }
-void static ffor_2bit_16ow(const uint16_t *__restrict in, uint16_t *__restrict out, const uint16_t *__restrict a_base_p)
-{
+void static ffor_2bit_16ow(const uint16_t* __restrict in,
+                           uint16_t* __restrict out,
+                           const uint16_t* __restrict a_base_p) {
 	uint16_t tmp = 0U;
 	uint16_t src;
-	for (int i = 0; i < 64; i++ )
-	{
+	for (int i = 0; i < 64; i++) {
 		src = *(in + 64 * 0 + i) - *(a_base_p);
 		src = src & ((1ULL << 2) - 1);
 		tmp = src;
@@ -493,15 +476,15 @@ void static ffor_2bit_16ow(const uint16_t *__restrict in, uint16_t *__restrict o
 		src = src & ((1ULL << 2) - 1);
 		tmp |= src << 14U;
 		*(out + i) = tmp;
-		out -= 64; 
+		out -= 64;
 	}
 }
-void static ffor_3bit_16ow(const uint16_t *__restrict in, uint16_t *__restrict out, const uint16_t *__restrict a_base_p)
-{
+void static ffor_3bit_16ow(const uint16_t* __restrict in,
+                           uint16_t* __restrict out,
+                           const uint16_t* __restrict a_base_p) {
 	uint16_t tmp = 0U;
 	uint16_t src;
-	for (int i = 0; i < 64; i++ )
-	{
+	for (int i = 0; i < 64; i++) {
 		src = *(in + 64 * 0 + i) - *(a_base_p);
 		src = src & ((1ULL << 3) - 1);
 		tmp = src;
@@ -561,15 +544,15 @@ void static ffor_3bit_16ow(const uint16_t *__restrict in, uint16_t *__restrict o
 		src = src & ((1ULL << 3) - 1);
 		tmp |= src << 13U;
 		*(out + i) = tmp;
-		out -= 128; 
+		out -= 128;
 	}
 }
-void static ffor_4bit_16ow(const uint16_t *__restrict in, uint16_t *__restrict out, const uint16_t *__restrict a_base_p)
-{
+void static ffor_4bit_16ow(const uint16_t* __restrict in,
+                           uint16_t* __restrict out,
+                           const uint16_t* __restrict a_base_p) {
 	uint16_t tmp = 0U;
 	uint16_t src;
-	for (int i = 0; i < 64; i++ )
-	{
+	for (int i = 0; i < 64; i++) {
 		src = *(in + 64 * 0 + i) - *(a_base_p);
 		src = src & ((1ULL << 4) - 1);
 		tmp = src;
@@ -625,15 +608,15 @@ void static ffor_4bit_16ow(const uint16_t *__restrict in, uint16_t *__restrict o
 		src = src & ((1ULL << 4) - 1);
 		tmp |= src << 12U;
 		*(out + i) = tmp;
-		out -= 192; 
+		out -= 192;
 	}
 }
-void static ffor_5bit_16ow(const uint16_t *__restrict in, uint16_t *__restrict out, const uint16_t *__restrict a_base_p)
-{
+void static ffor_5bit_16ow(const uint16_t* __restrict in,
+                           uint16_t* __restrict out,
+                           const uint16_t* __restrict a_base_p) {
 	uint16_t tmp = 0U;
 	uint16_t src;
-	for (int i = 0; i < 64; i++ )
-	{
+	for (int i = 0; i < 64; i++) {
 		src = *(in + 64 * 0 + i) - *(a_base_p);
 		src = src & ((1ULL << 5) - 1);
 		tmp = src;
@@ -703,15 +686,15 @@ void static ffor_5bit_16ow(const uint16_t *__restrict in, uint16_t *__restrict o
 		src = src & ((1ULL << 5) - 1);
 		tmp |= src << 11U;
 		*(out + i) = tmp;
-		out -= 256; 
+		out -= 256;
 	}
 }
-void static ffor_6bit_16ow(const uint16_t *__restrict in, uint16_t *__restrict out, const uint16_t *__restrict a_base_p)
-{
+void static ffor_6bit_16ow(const uint16_t* __restrict in,
+                           uint16_t* __restrict out,
+                           const uint16_t* __restrict a_base_p) {
 	uint16_t tmp = 0U;
 	uint16_t src;
-	for (int i = 0; i < 64; i++ )
-	{
+	for (int i = 0; i < 64; i++) {
 		src = *(in + 64 * 0 + i) - *(a_base_p);
 		src = src & ((1ULL << 6) - 1);
 		tmp = src;
@@ -783,15 +766,15 @@ void static ffor_6bit_16ow(const uint16_t *__restrict in, uint16_t *__restrict o
 		src = src & ((1ULL << 6) - 1);
 		tmp |= src << 10U;
 		*(out + i) = tmp;
-		out -= 320; 
+		out -= 320;
 	}
 }
-void static ffor_7bit_16ow(const uint16_t *__restrict in, uint16_t *__restrict out, const uint16_t *__restrict a_base_p)
-{
+void static ffor_7bit_16ow(const uint16_t* __restrict in,
+                           uint16_t* __restrict out,
+                           const uint16_t* __restrict a_base_p) {
 	uint16_t tmp = 0U;
 	uint16_t src;
-	for (int i = 0; i < 64; i++ )
-	{
+	for (int i = 0; i < 64; i++) {
 		src = *(in + 64 * 0 + i) - *(a_base_p);
 		src = src & ((1ULL << 7) - 1);
 		tmp = src;
@@ -871,15 +854,15 @@ void static ffor_7bit_16ow(const uint16_t *__restrict in, uint16_t *__restrict o
 		src = src & ((1ULL << 7) - 1);
 		tmp |= src << 9U;
 		*(out + i) = tmp;
-		out -= 384; 
+		out -= 384;
 	}
 }
-void static ffor_8bit_16ow(const uint16_t *__restrict in, uint16_t *__restrict out, const uint16_t *__restrict a_base_p)
-{
+void static ffor_8bit_16ow(const uint16_t* __restrict in,
+                           uint16_t* __restrict out,
+                           const uint16_t* __restrict a_base_p) {
 	uint16_t tmp = 0U;
 	uint16_t src;
-	for (int i = 0; i < 64; i++ )
-	{
+	for (int i = 0; i < 64; i++) {
 		src = *(in + 64 * 0 + i) - *(a_base_p);
 		src = src & ((1ULL << 8) - 1);
 		tmp = src;
@@ -943,15 +926,15 @@ void static ffor_8bit_16ow(const uint16_t *__restrict in, uint16_t *__restrict o
 		src = src & ((1ULL << 8) - 1);
 		tmp |= src << 8U;
 		*(out + i) = tmp;
-		out -= 448; 
+		out -= 448;
 	}
 }
-void static ffor_9bit_16ow(const uint16_t *__restrict in, uint16_t *__restrict out, const uint16_t *__restrict a_base_p)
-{
+void static ffor_9bit_16ow(const uint16_t* __restrict in,
+                           uint16_t* __restrict out,
+                           const uint16_t* __restrict a_base_p) {
 	uint16_t tmp = 0U;
 	uint16_t src;
-	for (int i = 0; i < 64; i++ )
-	{
+	for (int i = 0; i < 64; i++) {
 		src = *(in + 64 * 0 + i) - *(a_base_p);
 		src = src & ((1ULL << 9) - 1);
 		tmp = src;
@@ -1041,15 +1024,15 @@ void static ffor_9bit_16ow(const uint16_t *__restrict in, uint16_t *__restrict o
 		src = src & ((1ULL << 9) - 1);
 		tmp |= src << 7U;
 		*(out + i) = tmp;
-		out -= 512; 
+		out -= 512;
 	}
 }
-void static ffor_10bit_16ow(const uint16_t *__restrict in, uint16_t *__restrict out, const uint16_t *__restrict a_base_p)
-{
+void static ffor_10bit_16ow(const uint16_t* __restrict in,
+                            uint16_t* __restrict out,
+                            const uint16_t* __restrict a_base_p) {
 	uint16_t tmp = 0U;
 	uint16_t src;
-	for (int i = 0; i < 64; i++ )
-	{
+	for (int i = 0; i < 64; i++) {
 		src = *(in + 64 * 0 + i) - *(a_base_p);
 		src = src & ((1ULL << 10) - 1);
 		tmp = src;
@@ -1141,15 +1124,15 @@ void static ffor_10bit_16ow(const uint16_t *__restrict in, uint16_t *__restrict 
 		src = src & ((1ULL << 10) - 1);
 		tmp |= src << 6U;
 		*(out + i) = tmp;
-		out -= 576; 
+		out -= 576;
 	}
 }
-void static ffor_11bit_16ow(const uint16_t *__restrict in, uint16_t *__restrict out, const uint16_t *__restrict a_base_p)
-{
+void static ffor_11bit_16ow(const uint16_t* __restrict in,
+                            uint16_t* __restrict out,
+                            const uint16_t* __restrict a_base_p) {
 	uint16_t tmp = 0U;
 	uint16_t src;
-	for (int i = 0; i < 64; i++ )
-	{
+	for (int i = 0; i < 64; i++) {
 		src = *(in + 64 * 0 + i) - *(a_base_p);
 		src = src & ((1ULL << 11) - 1);
 		tmp = src;
@@ -1249,15 +1232,15 @@ void static ffor_11bit_16ow(const uint16_t *__restrict in, uint16_t *__restrict 
 		src = src & ((1ULL << 11) - 1);
 		tmp |= src << 5U;
 		*(out + i) = tmp;
-		out -= 640; 
+		out -= 640;
 	}
 }
-void static ffor_12bit_16ow(const uint16_t *__restrict in, uint16_t *__restrict out, const uint16_t *__restrict a_base_p)
-{
+void static ffor_12bit_16ow(const uint16_t* __restrict in,
+                            uint16_t* __restrict out,
+                            const uint16_t* __restrict a_base_p) {
 	uint16_t tmp = 0U;
 	uint16_t src;
-	for (int i = 0; i < 64; i++ )
-	{
+	for (int i = 0; i < 64; i++) {
 		src = *(in + 64 * 0 + i) - *(a_base_p);
 		src = src & ((1ULL << 12) - 1);
 		tmp = src;
@@ -1353,15 +1336,15 @@ void static ffor_12bit_16ow(const uint16_t *__restrict in, uint16_t *__restrict 
 		src = src & ((1ULL << 12) - 1);
 		tmp |= src << 4U;
 		*(out + i) = tmp;
-		out -= 704; 
+		out -= 704;
 	}
 }
-void static ffor_13bit_16ow(const uint16_t *__restrict in, uint16_t *__restrict out, const uint16_t *__restrict a_base_p)
-{
+void static ffor_13bit_16ow(const uint16_t* __restrict in,
+                            uint16_t* __restrict out,
+                            const uint16_t* __restrict a_base_p) {
 	uint16_t tmp = 0U;
 	uint16_t src;
-	for (int i = 0; i < 64; i++ )
-	{
+	for (int i = 0; i < 64; i++) {
 		src = *(in + 64 * 0 + i) - *(a_base_p);
 		src = src & ((1ULL << 13) - 1);
 		tmp = src;
@@ -1471,15 +1454,15 @@ void static ffor_13bit_16ow(const uint16_t *__restrict in, uint16_t *__restrict 
 		src = src & ((1ULL << 13) - 1);
 		tmp |= src << 3U;
 		*(out + i) = tmp;
-		out -= 768; 
+		out -= 768;
 	}
 }
-void static ffor_14bit_16ow(const uint16_t *__restrict in, uint16_t *__restrict out, const uint16_t *__restrict a_base_p)
-{
+void static ffor_14bit_16ow(const uint16_t* __restrict in,
+                            uint16_t* __restrict out,
+                            const uint16_t* __restrict a_base_p) {
 	uint16_t tmp = 0U;
 	uint16_t src;
-	for (int i = 0; i < 64; i++ )
-	{
+	for (int i = 0; i < 64; i++) {
 		src = *(in + 64 * 0 + i) - *(a_base_p);
 		src = src & ((1ULL << 14) - 1);
 		tmp = src;
@@ -1591,15 +1574,15 @@ void static ffor_14bit_16ow(const uint16_t *__restrict in, uint16_t *__restrict 
 		src = src & ((1ULL << 14) - 1);
 		tmp |= src << 2U;
 		*(out + i) = tmp;
-		out -= 832; 
+		out -= 832;
 	}
 }
-void static ffor_15bit_16ow(const uint16_t *__restrict in, uint16_t *__restrict out, const uint16_t *__restrict a_base_p)
-{
+void static ffor_15bit_16ow(const uint16_t* __restrict in,
+                            uint16_t* __restrict out,
+                            const uint16_t* __restrict a_base_p) {
 	uint16_t tmp = 0U;
 	uint16_t src;
-	for (int i = 0; i < 64; i++ )
-	{
+	for (int i = 0; i < 64; i++) {
 		src = *(in + 64 * 0 + i) - *(a_base_p);
 		src = src & ((1ULL << 15) - 1);
 		tmp = src;
@@ -1719,90 +1702,91 @@ void static ffor_15bit_16ow(const uint16_t *__restrict in, uint16_t *__restrict 
 		src = src & ((1ULL << 15) - 1);
 		tmp |= src << 1U;
 		*(out + i) = tmp;
-		out -= 896; 
+		out -= 896;
 	}
 }
-void static ffor_16bit_16ow(const uint16_t *__restrict in, uint16_t *__restrict out, const uint16_t *__restrict a_base_p)
-{
+void static ffor_16bit_16ow(const uint16_t* __restrict in,
+                            uint16_t* __restrict out,
+                            const uint16_t* __restrict a_base_p) {
 	uint16_t tmp = 0U;
 	uint16_t src;
-	for (int i = 0; i < 64; i++ )
-	{
-		src = *(in + 64 * 0 + i) - *(a_base_p);
-		tmp = src;
+	for (int i = 0; i < 64; i++) {
+		src        = *(in + 64 * 0 + i) - *(a_base_p);
+		tmp        = src;
 		*(out + i) = tmp;
 		out += 64;
-		src = *(in + 64 * 1 + i) - *(a_base_p);
-		tmp = src;
+		src        = *(in + 64 * 1 + i) - *(a_base_p);
+		tmp        = src;
 		*(out + i) = tmp;
 		out += 64;
-		src = *(in + 64 * 2 + i) - *(a_base_p);
-		tmp = src;
+		src        = *(in + 64 * 2 + i) - *(a_base_p);
+		tmp        = src;
 		*(out + i) = tmp;
 		out += 64;
-		src = *(in + 64 * 3 + i) - *(a_base_p);
-		tmp = src;
+		src        = *(in + 64 * 3 + i) - *(a_base_p);
+		tmp        = src;
 		*(out + i) = tmp;
 		out += 64;
-		src = *(in + 64 * 4 + i) - *(a_base_p);
-		tmp = src;
+		src        = *(in + 64 * 4 + i) - *(a_base_p);
+		tmp        = src;
 		*(out + i) = tmp;
 		out += 64;
-		src = *(in + 64 * 5 + i) - *(a_base_p);
-		tmp = src;
+		src        = *(in + 64 * 5 + i) - *(a_base_p);
+		tmp        = src;
 		*(out + i) = tmp;
 		out += 64;
-		src = *(in + 64 * 6 + i) - *(a_base_p);
-		tmp = src;
+		src        = *(in + 64 * 6 + i) - *(a_base_p);
+		tmp        = src;
 		*(out + i) = tmp;
 		out += 64;
-		src = *(in + 64 * 7 + i) - *(a_base_p);
-		tmp = src;
+		src        = *(in + 64 * 7 + i) - *(a_base_p);
+		tmp        = src;
 		*(out + i) = tmp;
 		out += 64;
-		src = *(in + 64 * 8 + i) - *(a_base_p);
-		tmp = src;
+		src        = *(in + 64 * 8 + i) - *(a_base_p);
+		tmp        = src;
 		*(out + i) = tmp;
 		out += 64;
-		src = *(in + 64 * 9 + i) - *(a_base_p);
-		tmp = src;
+		src        = *(in + 64 * 9 + i) - *(a_base_p);
+		tmp        = src;
 		*(out + i) = tmp;
 		out += 64;
-		src = *(in + 64 * 10 + i) - *(a_base_p);
-		tmp = src;
+		src        = *(in + 64 * 10 + i) - *(a_base_p);
+		tmp        = src;
 		*(out + i) = tmp;
 		out += 64;
-		src = *(in + 64 * 11 + i) - *(a_base_p);
-		tmp = src;
+		src        = *(in + 64 * 11 + i) - *(a_base_p);
+		tmp        = src;
 		*(out + i) = tmp;
 		out += 64;
-		src = *(in + 64 * 12 + i) - *(a_base_p);
-		tmp = src;
+		src        = *(in + 64 * 12 + i) - *(a_base_p);
+		tmp        = src;
 		*(out + i) = tmp;
 		out += 64;
-		src = *(in + 64 * 13 + i) - *(a_base_p);
-		tmp = src;
+		src        = *(in + 64 * 13 + i) - *(a_base_p);
+		tmp        = src;
 		*(out + i) = tmp;
 		out += 64;
-		src = *(in + 64 * 14 + i) - *(a_base_p);
-		tmp = src;
+		src        = *(in + 64 * 14 + i) - *(a_base_p);
+		tmp        = src;
 		*(out + i) = tmp;
 		out += 64;
-		src = *(in + 64 * 15 + i) - *(a_base_p);
-		tmp = src;
+		src        = *(in + 64 * 15 + i) - *(a_base_p);
+		tmp        = src;
 		*(out + i) = tmp;
-		out -= 960; 
+		out -= 960;
 	}
 }
-void static ffor_0bit_32ow(const uint32_t *__restrict in, uint32_t *__restrict out, const uint32_t *__restrict a_base_p)
-{
+void static ffor_0bit_32ow(const uint32_t* __restrict in,
+                           uint32_t* __restrict out,
+                           const uint32_t* __restrict a_base_p) {
 }
-void static ffor_1bit_32ow(const uint32_t *__restrict in, uint32_t *__restrict out, const uint32_t *__restrict a_base_p)
-{
+void static ffor_1bit_32ow(const uint32_t* __restrict in,
+                           uint32_t* __restrict out,
+                           const uint32_t* __restrict a_base_p) {
 	uint32_t tmp = 0U;
 	uint32_t src;
-	for (int i = 0; i < 32; i++ )
-	{
+	for (int i = 0; i < 32; i++) {
 		src = *(in + 32 * 0 + i) - *(a_base_p);
 		src = src & ((1ULL << 1) - 1);
 		tmp = src;
@@ -1900,15 +1884,15 @@ void static ffor_1bit_32ow(const uint32_t *__restrict in, uint32_t *__restrict o
 		src = src & ((1ULL << 1) - 1);
 		tmp |= src << 31U;
 		*(out + i) = tmp;
-		out -= 0; 
+		out -= 0;
 	}
 }
-void static ffor_2bit_32ow(const uint32_t *__restrict in, uint32_t *__restrict out, const uint32_t *__restrict a_base_p)
-{
+void static ffor_2bit_32ow(const uint32_t* __restrict in,
+                           uint32_t* __restrict out,
+                           const uint32_t* __restrict a_base_p) {
 	uint32_t tmp = 0U;
 	uint32_t src;
-	for (int i = 0; i < 32; i++ )
-	{
+	for (int i = 0; i < 32; i++) {
 		src = *(in + 32 * 0 + i) - *(a_base_p);
 		src = src & ((1ULL << 2) - 1);
 		tmp = src;
@@ -2008,15 +1992,15 @@ void static ffor_2bit_32ow(const uint32_t *__restrict in, uint32_t *__restrict o
 		src = src & ((1ULL << 2) - 1);
 		tmp |= src << 30U;
 		*(out + i) = tmp;
-		out -= 32; 
+		out -= 32;
 	}
 }
-void static ffor_3bit_32ow(const uint32_t *__restrict in, uint32_t *__restrict out, const uint32_t *__restrict a_base_p)
-{
+void static ffor_3bit_32ow(const uint32_t* __restrict in,
+                           uint32_t* __restrict out,
+                           const uint32_t* __restrict a_base_p) {
 	uint32_t tmp = 0U;
 	uint32_t src;
-	for (int i = 0; i < 32; i++ )
-	{
+	for (int i = 0; i < 32; i++) {
 		src = *(in + 32 * 0 + i) - *(a_base_p);
 		src = src & ((1ULL << 3) - 1);
 		tmp = src;
@@ -2124,15 +2108,15 @@ void static ffor_3bit_32ow(const uint32_t *__restrict in, uint32_t *__restrict o
 		src = src & ((1ULL << 3) - 1);
 		tmp |= src << 29U;
 		*(out + i) = tmp;
-		out -= 64; 
+		out -= 64;
 	}
 }
-void static ffor_4bit_32ow(const uint32_t *__restrict in, uint32_t *__restrict out, const uint32_t *__restrict a_base_p)
-{
+void static ffor_4bit_32ow(const uint32_t* __restrict in,
+                           uint32_t* __restrict out,
+                           const uint32_t* __restrict a_base_p) {
 	uint32_t tmp = 0U;
 	uint32_t src;
-	for (int i = 0; i < 32; i++ )
-	{
+	for (int i = 0; i < 32; i++) {
 		src = *(in + 32 * 0 + i) - *(a_base_p);
 		src = src & ((1ULL << 4) - 1);
 		tmp = src;
@@ -2236,15 +2220,15 @@ void static ffor_4bit_32ow(const uint32_t *__restrict in, uint32_t *__restrict o
 		src = src & ((1ULL << 4) - 1);
 		tmp |= src << 28U;
 		*(out + i) = tmp;
-		out -= 96; 
+		out -= 96;
 	}
 }
-void static ffor_5bit_32ow(const uint32_t *__restrict in, uint32_t *__restrict out, const uint32_t *__restrict a_base_p)
-{
+void static ffor_5bit_32ow(const uint32_t* __restrict in,
+                           uint32_t* __restrict out,
+                           const uint32_t* __restrict a_base_p) {
 	uint32_t tmp = 0U;
 	uint32_t src;
-	for (int i = 0; i < 32; i++ )
-	{
+	for (int i = 0; i < 32; i++) {
 		src = *(in + 32 * 0 + i) - *(a_base_p);
 		src = src & ((1ULL << 5) - 1);
 		tmp = src;
@@ -2362,15 +2346,15 @@ void static ffor_5bit_32ow(const uint32_t *__restrict in, uint32_t *__restrict o
 		src = src & ((1ULL << 5) - 1);
 		tmp |= src << 27U;
 		*(out + i) = tmp;
-		out -= 128; 
+		out -= 128;
 	}
 }
-void static ffor_6bit_32ow(const uint32_t *__restrict in, uint32_t *__restrict out, const uint32_t *__restrict a_base_p)
-{
+void static ffor_6bit_32ow(const uint32_t* __restrict in,
+                           uint32_t* __restrict out,
+                           const uint32_t* __restrict a_base_p) {
 	uint32_t tmp = 0U;
 	uint32_t src;
-	for (int i = 0; i < 32; i++ )
-	{
+	for (int i = 0; i < 32; i++) {
 		src = *(in + 32 * 0 + i) - *(a_base_p);
 		src = src & ((1ULL << 6) - 1);
 		tmp = src;
@@ -2490,15 +2474,15 @@ void static ffor_6bit_32ow(const uint32_t *__restrict in, uint32_t *__restrict o
 		src = src & ((1ULL << 6) - 1);
 		tmp |= src << 26U;
 		*(out + i) = tmp;
-		out -= 160; 
+		out -= 160;
 	}
 }
-void static ffor_7bit_32ow(const uint32_t *__restrict in, uint32_t *__restrict out, const uint32_t *__restrict a_base_p)
-{
+void static ffor_7bit_32ow(const uint32_t* __restrict in,
+                           uint32_t* __restrict out,
+                           const uint32_t* __restrict a_base_p) {
 	uint32_t tmp = 0U;
 	uint32_t src;
-	for (int i = 0; i < 32; i++ )
-	{
+	for (int i = 0; i < 32; i++) {
 		src = *(in + 32 * 0 + i) - *(a_base_p);
 		src = src & ((1ULL << 7) - 1);
 		tmp = src;
@@ -2626,15 +2610,15 @@ void static ffor_7bit_32ow(const uint32_t *__restrict in, uint32_t *__restrict o
 		src = src & ((1ULL << 7) - 1);
 		tmp |= src << 25U;
 		*(out + i) = tmp;
-		out -= 192; 
+		out -= 192;
 	}
 }
-void static ffor_8bit_32ow(const uint32_t *__restrict in, uint32_t *__restrict out, const uint32_t *__restrict a_base_p)
-{
+void static ffor_8bit_32ow(const uint32_t* __restrict in,
+                           uint32_t* __restrict out,
+                           const uint32_t* __restrict a_base_p) {
 	uint32_t tmp = 0U;
 	uint32_t src;
-	for (int i = 0; i < 32; i++ )
-	{
+	for (int i = 0; i < 32; i++) {
 		src = *(in + 32 * 0 + i) - *(a_base_p);
 		src = src & ((1ULL << 8) - 1);
 		tmp = src;
@@ -2746,15 +2730,15 @@ void static ffor_8bit_32ow(const uint32_t *__restrict in, uint32_t *__restrict o
 		src = src & ((1ULL << 8) - 1);
 		tmp |= src << 24U;
 		*(out + i) = tmp;
-		out -= 224; 
+		out -= 224;
 	}
 }
-void static ffor_9bit_32ow(const uint32_t *__restrict in, uint32_t *__restrict out, const uint32_t *__restrict a_base_p)
-{
+void static ffor_9bit_32ow(const uint32_t* __restrict in,
+                           uint32_t* __restrict out,
+                           const uint32_t* __restrict a_base_p) {
 	uint32_t tmp = 0U;
 	uint32_t src;
-	for (int i = 0; i < 32; i++ )
-	{
+	for (int i = 0; i < 32; i++) {
 		src = *(in + 32 * 0 + i) - *(a_base_p);
 		src = src & ((1ULL << 9) - 1);
 		tmp = src;
@@ -2892,15 +2876,15 @@ void static ffor_9bit_32ow(const uint32_t *__restrict in, uint32_t *__restrict o
 		src = src & ((1ULL << 9) - 1);
 		tmp |= src << 23U;
 		*(out + i) = tmp;
-		out -= 256; 
+		out -= 256;
 	}
 }
-void static ffor_10bit_32ow(const uint32_t *__restrict in, uint32_t *__restrict out, const uint32_t *__restrict a_base_p)
-{
+void static ffor_10bit_32ow(const uint32_t* __restrict in,
+                            uint32_t* __restrict out,
+                            const uint32_t* __restrict a_base_p) {
 	uint32_t tmp = 0U;
 	uint32_t src;
-	for (int i = 0; i < 32; i++ )
-	{
+	for (int i = 0; i < 32; i++) {
 		src = *(in + 32 * 0 + i) - *(a_base_p);
 		src = src & ((1ULL << 10) - 1);
 		tmp = src;
@@ -3040,15 +3024,15 @@ void static ffor_10bit_32ow(const uint32_t *__restrict in, uint32_t *__restrict 
 		src = src & ((1ULL << 10) - 1);
 		tmp |= src << 22U;
 		*(out + i) = tmp;
-		out -= 288; 
+		out -= 288;
 	}
 }
-void static ffor_11bit_32ow(const uint32_t *__restrict in, uint32_t *__restrict out, const uint32_t *__restrict a_base_p)
-{
+void static ffor_11bit_32ow(const uint32_t* __restrict in,
+                            uint32_t* __restrict out,
+                            const uint32_t* __restrict a_base_p) {
 	uint32_t tmp = 0U;
 	uint32_t src;
-	for (int i = 0; i < 32; i++ )
-	{
+	for (int i = 0; i < 32; i++) {
 		src = *(in + 32 * 0 + i) - *(a_base_p);
 		src = src & ((1ULL << 11) - 1);
 		tmp = src;
@@ -3196,15 +3180,15 @@ void static ffor_11bit_32ow(const uint32_t *__restrict in, uint32_t *__restrict 
 		src = src & ((1ULL << 11) - 1);
 		tmp |= src << 21U;
 		*(out + i) = tmp;
-		out -= 320; 
+		out -= 320;
 	}
 }
-void static ffor_12bit_32ow(const uint32_t *__restrict in, uint32_t *__restrict out, const uint32_t *__restrict a_base_p)
-{
+void static ffor_12bit_32ow(const uint32_t* __restrict in,
+                            uint32_t* __restrict out,
+                            const uint32_t* __restrict a_base_p) {
 	uint32_t tmp = 0U;
 	uint32_t src;
-	for (int i = 0; i < 32; i++ )
-	{
+	for (int i = 0; i < 32; i++) {
 		src = *(in + 32 * 0 + i) - *(a_base_p);
 		src = src & ((1ULL << 12) - 1);
 		tmp = src;
@@ -3348,15 +3332,15 @@ void static ffor_12bit_32ow(const uint32_t *__restrict in, uint32_t *__restrict 
 		src = src & ((1ULL << 12) - 1);
 		tmp |= src << 20U;
 		*(out + i) = tmp;
-		out -= 352; 
+		out -= 352;
 	}
 }
-void static ffor_13bit_32ow(const uint32_t *__restrict in, uint32_t *__restrict out, const uint32_t *__restrict a_base_p)
-{
+void static ffor_13bit_32ow(const uint32_t* __restrict in,
+                            uint32_t* __restrict out,
+                            const uint32_t* __restrict a_base_p) {
 	uint32_t tmp = 0U;
 	uint32_t src;
-	for (int i = 0; i < 32; i++ )
-	{
+	for (int i = 0; i < 32; i++) {
 		src = *(in + 32 * 0 + i) - *(a_base_p);
 		src = src & ((1ULL << 13) - 1);
 		tmp = src;
@@ -3514,15 +3498,15 @@ void static ffor_13bit_32ow(const uint32_t *__restrict in, uint32_t *__restrict 
 		src = src & ((1ULL << 13) - 1);
 		tmp |= src << 19U;
 		*(out + i) = tmp;
-		out -= 384; 
+		out -= 384;
 	}
 }
-void static ffor_14bit_32ow(const uint32_t *__restrict in, uint32_t *__restrict out, const uint32_t *__restrict a_base_p)
-{
+void static ffor_14bit_32ow(const uint32_t* __restrict in,
+                            uint32_t* __restrict out,
+                            const uint32_t* __restrict a_base_p) {
 	uint32_t tmp = 0U;
 	uint32_t src;
-	for (int i = 0; i < 32; i++ )
-	{
+	for (int i = 0; i < 32; i++) {
 		src = *(in + 32 * 0 + i) - *(a_base_p);
 		src = src & ((1ULL << 14) - 1);
 		tmp = src;
@@ -3682,15 +3666,15 @@ void static ffor_14bit_32ow(const uint32_t *__restrict in, uint32_t *__restrict 
 		src = src & ((1ULL << 14) - 1);
 		tmp |= src << 18U;
 		*(out + i) = tmp;
-		out -= 416; 
+		out -= 416;
 	}
 }
-void static ffor_15bit_32ow(const uint32_t *__restrict in, uint32_t *__restrict out, const uint32_t *__restrict a_base_p)
-{
+void static ffor_15bit_32ow(const uint32_t* __restrict in,
+                            uint32_t* __restrict out,
+                            const uint32_t* __restrict a_base_p) {
 	uint32_t tmp = 0U;
 	uint32_t src;
-	for (int i = 0; i < 32; i++ )
-	{
+	for (int i = 0; i < 32; i++) {
 		src = *(in + 32 * 0 + i) - *(a_base_p);
 		src = src & ((1ULL << 15) - 1);
 		tmp = src;
@@ -3858,15 +3842,15 @@ void static ffor_15bit_32ow(const uint32_t *__restrict in, uint32_t *__restrict 
 		src = src & ((1ULL << 15) - 1);
 		tmp |= src << 17U;
 		*(out + i) = tmp;
-		out -= 448; 
+		out -= 448;
 	}
 }
-void static ffor_16bit_32ow(const uint32_t *__restrict in, uint32_t *__restrict out, const uint32_t *__restrict a_base_p)
-{
+void static ffor_16bit_32ow(const uint32_t* __restrict in,
+                            uint32_t* __restrict out,
+                            const uint32_t* __restrict a_base_p) {
 	uint32_t tmp = 0U;
 	uint32_t src;
-	for (int i = 0; i < 32; i++ )
-	{
+	for (int i = 0; i < 32; i++) {
 		src = *(in + 32 * 0 + i) - *(a_base_p);
 		src = src & ((1ULL << 16) - 1);
 		tmp = src;
@@ -3994,15 +3978,15 @@ void static ffor_16bit_32ow(const uint32_t *__restrict in, uint32_t *__restrict 
 		src = src & ((1ULL << 16) - 1);
 		tmp |= src << 16U;
 		*(out + i) = tmp;
-		out -= 480; 
+		out -= 480;
 	}
 }
-void static ffor_17bit_32ow(const uint32_t *__restrict in, uint32_t *__restrict out, const uint32_t *__restrict a_base_p)
-{
+void static ffor_17bit_32ow(const uint32_t* __restrict in,
+                            uint32_t* __restrict out,
+                            const uint32_t* __restrict a_base_p) {
 	uint32_t tmp = 0U;
 	uint32_t src;
-	for (int i = 0; i < 32; i++ )
-	{
+	for (int i = 0; i < 32; i++) {
 		src = *(in + 32 * 0 + i) - *(a_base_p);
 		src = src & ((1ULL << 17) - 1);
 		tmp = src;
@@ -4180,15 +4164,15 @@ void static ffor_17bit_32ow(const uint32_t *__restrict in, uint32_t *__restrict 
 		src = src & ((1ULL << 17) - 1);
 		tmp |= src << 15U;
 		*(out + i) = tmp;
-		out -= 512; 
+		out -= 512;
 	}
 }
-void static ffor_18bit_32ow(const uint32_t *__restrict in, uint32_t *__restrict out, const uint32_t *__restrict a_base_p)
-{
+void static ffor_18bit_32ow(const uint32_t* __restrict in,
+                            uint32_t* __restrict out,
+                            const uint32_t* __restrict a_base_p) {
 	uint32_t tmp = 0U;
 	uint32_t src;
-	for (int i = 0; i < 32; i++ )
-	{
+	for (int i = 0; i < 32; i++) {
 		src = *(in + 32 * 0 + i) - *(a_base_p);
 		src = src & ((1ULL << 18) - 1);
 		tmp = src;
@@ -4368,15 +4352,15 @@ void static ffor_18bit_32ow(const uint32_t *__restrict in, uint32_t *__restrict 
 		src = src & ((1ULL << 18) - 1);
 		tmp |= src << 14U;
 		*(out + i) = tmp;
-		out -= 544; 
+		out -= 544;
 	}
 }
-void static ffor_19bit_32ow(const uint32_t *__restrict in, uint32_t *__restrict out, const uint32_t *__restrict a_base_p)
-{
+void static ffor_19bit_32ow(const uint32_t* __restrict in,
+                            uint32_t* __restrict out,
+                            const uint32_t* __restrict a_base_p) {
 	uint32_t tmp = 0U;
 	uint32_t src;
-	for (int i = 0; i < 32; i++ )
-	{
+	for (int i = 0; i < 32; i++) {
 		src = *(in + 32 * 0 + i) - *(a_base_p);
 		src = src & ((1ULL << 19) - 1);
 		tmp = src;
@@ -4564,15 +4548,15 @@ void static ffor_19bit_32ow(const uint32_t *__restrict in, uint32_t *__restrict 
 		src = src & ((1ULL << 19) - 1);
 		tmp |= src << 13U;
 		*(out + i) = tmp;
-		out -= 576; 
+		out -= 576;
 	}
 }
-void static ffor_20bit_32ow(const uint32_t *__restrict in, uint32_t *__restrict out, const uint32_t *__restrict a_base_p)
-{
+void static ffor_20bit_32ow(const uint32_t* __restrict in,
+                            uint32_t* __restrict out,
+                            const uint32_t* __restrict a_base_p) {
 	uint32_t tmp = 0U;
 	uint32_t src;
-	for (int i = 0; i < 32; i++ )
-	{
+	for (int i = 0; i < 32; i++) {
 		src = *(in + 32 * 0 + i) - *(a_base_p);
 		src = src & ((1ULL << 20) - 1);
 		tmp = src;
@@ -4756,15 +4740,15 @@ void static ffor_20bit_32ow(const uint32_t *__restrict in, uint32_t *__restrict 
 		src = src & ((1ULL << 20) - 1);
 		tmp |= src << 12U;
 		*(out + i) = tmp;
-		out -= 608; 
+		out -= 608;
 	}
 }
-void static ffor_21bit_32ow(const uint32_t *__restrict in, uint32_t *__restrict out, const uint32_t *__restrict a_base_p)
-{
+void static ffor_21bit_32ow(const uint32_t* __restrict in,
+                            uint32_t* __restrict out,
+                            const uint32_t* __restrict a_base_p) {
 	uint32_t tmp = 0U;
 	uint32_t src;
-	for (int i = 0; i < 32; i++ )
-	{
+	for (int i = 0; i < 32; i++) {
 		src = *(in + 32 * 0 + i) - *(a_base_p);
 		src = src & ((1ULL << 21) - 1);
 		tmp = src;
@@ -4962,15 +4946,15 @@ void static ffor_21bit_32ow(const uint32_t *__restrict in, uint32_t *__restrict 
 		src = src & ((1ULL << 21) - 1);
 		tmp |= src << 11U;
 		*(out + i) = tmp;
-		out -= 640; 
+		out -= 640;
 	}
 }
-void static ffor_22bit_32ow(const uint32_t *__restrict in, uint32_t *__restrict out, const uint32_t *__restrict a_base_p)
-{
+void static ffor_22bit_32ow(const uint32_t* __restrict in,
+                            uint32_t* __restrict out,
+                            const uint32_t* __restrict a_base_p) {
 	uint32_t tmp = 0U;
 	uint32_t src;
-	for (int i = 0; i < 32; i++ )
-	{
+	for (int i = 0; i < 32; i++) {
 		src = *(in + 32 * 0 + i) - *(a_base_p);
 		src = src & ((1ULL << 22) - 1);
 		tmp = src;
@@ -5170,15 +5154,15 @@ void static ffor_22bit_32ow(const uint32_t *__restrict in, uint32_t *__restrict 
 		src = src & ((1ULL << 22) - 1);
 		tmp |= src << 10U;
 		*(out + i) = tmp;
-		out -= 672; 
+		out -= 672;
 	}
 }
-void static ffor_23bit_32ow(const uint32_t *__restrict in, uint32_t *__restrict out, const uint32_t *__restrict a_base_p)
-{
+void static ffor_23bit_32ow(const uint32_t* __restrict in,
+                            uint32_t* __restrict out,
+                            const uint32_t* __restrict a_base_p) {
 	uint32_t tmp = 0U;
 	uint32_t src;
-	for (int i = 0; i < 32; i++ )
-	{
+	for (int i = 0; i < 32; i++) {
 		src = *(in + 32 * 0 + i) - *(a_base_p);
 		src = src & ((1ULL << 23) - 1);
 		tmp = src;
@@ -5386,15 +5370,15 @@ void static ffor_23bit_32ow(const uint32_t *__restrict in, uint32_t *__restrict 
 		src = src & ((1ULL << 23) - 1);
 		tmp |= src << 9U;
 		*(out + i) = tmp;
-		out -= 704; 
+		out -= 704;
 	}
 }
-void static ffor_24bit_32ow(const uint32_t *__restrict in, uint32_t *__restrict out, const uint32_t *__restrict a_base_p)
-{
+void static ffor_24bit_32ow(const uint32_t* __restrict in,
+                            uint32_t* __restrict out,
+                            const uint32_t* __restrict a_base_p) {
 	uint32_t tmp = 0U;
 	uint32_t src;
-	for (int i = 0; i < 32; i++ )
-	{
+	for (int i = 0; i < 32; i++) {
 		src = *(in + 32 * 0 + i) - *(a_base_p);
 		src = src & ((1ULL << 24) - 1);
 		tmp = src;
@@ -5586,15 +5570,15 @@ void static ffor_24bit_32ow(const uint32_t *__restrict in, uint32_t *__restrict 
 		src = src & ((1ULL << 24) - 1);
 		tmp |= src << 8U;
 		*(out + i) = tmp;
-		out -= 736; 
+		out -= 736;
 	}
 }
-void static ffor_25bit_32ow(const uint32_t *__restrict in, uint32_t *__restrict out, const uint32_t *__restrict a_base_p)
-{
+void static ffor_25bit_32ow(const uint32_t* __restrict in,
+                            uint32_t* __restrict out,
+                            const uint32_t* __restrict a_base_p) {
 	uint32_t tmp = 0U;
 	uint32_t src;
-	for (int i = 0; i < 32; i++ )
-	{
+	for (int i = 0; i < 32; i++) {
 		src = *(in + 32 * 0 + i) - *(a_base_p);
 		src = src & ((1ULL << 25) - 1);
 		tmp = src;
@@ -5812,15 +5796,15 @@ void static ffor_25bit_32ow(const uint32_t *__restrict in, uint32_t *__restrict 
 		src = src & ((1ULL << 25) - 1);
 		tmp |= src << 7U;
 		*(out + i) = tmp;
-		out -= 768; 
+		out -= 768;
 	}
 }
-void static ffor_26bit_32ow(const uint32_t *__restrict in, uint32_t *__restrict out, const uint32_t *__restrict a_base_p)
-{
+void static ffor_26bit_32ow(const uint32_t* __restrict in,
+                            uint32_t* __restrict out,
+                            const uint32_t* __restrict a_base_p) {
 	uint32_t tmp = 0U;
 	uint32_t src;
-	for (int i = 0; i < 32; i++ )
-	{
+	for (int i = 0; i < 32; i++) {
 		src = *(in + 32 * 0 + i) - *(a_base_p);
 		src = src & ((1ULL << 26) - 1);
 		tmp = src;
@@ -6040,15 +6024,15 @@ void static ffor_26bit_32ow(const uint32_t *__restrict in, uint32_t *__restrict 
 		src = src & ((1ULL << 26) - 1);
 		tmp |= src << 6U;
 		*(out + i) = tmp;
-		out -= 800; 
+		out -= 800;
 	}
 }
-void static ffor_27bit_32ow(const uint32_t *__restrict in, uint32_t *__restrict out, const uint32_t *__restrict a_base_p)
-{
+void static ffor_27bit_32ow(const uint32_t* __restrict in,
+                            uint32_t* __restrict out,
+                            const uint32_t* __restrict a_base_p) {
 	uint32_t tmp = 0U;
 	uint32_t src;
-	for (int i = 0; i < 32; i++ )
-	{
+	for (int i = 0; i < 32; i++) {
 		src = *(in + 32 * 0 + i) - *(a_base_p);
 		src = src & ((1ULL << 27) - 1);
 		tmp = src;
@@ -6276,15 +6260,15 @@ void static ffor_27bit_32ow(const uint32_t *__restrict in, uint32_t *__restrict 
 		src = src & ((1ULL << 27) - 1);
 		tmp |= src << 5U;
 		*(out + i) = tmp;
-		out -= 832; 
+		out -= 832;
 	}
 }
-void static ffor_28bit_32ow(const uint32_t *__restrict in, uint32_t *__restrict out, const uint32_t *__restrict a_base_p)
-{
+void static ffor_28bit_32ow(const uint32_t* __restrict in,
+                            uint32_t* __restrict out,
+                            const uint32_t* __restrict a_base_p) {
 	uint32_t tmp = 0U;
 	uint32_t src;
-	for (int i = 0; i < 32; i++ )
-	{
+	for (int i = 0; i < 32; i++) {
 		src = *(in + 32 * 0 + i) - *(a_base_p);
 		src = src & ((1ULL << 28) - 1);
 		tmp = src;
@@ -6508,15 +6492,15 @@ void static ffor_28bit_32ow(const uint32_t *__restrict in, uint32_t *__restrict 
 		src = src & ((1ULL << 28) - 1);
 		tmp |= src << 4U;
 		*(out + i) = tmp;
-		out -= 864; 
+		out -= 864;
 	}
 }
-void static ffor_29bit_32ow(const uint32_t *__restrict in, uint32_t *__restrict out, const uint32_t *__restrict a_base_p)
-{
+void static ffor_29bit_32ow(const uint32_t* __restrict in,
+                            uint32_t* __restrict out,
+                            const uint32_t* __restrict a_base_p) {
 	uint32_t tmp = 0U;
 	uint32_t src;
-	for (int i = 0; i < 32; i++ )
-	{
+	for (int i = 0; i < 32; i++) {
 		src = *(in + 32 * 0 + i) - *(a_base_p);
 		src = src & ((1ULL << 29) - 1);
 		tmp = src;
@@ -6754,15 +6738,15 @@ void static ffor_29bit_32ow(const uint32_t *__restrict in, uint32_t *__restrict 
 		src = src & ((1ULL << 29) - 1);
 		tmp |= src << 3U;
 		*(out + i) = tmp;
-		out -= 896; 
+		out -= 896;
 	}
 }
-void static ffor_30bit_32ow(const uint32_t *__restrict in, uint32_t *__restrict out, const uint32_t *__restrict a_base_p)
-{
+void static ffor_30bit_32ow(const uint32_t* __restrict in,
+                            uint32_t* __restrict out,
+                            const uint32_t* __restrict a_base_p) {
 	uint32_t tmp = 0U;
 	uint32_t src;
-	for (int i = 0; i < 32; i++ )
-	{
+	for (int i = 0; i < 32; i++) {
 		src = *(in + 32 * 0 + i) - *(a_base_p);
 		src = src & ((1ULL << 30) - 1);
 		tmp = src;
@@ -7002,15 +6986,15 @@ void static ffor_30bit_32ow(const uint32_t *__restrict in, uint32_t *__restrict 
 		src = src & ((1ULL << 30) - 1);
 		tmp |= src << 2U;
 		*(out + i) = tmp;
-		out -= 928; 
+		out -= 928;
 	}
 }
-void static ffor_31bit_32ow(const uint32_t *__restrict in, uint32_t *__restrict out, const uint32_t *__restrict a_base_p)
-{
+void static ffor_31bit_32ow(const uint32_t* __restrict in,
+                            uint32_t* __restrict out,
+                            const uint32_t* __restrict a_base_p) {
 	uint32_t tmp = 0U;
 	uint32_t src;
-	for (int i = 0; i < 32; i++ )
-	{
+	for (int i = 0; i < 32; i++) {
 		src = *(in + 32 * 0 + i) - *(a_base_p);
 		src = src & ((1ULL << 31) - 1);
 		tmp = src;
@@ -7258,154 +7242,155 @@ void static ffor_31bit_32ow(const uint32_t *__restrict in, uint32_t *__restrict 
 		src = src & ((1ULL << 31) - 1);
 		tmp |= src << 1U;
 		*(out + i) = tmp;
-		out -= 960; 
+		out -= 960;
 	}
 }
-void static ffor_32bit_32ow(const uint32_t *__restrict in, uint32_t *__restrict out, const uint32_t *__restrict a_base_p)
-{
+void static ffor_32bit_32ow(const uint32_t* __restrict in,
+                            uint32_t* __restrict out,
+                            const uint32_t* __restrict a_base_p) {
 	uint32_t tmp = 0U;
 	uint32_t src;
-	for (int i = 0; i < 32; i++ )
-	{
-		src = *(in + 32 * 0 + i) - *(a_base_p);
-		tmp = src;
+	for (int i = 0; i < 32; i++) {
+		src        = *(in + 32 * 0 + i) - *(a_base_p);
+		tmp        = src;
 		*(out + i) = tmp;
 		out += 32;
-		src = *(in + 32 * 1 + i) - *(a_base_p);
-		tmp = src;
+		src        = *(in + 32 * 1 + i) - *(a_base_p);
+		tmp        = src;
 		*(out + i) = tmp;
 		out += 32;
-		src = *(in + 32 * 2 + i) - *(a_base_p);
-		tmp = src;
+		src        = *(in + 32 * 2 + i) - *(a_base_p);
+		tmp        = src;
 		*(out + i) = tmp;
 		out += 32;
-		src = *(in + 32 * 3 + i) - *(a_base_p);
-		tmp = src;
+		src        = *(in + 32 * 3 + i) - *(a_base_p);
+		tmp        = src;
 		*(out + i) = tmp;
 		out += 32;
-		src = *(in + 32 * 4 + i) - *(a_base_p);
-		tmp = src;
+		src        = *(in + 32 * 4 + i) - *(a_base_p);
+		tmp        = src;
 		*(out + i) = tmp;
 		out += 32;
-		src = *(in + 32 * 5 + i) - *(a_base_p);
-		tmp = src;
+		src        = *(in + 32 * 5 + i) - *(a_base_p);
+		tmp        = src;
 		*(out + i) = tmp;
 		out += 32;
-		src = *(in + 32 * 6 + i) - *(a_base_p);
-		tmp = src;
+		src        = *(in + 32 * 6 + i) - *(a_base_p);
+		tmp        = src;
 		*(out + i) = tmp;
 		out += 32;
-		src = *(in + 32 * 7 + i) - *(a_base_p);
-		tmp = src;
+		src        = *(in + 32 * 7 + i) - *(a_base_p);
+		tmp        = src;
 		*(out + i) = tmp;
 		out += 32;
-		src = *(in + 32 * 8 + i) - *(a_base_p);
-		tmp = src;
+		src        = *(in + 32 * 8 + i) - *(a_base_p);
+		tmp        = src;
 		*(out + i) = tmp;
 		out += 32;
-		src = *(in + 32 * 9 + i) - *(a_base_p);
-		tmp = src;
+		src        = *(in + 32 * 9 + i) - *(a_base_p);
+		tmp        = src;
 		*(out + i) = tmp;
 		out += 32;
-		src = *(in + 32 * 10 + i) - *(a_base_p);
-		tmp = src;
+		src        = *(in + 32 * 10 + i) - *(a_base_p);
+		tmp        = src;
 		*(out + i) = tmp;
 		out += 32;
-		src = *(in + 32 * 11 + i) - *(a_base_p);
-		tmp = src;
+		src        = *(in + 32 * 11 + i) - *(a_base_p);
+		tmp        = src;
 		*(out + i) = tmp;
 		out += 32;
-		src = *(in + 32 * 12 + i) - *(a_base_p);
-		tmp = src;
+		src        = *(in + 32 * 12 + i) - *(a_base_p);
+		tmp        = src;
 		*(out + i) = tmp;
 		out += 32;
-		src = *(in + 32 * 13 + i) - *(a_base_p);
-		tmp = src;
+		src        = *(in + 32 * 13 + i) - *(a_base_p);
+		tmp        = src;
 		*(out + i) = tmp;
 		out += 32;
-		src = *(in + 32 * 14 + i) - *(a_base_p);
-		tmp = src;
+		src        = *(in + 32 * 14 + i) - *(a_base_p);
+		tmp        = src;
 		*(out + i) = tmp;
 		out += 32;
-		src = *(in + 32 * 15 + i) - *(a_base_p);
-		tmp = src;
+		src        = *(in + 32 * 15 + i) - *(a_base_p);
+		tmp        = src;
 		*(out + i) = tmp;
 		out += 32;
-		src = *(in + 32 * 16 + i) - *(a_base_p);
-		tmp = src;
+		src        = *(in + 32 * 16 + i) - *(a_base_p);
+		tmp        = src;
 		*(out + i) = tmp;
 		out += 32;
-		src = *(in + 32 * 17 + i) - *(a_base_p);
-		tmp = src;
+		src        = *(in + 32 * 17 + i) - *(a_base_p);
+		tmp        = src;
 		*(out + i) = tmp;
 		out += 32;
-		src = *(in + 32 * 18 + i) - *(a_base_p);
-		tmp = src;
+		src        = *(in + 32 * 18 + i) - *(a_base_p);
+		tmp        = src;
 		*(out + i) = tmp;
 		out += 32;
-		src = *(in + 32 * 19 + i) - *(a_base_p);
-		tmp = src;
+		src        = *(in + 32 * 19 + i) - *(a_base_p);
+		tmp        = src;
 		*(out + i) = tmp;
 		out += 32;
-		src = *(in + 32 * 20 + i) - *(a_base_p);
-		tmp = src;
+		src        = *(in + 32 * 20 + i) - *(a_base_p);
+		tmp        = src;
 		*(out + i) = tmp;
 		out += 32;
-		src = *(in + 32 * 21 + i) - *(a_base_p);
-		tmp = src;
+		src        = *(in + 32 * 21 + i) - *(a_base_p);
+		tmp        = src;
 		*(out + i) = tmp;
 		out += 32;
-		src = *(in + 32 * 22 + i) - *(a_base_p);
-		tmp = src;
+		src        = *(in + 32 * 22 + i) - *(a_base_p);
+		tmp        = src;
 		*(out + i) = tmp;
 		out += 32;
-		src = *(in + 32 * 23 + i) - *(a_base_p);
-		tmp = src;
+		src        = *(in + 32 * 23 + i) - *(a_base_p);
+		tmp        = src;
 		*(out + i) = tmp;
 		out += 32;
-		src = *(in + 32 * 24 + i) - *(a_base_p);
-		tmp = src;
+		src        = *(in + 32 * 24 + i) - *(a_base_p);
+		tmp        = src;
 		*(out + i) = tmp;
 		out += 32;
-		src = *(in + 32 * 25 + i) - *(a_base_p);
-		tmp = src;
+		src        = *(in + 32 * 25 + i) - *(a_base_p);
+		tmp        = src;
 		*(out + i) = tmp;
 		out += 32;
-		src = *(in + 32 * 26 + i) - *(a_base_p);
-		tmp = src;
+		src        = *(in + 32 * 26 + i) - *(a_base_p);
+		tmp        = src;
 		*(out + i) = tmp;
 		out += 32;
-		src = *(in + 32 * 27 + i) - *(a_base_p);
-		tmp = src;
+		src        = *(in + 32 * 27 + i) - *(a_base_p);
+		tmp        = src;
 		*(out + i) = tmp;
 		out += 32;
-		src = *(in + 32 * 28 + i) - *(a_base_p);
-		tmp = src;
+		src        = *(in + 32 * 28 + i) - *(a_base_p);
+		tmp        = src;
 		*(out + i) = tmp;
 		out += 32;
-		src = *(in + 32 * 29 + i) - *(a_base_p);
-		tmp = src;
+		src        = *(in + 32 * 29 + i) - *(a_base_p);
+		tmp        = src;
 		*(out + i) = tmp;
 		out += 32;
-		src = *(in + 32 * 30 + i) - *(a_base_p);
-		tmp = src;
+		src        = *(in + 32 * 30 + i) - *(a_base_p);
+		tmp        = src;
 		*(out + i) = tmp;
 		out += 32;
-		src = *(in + 32 * 31 + i) - *(a_base_p);
-		tmp = src;
+		src        = *(in + 32 * 31 + i) - *(a_base_p);
+		tmp        = src;
 		*(out + i) = tmp;
-		out -= 992; 
+		out -= 992;
 	}
 }
-void static ffor_0bit_64ow(const uint64_t *__restrict in, uint64_t *__restrict out, const uint64_t *__restrict a_base_p)
-{
+void static ffor_0bit_64ow(const uint64_t* __restrict in,
+                           uint64_t* __restrict out,
+                           const uint64_t* __restrict a_base_p) {
 }
-void static ffor_1bit_64ow(const uint64_t *__restrict in, uint64_t *__restrict out, const uint64_t *__restrict a_base_p)
-{
+void static ffor_1bit_64ow(const uint64_t* __restrict in,
+                           uint64_t* __restrict out,
+                           const uint64_t* __restrict a_base_p) {
 	uint64_t tmp = 0U;
 	uint64_t src;
-	for (int i = 0; i < 16; i++ )
-	{
+	for (int i = 0; i < 16; i++) {
 		src = *(in + 16 * 0 + i) - *(a_base_p);
 		src = src & ((1ULL << 1) - 1);
 		tmp = src;
@@ -7599,15 +7584,15 @@ void static ffor_1bit_64ow(const uint64_t *__restrict in, uint64_t *__restrict o
 		src = src & ((1ULL << 1) - 1);
 		tmp |= src << 63U;
 		*(out + i) = tmp;
-		out -= 0; 
+		out -= 0;
 	}
 }
-void static ffor_2bit_64ow(const uint64_t *__restrict in, uint64_t *__restrict out, const uint64_t *__restrict a_base_p)
-{
+void static ffor_2bit_64ow(const uint64_t* __restrict in,
+                           uint64_t* __restrict out,
+                           const uint64_t* __restrict a_base_p) {
 	uint64_t tmp = 0U;
 	uint64_t src;
-	for (int i = 0; i < 16; i++ )
-	{
+	for (int i = 0; i < 16; i++) {
 		src = *(in + 16 * 0 + i) - *(a_base_p);
 		src = src & ((1ULL << 2) - 1);
 		tmp = src;
@@ -7803,15 +7788,15 @@ void static ffor_2bit_64ow(const uint64_t *__restrict in, uint64_t *__restrict o
 		src = src & ((1ULL << 2) - 1);
 		tmp |= src << 62U;
 		*(out + i) = tmp;
-		out -= 16; 
+		out -= 16;
 	}
 }
-void static ffor_3bit_64ow(const uint64_t *__restrict in, uint64_t *__restrict out, const uint64_t *__restrict a_base_p)
-{
+void static ffor_3bit_64ow(const uint64_t* __restrict in,
+                           uint64_t* __restrict out,
+                           const uint64_t* __restrict a_base_p) {
 	uint64_t tmp = 0U;
 	uint64_t src;
-	for (int i = 0; i < 16; i++ )
-	{
+	for (int i = 0; i < 16; i++) {
 		src = *(in + 16 * 0 + i) - *(a_base_p);
 		src = src & ((1ULL << 3) - 1);
 		tmp = src;
@@ -8015,15 +8000,15 @@ void static ffor_3bit_64ow(const uint64_t *__restrict in, uint64_t *__restrict o
 		src = src & ((1ULL << 3) - 1);
 		tmp |= src << 61U;
 		*(out + i) = tmp;
-		out -= 32; 
+		out -= 32;
 	}
 }
-void static ffor_4bit_64ow(const uint64_t *__restrict in, uint64_t *__restrict out, const uint64_t *__restrict a_base_p)
-{
+void static ffor_4bit_64ow(const uint64_t* __restrict in,
+                           uint64_t* __restrict out,
+                           const uint64_t* __restrict a_base_p) {
 	uint64_t tmp = 0U;
 	uint64_t src;
-	for (int i = 0; i < 16; i++ )
-	{
+	for (int i = 0; i < 16; i++) {
 		src = *(in + 16 * 0 + i) - *(a_base_p);
 		src = src & ((1ULL << 4) - 1);
 		tmp = src;
@@ -8223,15 +8208,15 @@ void static ffor_4bit_64ow(const uint64_t *__restrict in, uint64_t *__restrict o
 		src = src & ((1ULL << 4) - 1);
 		tmp |= src << 60U;
 		*(out + i) = tmp;
-		out -= 48; 
+		out -= 48;
 	}
 }
-void static ffor_5bit_64ow(const uint64_t *__restrict in, uint64_t *__restrict out, const uint64_t *__restrict a_base_p)
-{
+void static ffor_5bit_64ow(const uint64_t* __restrict in,
+                           uint64_t* __restrict out,
+                           const uint64_t* __restrict a_base_p) {
 	uint64_t tmp = 0U;
 	uint64_t src;
-	for (int i = 0; i < 16; i++ )
-	{
+	for (int i = 0; i < 16; i++) {
 		src = *(in + 16 * 0 + i) - *(a_base_p);
 		src = src & ((1ULL << 5) - 1);
 		tmp = src;
@@ -8445,15 +8430,15 @@ void static ffor_5bit_64ow(const uint64_t *__restrict in, uint64_t *__restrict o
 		src = src & ((1ULL << 5) - 1);
 		tmp |= src << 59U;
 		*(out + i) = tmp;
-		out -= 64; 
+		out -= 64;
 	}
 }
-void static ffor_6bit_64ow(const uint64_t *__restrict in, uint64_t *__restrict out, const uint64_t *__restrict a_base_p)
-{
+void static ffor_6bit_64ow(const uint64_t* __restrict in,
+                           uint64_t* __restrict out,
+                           const uint64_t* __restrict a_base_p) {
 	uint64_t tmp = 0U;
 	uint64_t src;
-	for (int i = 0; i < 16; i++ )
-	{
+	for (int i = 0; i < 16; i++) {
 		src = *(in + 16 * 0 + i) - *(a_base_p);
 		src = src & ((1ULL << 6) - 1);
 		tmp = src;
@@ -8669,15 +8654,15 @@ void static ffor_6bit_64ow(const uint64_t *__restrict in, uint64_t *__restrict o
 		src = src & ((1ULL << 6) - 1);
 		tmp |= src << 58U;
 		*(out + i) = tmp;
-		out -= 80; 
+		out -= 80;
 	}
 }
-void static ffor_7bit_64ow(const uint64_t *__restrict in, uint64_t *__restrict out, const uint64_t *__restrict a_base_p)
-{
+void static ffor_7bit_64ow(const uint64_t* __restrict in,
+                           uint64_t* __restrict out,
+                           const uint64_t* __restrict a_base_p) {
 	uint64_t tmp = 0U;
 	uint64_t src;
-	for (int i = 0; i < 16; i++ )
-	{
+	for (int i = 0; i < 16; i++) {
 		src = *(in + 16 * 0 + i) - *(a_base_p);
 		src = src & ((1ULL << 7) - 1);
 		tmp = src;
@@ -8901,15 +8886,15 @@ void static ffor_7bit_64ow(const uint64_t *__restrict in, uint64_t *__restrict o
 		src = src & ((1ULL << 7) - 1);
 		tmp |= src << 57U;
 		*(out + i) = tmp;
-		out -= 96; 
+		out -= 96;
 	}
 }
-void static ffor_8bit_64ow(const uint64_t *__restrict in, uint64_t *__restrict out, const uint64_t *__restrict a_base_p)
-{
+void static ffor_8bit_64ow(const uint64_t* __restrict in,
+                           uint64_t* __restrict out,
+                           const uint64_t* __restrict a_base_p) {
 	uint64_t tmp = 0U;
 	uint64_t src;
-	for (int i = 0; i < 16; i++ )
-	{
+	for (int i = 0; i < 16; i++) {
 		src = *(in + 16 * 0 + i) - *(a_base_p);
 		src = src & ((1ULL << 8) - 1);
 		tmp = src;
@@ -9117,15 +9102,15 @@ void static ffor_8bit_64ow(const uint64_t *__restrict in, uint64_t *__restrict o
 		src = src & ((1ULL << 8) - 1);
 		tmp |= src << 56U;
 		*(out + i) = tmp;
-		out -= 112; 
+		out -= 112;
 	}
 }
-void static ffor_9bit_64ow(const uint64_t *__restrict in, uint64_t *__restrict out, const uint64_t *__restrict a_base_p)
-{
+void static ffor_9bit_64ow(const uint64_t* __restrict in,
+                           uint64_t* __restrict out,
+                           const uint64_t* __restrict a_base_p) {
 	uint64_t tmp = 0U;
 	uint64_t src;
-	for (int i = 0; i < 16; i++ )
-	{
+	for (int i = 0; i < 16; i++) {
 		src = *(in + 16 * 0 + i) - *(a_base_p);
 		src = src & ((1ULL << 9) - 1);
 		tmp = src;
@@ -9359,15 +9344,15 @@ void static ffor_9bit_64ow(const uint64_t *__restrict in, uint64_t *__restrict o
 		src = src & ((1ULL << 9) - 1);
 		tmp |= src << 55U;
 		*(out + i) = tmp;
-		out -= 128; 
+		out -= 128;
 	}
 }
-void static ffor_10bit_64ow(const uint64_t *__restrict in, uint64_t *__restrict out, const uint64_t *__restrict a_base_p)
-{
+void static ffor_10bit_64ow(const uint64_t* __restrict in,
+                            uint64_t* __restrict out,
+                            const uint64_t* __restrict a_base_p) {
 	uint64_t tmp = 0U;
 	uint64_t src;
-	for (int i = 0; i < 16; i++ )
-	{
+	for (int i = 0; i < 16; i++) {
 		src = *(in + 16 * 0 + i) - *(a_base_p);
 		src = src & ((1ULL << 10) - 1);
 		tmp = src;
@@ -9603,15 +9588,15 @@ void static ffor_10bit_64ow(const uint64_t *__restrict in, uint64_t *__restrict 
 		src = src & ((1ULL << 10) - 1);
 		tmp |= src << 54U;
 		*(out + i) = tmp;
-		out -= 144; 
+		out -= 144;
 	}
 }
-void static ffor_11bit_64ow(const uint64_t *__restrict in, uint64_t *__restrict out, const uint64_t *__restrict a_base_p)
-{
+void static ffor_11bit_64ow(const uint64_t* __restrict in,
+                            uint64_t* __restrict out,
+                            const uint64_t* __restrict a_base_p) {
 	uint64_t tmp = 0U;
 	uint64_t src;
-	for (int i = 0; i < 16; i++ )
-	{
+	for (int i = 0; i < 16; i++) {
 		src = *(in + 16 * 0 + i) - *(a_base_p);
 		src = src & ((1ULL << 11) - 1);
 		tmp = src;
@@ -9855,15 +9840,15 @@ void static ffor_11bit_64ow(const uint64_t *__restrict in, uint64_t *__restrict 
 		src = src & ((1ULL << 11) - 1);
 		tmp |= src << 53U;
 		*(out + i) = tmp;
-		out -= 160; 
+		out -= 160;
 	}
 }
-void static ffor_12bit_64ow(const uint64_t *__restrict in, uint64_t *__restrict out, const uint64_t *__restrict a_base_p)
-{
+void static ffor_12bit_64ow(const uint64_t* __restrict in,
+                            uint64_t* __restrict out,
+                            const uint64_t* __restrict a_base_p) {
 	uint64_t tmp = 0U;
 	uint64_t src;
-	for (int i = 0; i < 16; i++ )
-	{
+	for (int i = 0; i < 16; i++) {
 		src = *(in + 16 * 0 + i) - *(a_base_p);
 		src = src & ((1ULL << 12) - 1);
 		tmp = src;
@@ -10103,15 +10088,15 @@ void static ffor_12bit_64ow(const uint64_t *__restrict in, uint64_t *__restrict 
 		src = src & ((1ULL << 12) - 1);
 		tmp |= src << 52U;
 		*(out + i) = tmp;
-		out -= 176; 
+		out -= 176;
 	}
 }
-void static ffor_13bit_64ow(const uint64_t *__restrict in, uint64_t *__restrict out, const uint64_t *__restrict a_base_p)
-{
+void static ffor_13bit_64ow(const uint64_t* __restrict in,
+                            uint64_t* __restrict out,
+                            const uint64_t* __restrict a_base_p) {
 	uint64_t tmp = 0U;
 	uint64_t src;
-	for (int i = 0; i < 16; i++ )
-	{
+	for (int i = 0; i < 16; i++) {
 		src = *(in + 16 * 0 + i) - *(a_base_p);
 		src = src & ((1ULL << 13) - 1);
 		tmp = src;
@@ -10365,15 +10350,15 @@ void static ffor_13bit_64ow(const uint64_t *__restrict in, uint64_t *__restrict 
 		src = src & ((1ULL << 13) - 1);
 		tmp |= src << 51U;
 		*(out + i) = tmp;
-		out -= 192; 
+		out -= 192;
 	}
 }
-void static ffor_14bit_64ow(const uint64_t *__restrict in, uint64_t *__restrict out, const uint64_t *__restrict a_base_p)
-{
+void static ffor_14bit_64ow(const uint64_t* __restrict in,
+                            uint64_t* __restrict out,
+                            const uint64_t* __restrict a_base_p) {
 	uint64_t tmp = 0U;
 	uint64_t src;
-	for (int i = 0; i < 16; i++ )
-	{
+	for (int i = 0; i < 16; i++) {
 		src = *(in + 16 * 0 + i) - *(a_base_p);
 		src = src & ((1ULL << 14) - 1);
 		tmp = src;
@@ -10629,15 +10614,15 @@ void static ffor_14bit_64ow(const uint64_t *__restrict in, uint64_t *__restrict 
 		src = src & ((1ULL << 14) - 1);
 		tmp |= src << 50U;
 		*(out + i) = tmp;
-		out -= 208; 
+		out -= 208;
 	}
 }
-void static ffor_15bit_64ow(const uint64_t *__restrict in, uint64_t *__restrict out, const uint64_t *__restrict a_base_p)
-{
+void static ffor_15bit_64ow(const uint64_t* __restrict in,
+                            uint64_t* __restrict out,
+                            const uint64_t* __restrict a_base_p) {
 	uint64_t tmp = 0U;
 	uint64_t src;
-	for (int i = 0; i < 16; i++ )
-	{
+	for (int i = 0; i < 16; i++) {
 		src = *(in + 16 * 0 + i) - *(a_base_p);
 		src = src & ((1ULL << 15) - 1);
 		tmp = src;
@@ -10901,15 +10886,15 @@ void static ffor_15bit_64ow(const uint64_t *__restrict in, uint64_t *__restrict 
 		src = src & ((1ULL << 15) - 1);
 		tmp |= src << 49U;
 		*(out + i) = tmp;
-		out -= 224; 
+		out -= 224;
 	}
 }
-void static ffor_16bit_64ow(const uint64_t *__restrict in, uint64_t *__restrict out, const uint64_t *__restrict a_base_p)
-{
+void static ffor_16bit_64ow(const uint64_t* __restrict in,
+                            uint64_t* __restrict out,
+                            const uint64_t* __restrict a_base_p) {
 	uint64_t tmp = 0U;
 	uint64_t src;
-	for (int i = 0; i < 16; i++ )
-	{
+	for (int i = 0; i < 16; i++) {
 		src = *(in + 16 * 0 + i) - *(a_base_p);
 		src = src & ((1ULL << 16) - 1);
 		tmp = src;
@@ -11133,15 +11118,15 @@ void static ffor_16bit_64ow(const uint64_t *__restrict in, uint64_t *__restrict 
 		src = src & ((1ULL << 16) - 1);
 		tmp |= src << 48U;
 		*(out + i) = tmp;
-		out -= 240; 
+		out -= 240;
 	}
 }
-void static ffor_17bit_64ow(const uint64_t *__restrict in, uint64_t *__restrict out, const uint64_t *__restrict a_base_p)
-{
+void static ffor_17bit_64ow(const uint64_t* __restrict in,
+                            uint64_t* __restrict out,
+                            const uint64_t* __restrict a_base_p) {
 	uint64_t tmp = 0U;
 	uint64_t src;
-	for (int i = 0; i < 16; i++ )
-	{
+	for (int i = 0; i < 16; i++) {
 		src = *(in + 16 * 0 + i) - *(a_base_p);
 		src = src & ((1ULL << 17) - 1);
 		tmp = src;
@@ -11415,15 +11400,15 @@ void static ffor_17bit_64ow(const uint64_t *__restrict in, uint64_t *__restrict 
 		src = src & ((1ULL << 17) - 1);
 		tmp |= src << 47U;
 		*(out + i) = tmp;
-		out -= 256; 
+		out -= 256;
 	}
 }
-void static ffor_18bit_64ow(const uint64_t *__restrict in, uint64_t *__restrict out, const uint64_t *__restrict a_base_p)
-{
+void static ffor_18bit_64ow(const uint64_t* __restrict in,
+                            uint64_t* __restrict out,
+                            const uint64_t* __restrict a_base_p) {
 	uint64_t tmp = 0U;
 	uint64_t src;
-	for (int i = 0; i < 16; i++ )
-	{
+	for (int i = 0; i < 16; i++) {
 		src = *(in + 16 * 0 + i) - *(a_base_p);
 		src = src & ((1ULL << 18) - 1);
 		tmp = src;
@@ -11699,15 +11684,15 @@ void static ffor_18bit_64ow(const uint64_t *__restrict in, uint64_t *__restrict 
 		src = src & ((1ULL << 18) - 1);
 		tmp |= src << 46U;
 		*(out + i) = tmp;
-		out -= 272; 
+		out -= 272;
 	}
 }
-void static ffor_19bit_64ow(const uint64_t *__restrict in, uint64_t *__restrict out, const uint64_t *__restrict a_base_p)
-{
+void static ffor_19bit_64ow(const uint64_t* __restrict in,
+                            uint64_t* __restrict out,
+                            const uint64_t* __restrict a_base_p) {
 	uint64_t tmp = 0U;
 	uint64_t src;
-	for (int i = 0; i < 16; i++ )
-	{
+	for (int i = 0; i < 16; i++) {
 		src = *(in + 16 * 0 + i) - *(a_base_p);
 		src = src & ((1ULL << 19) - 1);
 		tmp = src;
@@ -11991,15 +11976,15 @@ void static ffor_19bit_64ow(const uint64_t *__restrict in, uint64_t *__restrict 
 		src = src & ((1ULL << 19) - 1);
 		tmp |= src << 45U;
 		*(out + i) = tmp;
-		out -= 288; 
+		out -= 288;
 	}
 }
-void static ffor_20bit_64ow(const uint64_t *__restrict in, uint64_t *__restrict out, const uint64_t *__restrict a_base_p)
-{
+void static ffor_20bit_64ow(const uint64_t* __restrict in,
+                            uint64_t* __restrict out,
+                            const uint64_t* __restrict a_base_p) {
 	uint64_t tmp = 0U;
 	uint64_t src;
-	for (int i = 0; i < 16; i++ )
-	{
+	for (int i = 0; i < 16; i++) {
 		src = *(in + 16 * 0 + i) - *(a_base_p);
 		src = src & ((1ULL << 20) - 1);
 		tmp = src;
@@ -12279,15 +12264,15 @@ void static ffor_20bit_64ow(const uint64_t *__restrict in, uint64_t *__restrict 
 		src = src & ((1ULL << 20) - 1);
 		tmp |= src << 44U;
 		*(out + i) = tmp;
-		out -= 304; 
+		out -= 304;
 	}
 }
-void static ffor_21bit_64ow(const uint64_t *__restrict in, uint64_t *__restrict out, const uint64_t *__restrict a_base_p)
-{
+void static ffor_21bit_64ow(const uint64_t* __restrict in,
+                            uint64_t* __restrict out,
+                            const uint64_t* __restrict a_base_p) {
 	uint64_t tmp = 0U;
 	uint64_t src;
-	for (int i = 0; i < 16; i++ )
-	{
+	for (int i = 0; i < 16; i++) {
 		src = *(in + 16 * 0 + i) - *(a_base_p);
 		src = src & ((1ULL << 21) - 1);
 		tmp = src;
@@ -12581,15 +12566,15 @@ void static ffor_21bit_64ow(const uint64_t *__restrict in, uint64_t *__restrict 
 		src = src & ((1ULL << 21) - 1);
 		tmp |= src << 43U;
 		*(out + i) = tmp;
-		out -= 320; 
+		out -= 320;
 	}
 }
-void static ffor_22bit_64ow(const uint64_t *__restrict in, uint64_t *__restrict out, const uint64_t *__restrict a_base_p)
-{
+void static ffor_22bit_64ow(const uint64_t* __restrict in,
+                            uint64_t* __restrict out,
+                            const uint64_t* __restrict a_base_p) {
 	uint64_t tmp = 0U;
 	uint64_t src;
-	for (int i = 0; i < 16; i++ )
-	{
+	for (int i = 0; i < 16; i++) {
 		src = *(in + 16 * 0 + i) - *(a_base_p);
 		src = src & ((1ULL << 22) - 1);
 		tmp = src;
@@ -12885,15 +12870,15 @@ void static ffor_22bit_64ow(const uint64_t *__restrict in, uint64_t *__restrict 
 		src = src & ((1ULL << 22) - 1);
 		tmp |= src << 42U;
 		*(out + i) = tmp;
-		out -= 336; 
+		out -= 336;
 	}
 }
-void static ffor_23bit_64ow(const uint64_t *__restrict in, uint64_t *__restrict out, const uint64_t *__restrict a_base_p)
-{
+void static ffor_23bit_64ow(const uint64_t* __restrict in,
+                            uint64_t* __restrict out,
+                            const uint64_t* __restrict a_base_p) {
 	uint64_t tmp = 0U;
 	uint64_t src;
-	for (int i = 0; i < 16; i++ )
-	{
+	for (int i = 0; i < 16; i++) {
 		src = *(in + 16 * 0 + i) - *(a_base_p);
 		src = src & ((1ULL << 23) - 1);
 		tmp = src;
@@ -13197,15 +13182,15 @@ void static ffor_23bit_64ow(const uint64_t *__restrict in, uint64_t *__restrict 
 		src = src & ((1ULL << 23) - 1);
 		tmp |= src << 41U;
 		*(out + i) = tmp;
-		out -= 352; 
+		out -= 352;
 	}
 }
-void static ffor_24bit_64ow(const uint64_t *__restrict in, uint64_t *__restrict out, const uint64_t *__restrict a_base_p)
-{
+void static ffor_24bit_64ow(const uint64_t* __restrict in,
+                            uint64_t* __restrict out,
+                            const uint64_t* __restrict a_base_p) {
 	uint64_t tmp = 0U;
 	uint64_t src;
-	for (int i = 0; i < 16; i++ )
-	{
+	for (int i = 0; i < 16; i++) {
 		src = *(in + 16 * 0 + i) - *(a_base_p);
 		src = src & ((1ULL << 24) - 1);
 		tmp = src;
@@ -13493,15 +13478,15 @@ void static ffor_24bit_64ow(const uint64_t *__restrict in, uint64_t *__restrict 
 		src = src & ((1ULL << 24) - 1);
 		tmp |= src << 40U;
 		*(out + i) = tmp;
-		out -= 368; 
+		out -= 368;
 	}
 }
-void static ffor_25bit_64ow(const uint64_t *__restrict in, uint64_t *__restrict out, const uint64_t *__restrict a_base_p)
-{
+void static ffor_25bit_64ow(const uint64_t* __restrict in,
+                            uint64_t* __restrict out,
+                            const uint64_t* __restrict a_base_p) {
 	uint64_t tmp = 0U;
 	uint64_t src;
-	for (int i = 0; i < 16; i++ )
-	{
+	for (int i = 0; i < 16; i++) {
 		src = *(in + 16 * 0 + i) - *(a_base_p);
 		src = src & ((1ULL << 25) - 1);
 		tmp = src;
@@ -13815,15 +13800,15 @@ void static ffor_25bit_64ow(const uint64_t *__restrict in, uint64_t *__restrict 
 		src = src & ((1ULL << 25) - 1);
 		tmp |= src << 39U;
 		*(out + i) = tmp;
-		out -= 384; 
+		out -= 384;
 	}
 }
-void static ffor_26bit_64ow(const uint64_t *__restrict in, uint64_t *__restrict out, const uint64_t *__restrict a_base_p)
-{
+void static ffor_26bit_64ow(const uint64_t* __restrict in,
+                            uint64_t* __restrict out,
+                            const uint64_t* __restrict a_base_p) {
 	uint64_t tmp = 0U;
 	uint64_t src;
-	for (int i = 0; i < 16; i++ )
-	{
+	for (int i = 0; i < 16; i++) {
 		src = *(in + 16 * 0 + i) - *(a_base_p);
 		src = src & ((1ULL << 26) - 1);
 		tmp = src;
@@ -14139,15 +14124,15 @@ void static ffor_26bit_64ow(const uint64_t *__restrict in, uint64_t *__restrict 
 		src = src & ((1ULL << 26) - 1);
 		tmp |= src << 38U;
 		*(out + i) = tmp;
-		out -= 400; 
+		out -= 400;
 	}
 }
-void static ffor_27bit_64ow(const uint64_t *__restrict in, uint64_t *__restrict out, const uint64_t *__restrict a_base_p)
-{
+void static ffor_27bit_64ow(const uint64_t* __restrict in,
+                            uint64_t* __restrict out,
+                            const uint64_t* __restrict a_base_p) {
 	uint64_t tmp = 0U;
 	uint64_t src;
-	for (int i = 0; i < 16; i++ )
-	{
+	for (int i = 0; i < 16; i++) {
 		src = *(in + 16 * 0 + i) - *(a_base_p);
 		src = src & ((1ULL << 27) - 1);
 		tmp = src;
@@ -14471,15 +14456,15 @@ void static ffor_27bit_64ow(const uint64_t *__restrict in, uint64_t *__restrict 
 		src = src & ((1ULL << 27) - 1);
 		tmp |= src << 37U;
 		*(out + i) = tmp;
-		out -= 416; 
+		out -= 416;
 	}
 }
-void static ffor_28bit_64ow(const uint64_t *__restrict in, uint64_t *__restrict out, const uint64_t *__restrict a_base_p)
-{
+void static ffor_28bit_64ow(const uint64_t* __restrict in,
+                            uint64_t* __restrict out,
+                            const uint64_t* __restrict a_base_p) {
 	uint64_t tmp = 0U;
 	uint64_t src;
-	for (int i = 0; i < 16; i++ )
-	{
+	for (int i = 0; i < 16; i++) {
 		src = *(in + 16 * 0 + i) - *(a_base_p);
 		src = src & ((1ULL << 28) - 1);
 		tmp = src;
@@ -14799,15 +14784,15 @@ void static ffor_28bit_64ow(const uint64_t *__restrict in, uint64_t *__restrict 
 		src = src & ((1ULL << 28) - 1);
 		tmp |= src << 36U;
 		*(out + i) = tmp;
-		out -= 432; 
+		out -= 432;
 	}
 }
-void static ffor_29bit_64ow(const uint64_t *__restrict in, uint64_t *__restrict out, const uint64_t *__restrict a_base_p)
-{
+void static ffor_29bit_64ow(const uint64_t* __restrict in,
+                            uint64_t* __restrict out,
+                            const uint64_t* __restrict a_base_p) {
 	uint64_t tmp = 0U;
 	uint64_t src;
-	for (int i = 0; i < 16; i++ )
-	{
+	for (int i = 0; i < 16; i++) {
 		src = *(in + 16 * 0 + i) - *(a_base_p);
 		src = src & ((1ULL << 29) - 1);
 		tmp = src;
@@ -15141,15 +15126,15 @@ void static ffor_29bit_64ow(const uint64_t *__restrict in, uint64_t *__restrict 
 		src = src & ((1ULL << 29) - 1);
 		tmp |= src << 35U;
 		*(out + i) = tmp;
-		out -= 448; 
+		out -= 448;
 	}
 }
-void static ffor_30bit_64ow(const uint64_t *__restrict in, uint64_t *__restrict out, const uint64_t *__restrict a_base_p)
-{
+void static ffor_30bit_64ow(const uint64_t* __restrict in,
+                            uint64_t* __restrict out,
+                            const uint64_t* __restrict a_base_p) {
 	uint64_t tmp = 0U;
 	uint64_t src;
-	for (int i = 0; i < 16; i++ )
-	{
+	for (int i = 0; i < 16; i++) {
 		src = *(in + 16 * 0 + i) - *(a_base_p);
 		src = src & ((1ULL << 30) - 1);
 		tmp = src;
@@ -15485,15 +15470,15 @@ void static ffor_30bit_64ow(const uint64_t *__restrict in, uint64_t *__restrict 
 		src = src & ((1ULL << 30) - 1);
 		tmp |= src << 34U;
 		*(out + i) = tmp;
-		out -= 464; 
+		out -= 464;
 	}
 }
-void static ffor_31bit_64ow(const uint64_t *__restrict in, uint64_t *__restrict out, const uint64_t *__restrict a_base_p)
-{
+void static ffor_31bit_64ow(const uint64_t* __restrict in,
+                            uint64_t* __restrict out,
+                            const uint64_t* __restrict a_base_p) {
 	uint64_t tmp = 0U;
 	uint64_t src;
-	for (int i = 0; i < 16; i++ )
-	{
+	for (int i = 0; i < 16; i++) {
 		src = *(in + 16 * 0 + i) - *(a_base_p);
 		src = src & ((1ULL << 31) - 1);
 		tmp = src;
@@ -15837,15 +15822,15 @@ void static ffor_31bit_64ow(const uint64_t *__restrict in, uint64_t *__restrict 
 		src = src & ((1ULL << 31) - 1);
 		tmp |= src << 33U;
 		*(out + i) = tmp;
-		out -= 480; 
+		out -= 480;
 	}
 }
-void static ffor_32bit_64ow(const uint64_t *__restrict in, uint64_t *__restrict out, const uint64_t *__restrict a_base_p)
-{
+void static ffor_32bit_64ow(const uint64_t* __restrict in,
+                            uint64_t* __restrict out,
+                            const uint64_t* __restrict a_base_p) {
 	uint64_t tmp = 0U;
 	uint64_t src;
-	for (int i = 0; i < 16; i++ )
-	{
+	for (int i = 0; i < 16; i++) {
 		src = *(in + 16 * 0 + i) - *(a_base_p);
 		src = src & ((1ULL << 32) - 1);
 		tmp = src;
@@ -16101,15 +16086,15 @@ void static ffor_32bit_64ow(const uint64_t *__restrict in, uint64_t *__restrict 
 		src = src & ((1ULL << 32) - 1);
 		tmp |= src << 32U;
 		*(out + i) = tmp;
-		out -= 496; 
+		out -= 496;
 	}
 }
-void static ffor_33bit_64ow(const uint64_t *__restrict in, uint64_t *__restrict out, const uint64_t *__restrict a_base_p)
-{
+void static ffor_33bit_64ow(const uint64_t* __restrict in,
+                            uint64_t* __restrict out,
+                            const uint64_t* __restrict a_base_p) {
 	uint64_t tmp = 0U;
 	uint64_t src;
-	for (int i = 0; i < 16; i++ )
-	{
+	for (int i = 0; i < 16; i++) {
 		src = *(in + 16 * 0 + i) - *(a_base_p);
 		src = src & ((1ULL << 33) - 1);
 		tmp = src;
@@ -16463,15 +16448,15 @@ void static ffor_33bit_64ow(const uint64_t *__restrict in, uint64_t *__restrict 
 		src = src & ((1ULL << 33) - 1);
 		tmp |= src << 31U;
 		*(out + i) = tmp;
-		out -= 512; 
+		out -= 512;
 	}
 }
-void static ffor_34bit_64ow(const uint64_t *__restrict in, uint64_t *__restrict out, const uint64_t *__restrict a_base_p)
-{
+void static ffor_34bit_64ow(const uint64_t* __restrict in,
+                            uint64_t* __restrict out,
+                            const uint64_t* __restrict a_base_p) {
 	uint64_t tmp = 0U;
 	uint64_t src;
-	for (int i = 0; i < 16; i++ )
-	{
+	for (int i = 0; i < 16; i++) {
 		src = *(in + 16 * 0 + i) - *(a_base_p);
 		src = src & ((1ULL << 34) - 1);
 		tmp = src;
@@ -16827,15 +16812,15 @@ void static ffor_34bit_64ow(const uint64_t *__restrict in, uint64_t *__restrict 
 		src = src & ((1ULL << 34) - 1);
 		tmp |= src << 30U;
 		*(out + i) = tmp;
-		out -= 528; 
+		out -= 528;
 	}
 }
-void static ffor_35bit_64ow(const uint64_t *__restrict in, uint64_t *__restrict out, const uint64_t *__restrict a_base_p)
-{
+void static ffor_35bit_64ow(const uint64_t* __restrict in,
+                            uint64_t* __restrict out,
+                            const uint64_t* __restrict a_base_p) {
 	uint64_t tmp = 0U;
 	uint64_t src;
-	for (int i = 0; i < 16; i++ )
-	{
+	for (int i = 0; i < 16; i++) {
 		src = *(in + 16 * 0 + i) - *(a_base_p);
 		src = src & ((1ULL << 35) - 1);
 		tmp = src;
@@ -17199,15 +17184,15 @@ void static ffor_35bit_64ow(const uint64_t *__restrict in, uint64_t *__restrict 
 		src = src & ((1ULL << 35) - 1);
 		tmp |= src << 29U;
 		*(out + i) = tmp;
-		out -= 544; 
+		out -= 544;
 	}
 }
-void static ffor_36bit_64ow(const uint64_t *__restrict in, uint64_t *__restrict out, const uint64_t *__restrict a_base_p)
-{
+void static ffor_36bit_64ow(const uint64_t* __restrict in,
+                            uint64_t* __restrict out,
+                            const uint64_t* __restrict a_base_p) {
 	uint64_t tmp = 0U;
 	uint64_t src;
-	for (int i = 0; i < 16; i++ )
-	{
+	for (int i = 0; i < 16; i++) {
 		src = *(in + 16 * 0 + i) - *(a_base_p);
 		src = src & ((1ULL << 36) - 1);
 		tmp = src;
@@ -17567,15 +17552,15 @@ void static ffor_36bit_64ow(const uint64_t *__restrict in, uint64_t *__restrict 
 		src = src & ((1ULL << 36) - 1);
 		tmp |= src << 28U;
 		*(out + i) = tmp;
-		out -= 560; 
+		out -= 560;
 	}
 }
-void static ffor_37bit_64ow(const uint64_t *__restrict in, uint64_t *__restrict out, const uint64_t *__restrict a_base_p)
-{
+void static ffor_37bit_64ow(const uint64_t* __restrict in,
+                            uint64_t* __restrict out,
+                            const uint64_t* __restrict a_base_p) {
 	uint64_t tmp = 0U;
 	uint64_t src;
-	for (int i = 0; i < 16; i++ )
-	{
+	for (int i = 0; i < 16; i++) {
 		src = *(in + 16 * 0 + i) - *(a_base_p);
 		src = src & ((1ULL << 37) - 1);
 		tmp = src;
@@ -17949,15 +17934,15 @@ void static ffor_37bit_64ow(const uint64_t *__restrict in, uint64_t *__restrict 
 		src = src & ((1ULL << 37) - 1);
 		tmp |= src << 27U;
 		*(out + i) = tmp;
-		out -= 576; 
+		out -= 576;
 	}
 }
-void static ffor_38bit_64ow(const uint64_t *__restrict in, uint64_t *__restrict out, const uint64_t *__restrict a_base_p)
-{
+void static ffor_38bit_64ow(const uint64_t* __restrict in,
+                            uint64_t* __restrict out,
+                            const uint64_t* __restrict a_base_p) {
 	uint64_t tmp = 0U;
 	uint64_t src;
-	for (int i = 0; i < 16; i++ )
-	{
+	for (int i = 0; i < 16; i++) {
 		src = *(in + 16 * 0 + i) - *(a_base_p);
 		src = src & ((1ULL << 38) - 1);
 		tmp = src;
@@ -18333,15 +18318,15 @@ void static ffor_38bit_64ow(const uint64_t *__restrict in, uint64_t *__restrict 
 		src = src & ((1ULL << 38) - 1);
 		tmp |= src << 26U;
 		*(out + i) = tmp;
-		out -= 592; 
+		out -= 592;
 	}
 }
-void static ffor_39bit_64ow(const uint64_t *__restrict in, uint64_t *__restrict out, const uint64_t *__restrict a_base_p)
-{
+void static ffor_39bit_64ow(const uint64_t* __restrict in,
+                            uint64_t* __restrict out,
+                            const uint64_t* __restrict a_base_p) {
 	uint64_t tmp = 0U;
 	uint64_t src;
-	for (int i = 0; i < 16; i++ )
-	{
+	for (int i = 0; i < 16; i++) {
 		src = *(in + 16 * 0 + i) - *(a_base_p);
 		src = src & ((1ULL << 39) - 1);
 		tmp = src;
@@ -18725,15 +18710,15 @@ void static ffor_39bit_64ow(const uint64_t *__restrict in, uint64_t *__restrict 
 		src = src & ((1ULL << 39) - 1);
 		tmp |= src << 25U;
 		*(out + i) = tmp;
-		out -= 608; 
+		out -= 608;
 	}
 }
-void static ffor_40bit_64ow(const uint64_t *__restrict in, uint64_t *__restrict out, const uint64_t *__restrict a_base_p)
-{
+void static ffor_40bit_64ow(const uint64_t* __restrict in,
+                            uint64_t* __restrict out,
+                            const uint64_t* __restrict a_base_p) {
 	uint64_t tmp = 0U;
 	uint64_t src;
-	for (int i = 0; i < 16; i++ )
-	{
+	for (int i = 0; i < 16; i++) {
 		src = *(in + 16 * 0 + i) - *(a_base_p);
 		src = src & ((1ULL << 40) - 1);
 		tmp = src;
@@ -19101,15 +19086,15 @@ void static ffor_40bit_64ow(const uint64_t *__restrict in, uint64_t *__restrict 
 		src = src & ((1ULL << 40) - 1);
 		tmp |= src << 24U;
 		*(out + i) = tmp;
-		out -= 624; 
+		out -= 624;
 	}
 }
-void static ffor_41bit_64ow(const uint64_t *__restrict in, uint64_t *__restrict out, const uint64_t *__restrict a_base_p)
-{
+void static ffor_41bit_64ow(const uint64_t* __restrict in,
+                            uint64_t* __restrict out,
+                            const uint64_t* __restrict a_base_p) {
 	uint64_t tmp = 0U;
 	uint64_t src;
-	for (int i = 0; i < 16; i++ )
-	{
+	for (int i = 0; i < 16; i++) {
 		src = *(in + 16 * 0 + i) - *(a_base_p);
 		src = src & ((1ULL << 41) - 1);
 		tmp = src;
@@ -19503,15 +19488,15 @@ void static ffor_41bit_64ow(const uint64_t *__restrict in, uint64_t *__restrict 
 		src = src & ((1ULL << 41) - 1);
 		tmp |= src << 23U;
 		*(out + i) = tmp;
-		out -= 640; 
+		out -= 640;
 	}
 }
-void static ffor_42bit_64ow(const uint64_t *__restrict in, uint64_t *__restrict out, const uint64_t *__restrict a_base_p)
-{
+void static ffor_42bit_64ow(const uint64_t* __restrict in,
+                            uint64_t* __restrict out,
+                            const uint64_t* __restrict a_base_p) {
 	uint64_t tmp = 0U;
 	uint64_t src;
-	for (int i = 0; i < 16; i++ )
-	{
+	for (int i = 0; i < 16; i++) {
 		src = *(in + 16 * 0 + i) - *(a_base_p);
 		src = src & ((1ULL << 42) - 1);
 		tmp = src;
@@ -19907,15 +19892,15 @@ void static ffor_42bit_64ow(const uint64_t *__restrict in, uint64_t *__restrict 
 		src = src & ((1ULL << 42) - 1);
 		tmp |= src << 22U;
 		*(out + i) = tmp;
-		out -= 656; 
+		out -= 656;
 	}
 }
-void static ffor_43bit_64ow(const uint64_t *__restrict in, uint64_t *__restrict out, const uint64_t *__restrict a_base_p)
-{
+void static ffor_43bit_64ow(const uint64_t* __restrict in,
+                            uint64_t* __restrict out,
+                            const uint64_t* __restrict a_base_p) {
 	uint64_t tmp = 0U;
 	uint64_t src;
-	for (int i = 0; i < 16; i++ )
-	{
+	for (int i = 0; i < 16; i++) {
 		src = *(in + 16 * 0 + i) - *(a_base_p);
 		src = src & ((1ULL << 43) - 1);
 		tmp = src;
@@ -20319,15 +20304,15 @@ void static ffor_43bit_64ow(const uint64_t *__restrict in, uint64_t *__restrict 
 		src = src & ((1ULL << 43) - 1);
 		tmp |= src << 21U;
 		*(out + i) = tmp;
-		out -= 672; 
+		out -= 672;
 	}
 }
-void static ffor_44bit_64ow(const uint64_t *__restrict in, uint64_t *__restrict out, const uint64_t *__restrict a_base_p)
-{
+void static ffor_44bit_64ow(const uint64_t* __restrict in,
+                            uint64_t* __restrict out,
+                            const uint64_t* __restrict a_base_p) {
 	uint64_t tmp = 0U;
 	uint64_t src;
-	for (int i = 0; i < 16; i++ )
-	{
+	for (int i = 0; i < 16; i++) {
 		src = *(in + 16 * 0 + i) - *(a_base_p);
 		src = src & ((1ULL << 44) - 1);
 		tmp = src;
@@ -20727,15 +20712,15 @@ void static ffor_44bit_64ow(const uint64_t *__restrict in, uint64_t *__restrict 
 		src = src & ((1ULL << 44) - 1);
 		tmp |= src << 20U;
 		*(out + i) = tmp;
-		out -= 688; 
+		out -= 688;
 	}
 }
-void static ffor_45bit_64ow(const uint64_t *__restrict in, uint64_t *__restrict out, const uint64_t *__restrict a_base_p)
-{
+void static ffor_45bit_64ow(const uint64_t* __restrict in,
+                            uint64_t* __restrict out,
+                            const uint64_t* __restrict a_base_p) {
 	uint64_t tmp = 0U;
 	uint64_t src;
-	for (int i = 0; i < 16; i++ )
-	{
+	for (int i = 0; i < 16; i++) {
 		src = *(in + 16 * 0 + i) - *(a_base_p);
 		src = src & ((1ULL << 45) - 1);
 		tmp = src;
@@ -21149,15 +21134,15 @@ void static ffor_45bit_64ow(const uint64_t *__restrict in, uint64_t *__restrict 
 		src = src & ((1ULL << 45) - 1);
 		tmp |= src << 19U;
 		*(out + i) = tmp;
-		out -= 704; 
+		out -= 704;
 	}
 }
-void static ffor_46bit_64ow(const uint64_t *__restrict in, uint64_t *__restrict out, const uint64_t *__restrict a_base_p)
-{
+void static ffor_46bit_64ow(const uint64_t* __restrict in,
+                            uint64_t* __restrict out,
+                            const uint64_t* __restrict a_base_p) {
 	uint64_t tmp = 0U;
 	uint64_t src;
-	for (int i = 0; i < 16; i++ )
-	{
+	for (int i = 0; i < 16; i++) {
 		src = *(in + 16 * 0 + i) - *(a_base_p);
 		src = src & ((1ULL << 46) - 1);
 		tmp = src;
@@ -21573,15 +21558,15 @@ void static ffor_46bit_64ow(const uint64_t *__restrict in, uint64_t *__restrict 
 		src = src & ((1ULL << 46) - 1);
 		tmp |= src << 18U;
 		*(out + i) = tmp;
-		out -= 720; 
+		out -= 720;
 	}
 }
-void static ffor_47bit_64ow(const uint64_t *__restrict in, uint64_t *__restrict out, const uint64_t *__restrict a_base_p)
-{
+void static ffor_47bit_64ow(const uint64_t* __restrict in,
+                            uint64_t* __restrict out,
+                            const uint64_t* __restrict a_base_p) {
 	uint64_t tmp = 0U;
 	uint64_t src;
-	for (int i = 0; i < 16; i++ )
-	{
+	for (int i = 0; i < 16; i++) {
 		src = *(in + 16 * 0 + i) - *(a_base_p);
 		src = src & ((1ULL << 47) - 1);
 		tmp = src;
@@ -22005,15 +21990,15 @@ void static ffor_47bit_64ow(const uint64_t *__restrict in, uint64_t *__restrict 
 		src = src & ((1ULL << 47) - 1);
 		tmp |= src << 17U;
 		*(out + i) = tmp;
-		out -= 736; 
+		out -= 736;
 	}
 }
-void static ffor_48bit_64ow(const uint64_t *__restrict in, uint64_t *__restrict out, const uint64_t *__restrict a_base_p)
-{
+void static ffor_48bit_64ow(const uint64_t* __restrict in,
+                            uint64_t* __restrict out,
+                            const uint64_t* __restrict a_base_p) {
 	uint64_t tmp = 0U;
 	uint64_t src;
-	for (int i = 0; i < 16; i++ )
-	{
+	for (int i = 0; i < 16; i++) {
 		src = *(in + 16 * 0 + i) - *(a_base_p);
 		src = src & ((1ULL << 48) - 1);
 		tmp = src;
@@ -22397,15 +22382,15 @@ void static ffor_48bit_64ow(const uint64_t *__restrict in, uint64_t *__restrict 
 		src = src & ((1ULL << 48) - 1);
 		tmp |= src << 16U;
 		*(out + i) = tmp;
-		out -= 752; 
+		out -= 752;
 	}
 }
-void static ffor_49bit_64ow(const uint64_t *__restrict in, uint64_t *__restrict out, const uint64_t *__restrict a_base_p)
-{
+void static ffor_49bit_64ow(const uint64_t* __restrict in,
+                            uint64_t* __restrict out,
+                            const uint64_t* __restrict a_base_p) {
 	uint64_t tmp = 0U;
 	uint64_t src;
-	for (int i = 0; i < 16; i++ )
-	{
+	for (int i = 0; i < 16; i++) {
 		src = *(in + 16 * 0 + i) - *(a_base_p);
 		src = src & ((1ULL << 49) - 1);
 		tmp = src;
@@ -22839,15 +22824,15 @@ void static ffor_49bit_64ow(const uint64_t *__restrict in, uint64_t *__restrict 
 		src = src & ((1ULL << 49) - 1);
 		tmp |= src << 15U;
 		*(out + i) = tmp;
-		out -= 768; 
+		out -= 768;
 	}
 }
-void static ffor_50bit_64ow(const uint64_t *__restrict in, uint64_t *__restrict out, const uint64_t *__restrict a_base_p)
-{
+void static ffor_50bit_64ow(const uint64_t* __restrict in,
+                            uint64_t* __restrict out,
+                            const uint64_t* __restrict a_base_p) {
 	uint64_t tmp = 0U;
 	uint64_t src;
-	for (int i = 0; i < 16; i++ )
-	{
+	for (int i = 0; i < 16; i++) {
 		src = *(in + 16 * 0 + i) - *(a_base_p);
 		src = src & ((1ULL << 50) - 1);
 		tmp = src;
@@ -23283,15 +23268,15 @@ void static ffor_50bit_64ow(const uint64_t *__restrict in, uint64_t *__restrict 
 		src = src & ((1ULL << 50) - 1);
 		tmp |= src << 14U;
 		*(out + i) = tmp;
-		out -= 784; 
+		out -= 784;
 	}
 }
-void static ffor_51bit_64ow(const uint64_t *__restrict in, uint64_t *__restrict out, const uint64_t *__restrict a_base_p)
-{
+void static ffor_51bit_64ow(const uint64_t* __restrict in,
+                            uint64_t* __restrict out,
+                            const uint64_t* __restrict a_base_p) {
 	uint64_t tmp = 0U;
 	uint64_t src;
-	for (int i = 0; i < 16; i++ )
-	{
+	for (int i = 0; i < 16; i++) {
 		src = *(in + 16 * 0 + i) - *(a_base_p);
 		src = src & ((1ULL << 51) - 1);
 		tmp = src;
@@ -23735,15 +23720,15 @@ void static ffor_51bit_64ow(const uint64_t *__restrict in, uint64_t *__restrict 
 		src = src & ((1ULL << 51) - 1);
 		tmp |= src << 13U;
 		*(out + i) = tmp;
-		out -= 800; 
+		out -= 800;
 	}
 }
-void static ffor_52bit_64ow(const uint64_t *__restrict in, uint64_t *__restrict out, const uint64_t *__restrict a_base_p)
-{
+void static ffor_52bit_64ow(const uint64_t* __restrict in,
+                            uint64_t* __restrict out,
+                            const uint64_t* __restrict a_base_p) {
 	uint64_t tmp = 0U;
 	uint64_t src;
-	for (int i = 0; i < 16; i++ )
-	{
+	for (int i = 0; i < 16; i++) {
 		src = *(in + 16 * 0 + i) - *(a_base_p);
 		src = src & ((1ULL << 52) - 1);
 		tmp = src;
@@ -24183,15 +24168,15 @@ void static ffor_52bit_64ow(const uint64_t *__restrict in, uint64_t *__restrict 
 		src = src & ((1ULL << 52) - 1);
 		tmp |= src << 12U;
 		*(out + i) = tmp;
-		out -= 816; 
+		out -= 816;
 	}
 }
-void static ffor_53bit_64ow(const uint64_t *__restrict in, uint64_t *__restrict out, const uint64_t *__restrict a_base_p)
-{
+void static ffor_53bit_64ow(const uint64_t* __restrict in,
+                            uint64_t* __restrict out,
+                            const uint64_t* __restrict a_base_p) {
 	uint64_t tmp = 0U;
 	uint64_t src;
-	for (int i = 0; i < 16; i++ )
-	{
+	for (int i = 0; i < 16; i++) {
 		src = *(in + 16 * 0 + i) - *(a_base_p);
 		src = src & ((1ULL << 53) - 1);
 		tmp = src;
@@ -24645,15 +24630,15 @@ void static ffor_53bit_64ow(const uint64_t *__restrict in, uint64_t *__restrict 
 		src = src & ((1ULL << 53) - 1);
 		tmp |= src << 11U;
 		*(out + i) = tmp;
-		out -= 832; 
+		out -= 832;
 	}
 }
-void static ffor_54bit_64ow(const uint64_t *__restrict in, uint64_t *__restrict out, const uint64_t *__restrict a_base_p)
-{
+void static ffor_54bit_64ow(const uint64_t* __restrict in,
+                            uint64_t* __restrict out,
+                            const uint64_t* __restrict a_base_p) {
 	uint64_t tmp = 0U;
 	uint64_t src;
-	for (int i = 0; i < 16; i++ )
-	{
+	for (int i = 0; i < 16; i++) {
 		src = *(in + 16 * 0 + i) - *(a_base_p);
 		src = src & ((1ULL << 54) - 1);
 		tmp = src;
@@ -25109,15 +25094,15 @@ void static ffor_54bit_64ow(const uint64_t *__restrict in, uint64_t *__restrict 
 		src = src & ((1ULL << 54) - 1);
 		tmp |= src << 10U;
 		*(out + i) = tmp;
-		out -= 848; 
+		out -= 848;
 	}
 }
-void static ffor_55bit_64ow(const uint64_t *__restrict in, uint64_t *__restrict out, const uint64_t *__restrict a_base_p)
-{
+void static ffor_55bit_64ow(const uint64_t* __restrict in,
+                            uint64_t* __restrict out,
+                            const uint64_t* __restrict a_base_p) {
 	uint64_t tmp = 0U;
 	uint64_t src;
-	for (int i = 0; i < 16; i++ )
-	{
+	for (int i = 0; i < 16; i++) {
 		src = *(in + 16 * 0 + i) - *(a_base_p);
 		src = src & ((1ULL << 55) - 1);
 		tmp = src;
@@ -25581,15 +25566,15 @@ void static ffor_55bit_64ow(const uint64_t *__restrict in, uint64_t *__restrict 
 		src = src & ((1ULL << 55) - 1);
 		tmp |= src << 9U;
 		*(out + i) = tmp;
-		out -= 864; 
+		out -= 864;
 	}
 }
-void static ffor_56bit_64ow(const uint64_t *__restrict in, uint64_t *__restrict out, const uint64_t *__restrict a_base_p)
-{
+void static ffor_56bit_64ow(const uint64_t* __restrict in,
+                            uint64_t* __restrict out,
+                            const uint64_t* __restrict a_base_p) {
 	uint64_t tmp = 0U;
 	uint64_t src;
-	for (int i = 0; i < 16; i++ )
-	{
+	for (int i = 0; i < 16; i++) {
 		src = *(in + 16 * 0 + i) - *(a_base_p);
 		src = src & ((1ULL << 56) - 1);
 		tmp = src;
@@ -26037,15 +26022,15 @@ void static ffor_56bit_64ow(const uint64_t *__restrict in, uint64_t *__restrict 
 		src = src & ((1ULL << 56) - 1);
 		tmp |= src << 8U;
 		*(out + i) = tmp;
-		out -= 880; 
+		out -= 880;
 	}
 }
-void static ffor_57bit_64ow(const uint64_t *__restrict in, uint64_t *__restrict out, const uint64_t *__restrict a_base_p)
-{
+void static ffor_57bit_64ow(const uint64_t* __restrict in,
+                            uint64_t* __restrict out,
+                            const uint64_t* __restrict a_base_p) {
 	uint64_t tmp = 0U;
 	uint64_t src;
-	for (int i = 0; i < 16; i++ )
-	{
+	for (int i = 0; i < 16; i++) {
 		src = *(in + 16 * 0 + i) - *(a_base_p);
 		src = src & ((1ULL << 57) - 1);
 		tmp = src;
@@ -26519,15 +26504,15 @@ void static ffor_57bit_64ow(const uint64_t *__restrict in, uint64_t *__restrict 
 		src = src & ((1ULL << 57) - 1);
 		tmp |= src << 7U;
 		*(out + i) = tmp;
-		out -= 896; 
+		out -= 896;
 	}
 }
-void static ffor_58bit_64ow(const uint64_t *__restrict in, uint64_t *__restrict out, const uint64_t *__restrict a_base_p)
-{
+void static ffor_58bit_64ow(const uint64_t* __restrict in,
+                            uint64_t* __restrict out,
+                            const uint64_t* __restrict a_base_p) {
 	uint64_t tmp = 0U;
 	uint64_t src;
-	for (int i = 0; i < 16; i++ )
-	{
+	for (int i = 0; i < 16; i++) {
 		src = *(in + 16 * 0 + i) - *(a_base_p);
 		src = src & ((1ULL << 58) - 1);
 		tmp = src;
@@ -27003,15 +26988,15 @@ void static ffor_58bit_64ow(const uint64_t *__restrict in, uint64_t *__restrict 
 		src = src & ((1ULL << 58) - 1);
 		tmp |= src << 6U;
 		*(out + i) = tmp;
-		out -= 912; 
+		out -= 912;
 	}
 }
-void static ffor_59bit_64ow(const uint64_t *__restrict in, uint64_t *__restrict out, const uint64_t *__restrict a_base_p)
-{
+void static ffor_59bit_64ow(const uint64_t* __restrict in,
+                            uint64_t* __restrict out,
+                            const uint64_t* __restrict a_base_p) {
 	uint64_t tmp = 0U;
 	uint64_t src;
-	for (int i = 0; i < 16; i++ )
-	{
+	for (int i = 0; i < 16; i++) {
 		src = *(in + 16 * 0 + i) - *(a_base_p);
 		src = src & ((1ULL << 59) - 1);
 		tmp = src;
@@ -27495,15 +27480,15 @@ void static ffor_59bit_64ow(const uint64_t *__restrict in, uint64_t *__restrict 
 		src = src & ((1ULL << 59) - 1);
 		tmp |= src << 5U;
 		*(out + i) = tmp;
-		out -= 928; 
+		out -= 928;
 	}
 }
-void static ffor_60bit_64ow(const uint64_t *__restrict in, uint64_t *__restrict out, const uint64_t *__restrict a_base_p)
-{
+void static ffor_60bit_64ow(const uint64_t* __restrict in,
+                            uint64_t* __restrict out,
+                            const uint64_t* __restrict a_base_p) {
 	uint64_t tmp = 0U;
 	uint64_t src;
-	for (int i = 0; i < 16; i++ )
-	{
+	for (int i = 0; i < 16; i++) {
 		src = *(in + 16 * 0 + i) - *(a_base_p);
 		src = src & ((1ULL << 60) - 1);
 		tmp = src;
@@ -27983,15 +27968,15 @@ void static ffor_60bit_64ow(const uint64_t *__restrict in, uint64_t *__restrict 
 		src = src & ((1ULL << 60) - 1);
 		tmp |= src << 4U;
 		*(out + i) = tmp;
-		out -= 944; 
+		out -= 944;
 	}
 }
-void static ffor_61bit_64ow(const uint64_t *__restrict in, uint64_t *__restrict out, const uint64_t *__restrict a_base_p)
-{
+void static ffor_61bit_64ow(const uint64_t* __restrict in,
+                            uint64_t* __restrict out,
+                            const uint64_t* __restrict a_base_p) {
 	uint64_t tmp = 0U;
 	uint64_t src;
-	for (int i = 0; i < 16; i++ )
-	{
+	for (int i = 0; i < 16; i++) {
 		src = *(in + 16 * 0 + i) - *(a_base_p);
 		src = src & ((1ULL << 61) - 1);
 		tmp = src;
@@ -28485,15 +28470,15 @@ void static ffor_61bit_64ow(const uint64_t *__restrict in, uint64_t *__restrict 
 		src = src & ((1ULL << 61) - 1);
 		tmp |= src << 3U;
 		*(out + i) = tmp;
-		out -= 960; 
+		out -= 960;
 	}
 }
-void static ffor_62bit_64ow(const uint64_t *__restrict in, uint64_t *__restrict out, const uint64_t *__restrict a_base_p)
-{
+void static ffor_62bit_64ow(const uint64_t* __restrict in,
+                            uint64_t* __restrict out,
+                            const uint64_t* __restrict a_base_p) {
 	uint64_t tmp = 0U;
 	uint64_t src;
-	for (int i = 0; i < 16; i++ )
-	{
+	for (int i = 0; i < 16; i++) {
 		src = *(in + 16 * 0 + i) - *(a_base_p);
 		src = src & ((1ULL << 62) - 1);
 		tmp = src;
@@ -28989,15 +28974,15 @@ void static ffor_62bit_64ow(const uint64_t *__restrict in, uint64_t *__restrict 
 		src = src & ((1ULL << 62) - 1);
 		tmp |= src << 2U;
 		*(out + i) = tmp;
-		out -= 976; 
+		out -= 976;
 	}
 }
-void static ffor_63bit_64ow(const uint64_t *__restrict in, uint64_t *__restrict out, const uint64_t *__restrict a_base_p)
-{
+void static ffor_63bit_64ow(const uint64_t* __restrict in,
+                            uint64_t* __restrict out,
+                            const uint64_t* __restrict a_base_p) {
 	uint64_t tmp = 0U;
 	uint64_t src;
-	for (int i = 0; i < 16; i++ )
-	{
+	for (int i = 0; i < 16; i++) {
 		src = *(in + 16 * 0 + i) - *(a_base_p);
 		src = src & ((1ULL << 63) - 1);
 		tmp = src;
@@ -29501,670 +29486,661 @@ void static ffor_63bit_64ow(const uint64_t *__restrict in, uint64_t *__restrict 
 		src = src & ((1ULL << 63) - 1);
 		tmp |= src << 1U;
 		*(out + i) = tmp;
-		out -= 992; 
+		out -= 992;
 	}
 }
-void static ffor_64bit_64ow(const uint64_t *__restrict in, uint64_t *__restrict out, const uint64_t *__restrict a_base_p)
-{
+void static ffor_64bit_64ow(const uint64_t* __restrict in,
+                            uint64_t* __restrict out,
+                            const uint64_t* __restrict a_base_p) {
 	uint64_t tmp = 0U;
 	uint64_t src;
-	for (int i = 0; i < 16; i++ )
-	{
-		src = *(in + 16 * 0 + i) - *(a_base_p);
-		tmp = src;
+	for (int i = 0; i < 16; i++) {
+		src        = *(in + 16 * 0 + i) - *(a_base_p);
+		tmp        = src;
 		*(out + i) = tmp;
 		out += 16;
-		src = *(in + 16 * 1 + i) - *(a_base_p);
-		tmp = src;
+		src        = *(in + 16 * 1 + i) - *(a_base_p);
+		tmp        = src;
 		*(out + i) = tmp;
 		out += 16;
-		src = *(in + 16 * 2 + i) - *(a_base_p);
-		tmp = src;
+		src        = *(in + 16 * 2 + i) - *(a_base_p);
+		tmp        = src;
 		*(out + i) = tmp;
 		out += 16;
-		src = *(in + 16 * 3 + i) - *(a_base_p);
-		tmp = src;
+		src        = *(in + 16 * 3 + i) - *(a_base_p);
+		tmp        = src;
 		*(out + i) = tmp;
 		out += 16;
-		src = *(in + 16 * 4 + i) - *(a_base_p);
-		tmp = src;
+		src        = *(in + 16 * 4 + i) - *(a_base_p);
+		tmp        = src;
 		*(out + i) = tmp;
 		out += 16;
-		src = *(in + 16 * 5 + i) - *(a_base_p);
-		tmp = src;
+		src        = *(in + 16 * 5 + i) - *(a_base_p);
+		tmp        = src;
 		*(out + i) = tmp;
 		out += 16;
-		src = *(in + 16 * 6 + i) - *(a_base_p);
-		tmp = src;
+		src        = *(in + 16 * 6 + i) - *(a_base_p);
+		tmp        = src;
 		*(out + i) = tmp;
 		out += 16;
-		src = *(in + 16 * 7 + i) - *(a_base_p);
-		tmp = src;
+		src        = *(in + 16 * 7 + i) - *(a_base_p);
+		tmp        = src;
 		*(out + i) = tmp;
 		out += 16;
-		src = *(in + 16 * 8 + i) - *(a_base_p);
-		tmp = src;
+		src        = *(in + 16 * 8 + i) - *(a_base_p);
+		tmp        = src;
 		*(out + i) = tmp;
 		out += 16;
-		src = *(in + 16 * 9 + i) - *(a_base_p);
-		tmp = src;
+		src        = *(in + 16 * 9 + i) - *(a_base_p);
+		tmp        = src;
 		*(out + i) = tmp;
 		out += 16;
-		src = *(in + 16 * 10 + i) - *(a_base_p);
-		tmp = src;
+		src        = *(in + 16 * 10 + i) - *(a_base_p);
+		tmp        = src;
 		*(out + i) = tmp;
 		out += 16;
-		src = *(in + 16 * 11 + i) - *(a_base_p);
-		tmp = src;
+		src        = *(in + 16 * 11 + i) - *(a_base_p);
+		tmp        = src;
 		*(out + i) = tmp;
 		out += 16;
-		src = *(in + 16 * 12 + i) - *(a_base_p);
-		tmp = src;
+		src        = *(in + 16 * 12 + i) - *(a_base_p);
+		tmp        = src;
 		*(out + i) = tmp;
 		out += 16;
-		src = *(in + 16 * 13 + i) - *(a_base_p);
-		tmp = src;
+		src        = *(in + 16 * 13 + i) - *(a_base_p);
+		tmp        = src;
 		*(out + i) = tmp;
 		out += 16;
-		src = *(in + 16 * 14 + i) - *(a_base_p);
-		tmp = src;
+		src        = *(in + 16 * 14 + i) - *(a_base_p);
+		tmp        = src;
 		*(out + i) = tmp;
 		out += 16;
-		src = *(in + 16 * 15 + i) - *(a_base_p);
-		tmp = src;
+		src        = *(in + 16 * 15 + i) - *(a_base_p);
+		tmp        = src;
 		*(out + i) = tmp;
 		out += 16;
-		src = *(in + 16 * 16 + i) - *(a_base_p);
-		tmp = src;
+		src        = *(in + 16 * 16 + i) - *(a_base_p);
+		tmp        = src;
 		*(out + i) = tmp;
 		out += 16;
-		src = *(in + 16 * 17 + i) - *(a_base_p);
-		tmp = src;
+		src        = *(in + 16 * 17 + i) - *(a_base_p);
+		tmp        = src;
 		*(out + i) = tmp;
 		out += 16;
-		src = *(in + 16 * 18 + i) - *(a_base_p);
-		tmp = src;
+		src        = *(in + 16 * 18 + i) - *(a_base_p);
+		tmp        = src;
 		*(out + i) = tmp;
 		out += 16;
-		src = *(in + 16 * 19 + i) - *(a_base_p);
-		tmp = src;
+		src        = *(in + 16 * 19 + i) - *(a_base_p);
+		tmp        = src;
 		*(out + i) = tmp;
 		out += 16;
-		src = *(in + 16 * 20 + i) - *(a_base_p);
-		tmp = src;
+		src        = *(in + 16 * 20 + i) - *(a_base_p);
+		tmp        = src;
 		*(out + i) = tmp;
 		out += 16;
-		src = *(in + 16 * 21 + i) - *(a_base_p);
-		tmp = src;
+		src        = *(in + 16 * 21 + i) - *(a_base_p);
+		tmp        = src;
 		*(out + i) = tmp;
 		out += 16;
-		src = *(in + 16 * 22 + i) - *(a_base_p);
-		tmp = src;
+		src        = *(in + 16 * 22 + i) - *(a_base_p);
+		tmp        = src;
 		*(out + i) = tmp;
 		out += 16;
-		src = *(in + 16 * 23 + i) - *(a_base_p);
-		tmp = src;
+		src        = *(in + 16 * 23 + i) - *(a_base_p);
+		tmp        = src;
 		*(out + i) = tmp;
 		out += 16;
-		src = *(in + 16 * 24 + i) - *(a_base_p);
-		tmp = src;
+		src        = *(in + 16 * 24 + i) - *(a_base_p);
+		tmp        = src;
 		*(out + i) = tmp;
 		out += 16;
-		src = *(in + 16 * 25 + i) - *(a_base_p);
-		tmp = src;
+		src        = *(in + 16 * 25 + i) - *(a_base_p);
+		tmp        = src;
 		*(out + i) = tmp;
 		out += 16;
-		src = *(in + 16 * 26 + i) - *(a_base_p);
-		tmp = src;
+		src        = *(in + 16 * 26 + i) - *(a_base_p);
+		tmp        = src;
 		*(out + i) = tmp;
 		out += 16;
-		src = *(in + 16 * 27 + i) - *(a_base_p);
-		tmp = src;
+		src        = *(in + 16 * 27 + i) - *(a_base_p);
+		tmp        = src;
 		*(out + i) = tmp;
 		out += 16;
-		src = *(in + 16 * 28 + i) - *(a_base_p);
-		tmp = src;
+		src        = *(in + 16 * 28 + i) - *(a_base_p);
+		tmp        = src;
 		*(out + i) = tmp;
 		out += 16;
-		src = *(in + 16 * 29 + i) - *(a_base_p);
-		tmp = src;
+		src        = *(in + 16 * 29 + i) - *(a_base_p);
+		tmp        = src;
 		*(out + i) = tmp;
 		out += 16;
-		src = *(in + 16 * 30 + i) - *(a_base_p);
-		tmp = src;
+		src        = *(in + 16 * 30 + i) - *(a_base_p);
+		tmp        = src;
 		*(out + i) = tmp;
 		out += 16;
-		src = *(in + 16 * 31 + i) - *(a_base_p);
-		tmp = src;
+		src        = *(in + 16 * 31 + i) - *(a_base_p);
+		tmp        = src;
 		*(out + i) = tmp;
 		out += 16;
-		src = *(in + 16 * 32 + i) - *(a_base_p);
-		tmp = src;
+		src        = *(in + 16 * 32 + i) - *(a_base_p);
+		tmp        = src;
 		*(out + i) = tmp;
 		out += 16;
-		src = *(in + 16 * 33 + i) - *(a_base_p);
-		tmp = src;
+		src        = *(in + 16 * 33 + i) - *(a_base_p);
+		tmp        = src;
 		*(out + i) = tmp;
 		out += 16;
-		src = *(in + 16 * 34 + i) - *(a_base_p);
-		tmp = src;
+		src        = *(in + 16 * 34 + i) - *(a_base_p);
+		tmp        = src;
 		*(out + i) = tmp;
 		out += 16;
-		src = *(in + 16 * 35 + i) - *(a_base_p);
-		tmp = src;
+		src        = *(in + 16 * 35 + i) - *(a_base_p);
+		tmp        = src;
 		*(out + i) = tmp;
 		out += 16;
-		src = *(in + 16 * 36 + i) - *(a_base_p);
-		tmp = src;
+		src        = *(in + 16 * 36 + i) - *(a_base_p);
+		tmp        = src;
 		*(out + i) = tmp;
 		out += 16;
-		src = *(in + 16 * 37 + i) - *(a_base_p);
-		tmp = src;
+		src        = *(in + 16 * 37 + i) - *(a_base_p);
+		tmp        = src;
 		*(out + i) = tmp;
 		out += 16;
-		src = *(in + 16 * 38 + i) - *(a_base_p);
-		tmp = src;
+		src        = *(in + 16 * 38 + i) - *(a_base_p);
+		tmp        = src;
 		*(out + i) = tmp;
 		out += 16;
-		src = *(in + 16 * 39 + i) - *(a_base_p);
-		tmp = src;
+		src        = *(in + 16 * 39 + i) - *(a_base_p);
+		tmp        = src;
 		*(out + i) = tmp;
 		out += 16;
-		src = *(in + 16 * 40 + i) - *(a_base_p);
-		tmp = src;
+		src        = *(in + 16 * 40 + i) - *(a_base_p);
+		tmp        = src;
 		*(out + i) = tmp;
 		out += 16;
-		src = *(in + 16 * 41 + i) - *(a_base_p);
-		tmp = src;
+		src        = *(in + 16 * 41 + i) - *(a_base_p);
+		tmp        = src;
 		*(out + i) = tmp;
 		out += 16;
-		src = *(in + 16 * 42 + i) - *(a_base_p);
-		tmp = src;
+		src        = *(in + 16 * 42 + i) - *(a_base_p);
+		tmp        = src;
 		*(out + i) = tmp;
 		out += 16;
-		src = *(in + 16 * 43 + i) - *(a_base_p);
-		tmp = src;
+		src        = *(in + 16 * 43 + i) - *(a_base_p);
+		tmp        = src;
 		*(out + i) = tmp;
 		out += 16;
-		src = *(in + 16 * 44 + i) - *(a_base_p);
-		tmp = src;
+		src        = *(in + 16 * 44 + i) - *(a_base_p);
+		tmp        = src;
 		*(out + i) = tmp;
 		out += 16;
-		src = *(in + 16 * 45 + i) - *(a_base_p);
-		tmp = src;
+		src        = *(in + 16 * 45 + i) - *(a_base_p);
+		tmp        = src;
 		*(out + i) = tmp;
 		out += 16;
-		src = *(in + 16 * 46 + i) - *(a_base_p);
-		tmp = src;
+		src        = *(in + 16 * 46 + i) - *(a_base_p);
+		tmp        = src;
 		*(out + i) = tmp;
 		out += 16;
-		src = *(in + 16 * 47 + i) - *(a_base_p);
-		tmp = src;
+		src        = *(in + 16 * 47 + i) - *(a_base_p);
+		tmp        = src;
 		*(out + i) = tmp;
 		out += 16;
-		src = *(in + 16 * 48 + i) - *(a_base_p);
-		tmp = src;
+		src        = *(in + 16 * 48 + i) - *(a_base_p);
+		tmp        = src;
 		*(out + i) = tmp;
 		out += 16;
-		src = *(in + 16 * 49 + i) - *(a_base_p);
-		tmp = src;
+		src        = *(in + 16 * 49 + i) - *(a_base_p);
+		tmp        = src;
 		*(out + i) = tmp;
 		out += 16;
-		src = *(in + 16 * 50 + i) - *(a_base_p);
-		tmp = src;
+		src        = *(in + 16 * 50 + i) - *(a_base_p);
+		tmp        = src;
 		*(out + i) = tmp;
 		out += 16;
-		src = *(in + 16 * 51 + i) - *(a_base_p);
-		tmp = src;
+		src        = *(in + 16 * 51 + i) - *(a_base_p);
+		tmp        = src;
 		*(out + i) = tmp;
 		out += 16;
-		src = *(in + 16 * 52 + i) - *(a_base_p);
-		tmp = src;
+		src        = *(in + 16 * 52 + i) - *(a_base_p);
+		tmp        = src;
 		*(out + i) = tmp;
 		out += 16;
-		src = *(in + 16 * 53 + i) - *(a_base_p);
-		tmp = src;
+		src        = *(in + 16 * 53 + i) - *(a_base_p);
+		tmp        = src;
 		*(out + i) = tmp;
 		out += 16;
-		src = *(in + 16 * 54 + i) - *(a_base_p);
-		tmp = src;
+		src        = *(in + 16 * 54 + i) - *(a_base_p);
+		tmp        = src;
 		*(out + i) = tmp;
 		out += 16;
-		src = *(in + 16 * 55 + i) - *(a_base_p);
-		tmp = src;
+		src        = *(in + 16 * 55 + i) - *(a_base_p);
+		tmp        = src;
 		*(out + i) = tmp;
 		out += 16;
-		src = *(in + 16 * 56 + i) - *(a_base_p);
-		tmp = src;
+		src        = *(in + 16 * 56 + i) - *(a_base_p);
+		tmp        = src;
 		*(out + i) = tmp;
 		out += 16;
-		src = *(in + 16 * 57 + i) - *(a_base_p);
-		tmp = src;
+		src        = *(in + 16 * 57 + i) - *(a_base_p);
+		tmp        = src;
 		*(out + i) = tmp;
 		out += 16;
-		src = *(in + 16 * 58 + i) - *(a_base_p);
-		tmp = src;
+		src        = *(in + 16 * 58 + i) - *(a_base_p);
+		tmp        = src;
 		*(out + i) = tmp;
 		out += 16;
-		src = *(in + 16 * 59 + i) - *(a_base_p);
-		tmp = src;
+		src        = *(in + 16 * 59 + i) - *(a_base_p);
+		tmp        = src;
 		*(out + i) = tmp;
 		out += 16;
-		src = *(in + 16 * 60 + i) - *(a_base_p);
-		tmp = src;
+		src        = *(in + 16 * 60 + i) - *(a_base_p);
+		tmp        = src;
 		*(out + i) = tmp;
 		out += 16;
-		src = *(in + 16 * 61 + i) - *(a_base_p);
-		tmp = src;
+		src        = *(in + 16 * 61 + i) - *(a_base_p);
+		tmp        = src;
 		*(out + i) = tmp;
 		out += 16;
-		src = *(in + 16 * 62 + i) - *(a_base_p);
-		tmp = src;
+		src        = *(in + 16 * 62 + i) - *(a_base_p);
+		tmp        = src;
 		*(out + i) = tmp;
 		out += 16;
-		src = *(in + 16 * 63 + i) - *(a_base_p);
-		tmp = src;
+		src        = *(in + 16 * 63 + i) - *(a_base_p);
+		tmp        = src;
 		*(out + i) = tmp;
-		out -= 1008; 
+		out -= 1008;
 	}
 }
-void ffor(const uint8_t *__restrict in, uint8_t *__restrict out, uint8_t bw, const uint8_t *__restrict a_base_p)
-{
-	 switch (bw)
-	{
-		case 0:
-				ffor_0bit_8ow(in, out, a_base_p);
-				return;
-		case 1:
-				ffor_1bit_8ow(in, out, a_base_p);
-				return;
-		case 2:
-				ffor_2bit_8ow(in, out, a_base_p);
-				return;
-		case 3:
-				ffor_3bit_8ow(in, out, a_base_p);
-				return;
-		case 4:
-				ffor_4bit_8ow(in, out, a_base_p);
-				return;
-		case 5:
-				ffor_5bit_8ow(in, out, a_base_p);
-				return;
-		case 6:
-				ffor_6bit_8ow(in, out, a_base_p);
-				return;
-		case 7:
-				ffor_7bit_8ow(in, out, a_base_p);
-				return;
-		case 8:
-				ffor_8bit_8ow(in, out, a_base_p);
-				return;
+void ffor(const uint8_t* __restrict in, uint8_t* __restrict out, uint8_t bw, const uint8_t* __restrict a_base_p) {
+	switch (bw) {
+	case 0:
+		ffor_0bit_8ow(in, out, a_base_p);
+		return;
+	case 1:
+		ffor_1bit_8ow(in, out, a_base_p);
+		return;
+	case 2:
+		ffor_2bit_8ow(in, out, a_base_p);
+		return;
+	case 3:
+		ffor_3bit_8ow(in, out, a_base_p);
+		return;
+	case 4:
+		ffor_4bit_8ow(in, out, a_base_p);
+		return;
+	case 5:
+		ffor_5bit_8ow(in, out, a_base_p);
+		return;
+	case 6:
+		ffor_6bit_8ow(in, out, a_base_p);
+		return;
+	case 7:
+		ffor_7bit_8ow(in, out, a_base_p);
+		return;
+	case 8:
+		ffor_8bit_8ow(in, out, a_base_p);
+		return;
 	}
 }
-void ffor(const uint16_t *__restrict in, uint16_t *__restrict out, uint8_t bw, const uint16_t *__restrict a_base_p)
-{
-	 switch (bw)
-	{
-		case 0:
-				ffor_0bit_16ow(in, out, a_base_p);
-				return;
-		case 1:
-				ffor_1bit_16ow(in, out, a_base_p);
-				return;
-		case 2:
-				ffor_2bit_16ow(in, out, a_base_p);
-				return;
-		case 3:
-				ffor_3bit_16ow(in, out, a_base_p);
-				return;
-		case 4:
-				ffor_4bit_16ow(in, out, a_base_p);
-				return;
-		case 5:
-				ffor_5bit_16ow(in, out, a_base_p);
-				return;
-		case 6:
-				ffor_6bit_16ow(in, out, a_base_p);
-				return;
-		case 7:
-				ffor_7bit_16ow(in, out, a_base_p);
-				return;
-		case 8:
-				ffor_8bit_16ow(in, out, a_base_p);
-				return;
-		case 9:
-				ffor_9bit_16ow(in, out, a_base_p);
-				return;
-		case 10:
-				ffor_10bit_16ow(in, out, a_base_p);
-				return;
-		case 11:
-				ffor_11bit_16ow(in, out, a_base_p);
-				return;
-		case 12:
-				ffor_12bit_16ow(in, out, a_base_p);
-				return;
-		case 13:
-				ffor_13bit_16ow(in, out, a_base_p);
-				return;
-		case 14:
-				ffor_14bit_16ow(in, out, a_base_p);
-				return;
-		case 15:
-				ffor_15bit_16ow(in, out, a_base_p);
-				return;
-		case 16:
-				ffor_16bit_16ow(in, out, a_base_p);
-				return;
+void ffor(const uint16_t* __restrict in, uint16_t* __restrict out, uint8_t bw, const uint16_t* __restrict a_base_p) {
+	switch (bw) {
+	case 0:
+		ffor_0bit_16ow(in, out, a_base_p);
+		return;
+	case 1:
+		ffor_1bit_16ow(in, out, a_base_p);
+		return;
+	case 2:
+		ffor_2bit_16ow(in, out, a_base_p);
+		return;
+	case 3:
+		ffor_3bit_16ow(in, out, a_base_p);
+		return;
+	case 4:
+		ffor_4bit_16ow(in, out, a_base_p);
+		return;
+	case 5:
+		ffor_5bit_16ow(in, out, a_base_p);
+		return;
+	case 6:
+		ffor_6bit_16ow(in, out, a_base_p);
+		return;
+	case 7:
+		ffor_7bit_16ow(in, out, a_base_p);
+		return;
+	case 8:
+		ffor_8bit_16ow(in, out, a_base_p);
+		return;
+	case 9:
+		ffor_9bit_16ow(in, out, a_base_p);
+		return;
+	case 10:
+		ffor_10bit_16ow(in, out, a_base_p);
+		return;
+	case 11:
+		ffor_11bit_16ow(in, out, a_base_p);
+		return;
+	case 12:
+		ffor_12bit_16ow(in, out, a_base_p);
+		return;
+	case 13:
+		ffor_13bit_16ow(in, out, a_base_p);
+		return;
+	case 14:
+		ffor_14bit_16ow(in, out, a_base_p);
+		return;
+	case 15:
+		ffor_15bit_16ow(in, out, a_base_p);
+		return;
+	case 16:
+		ffor_16bit_16ow(in, out, a_base_p);
+		return;
 	}
 }
-void ffor(const uint32_t *__restrict in, uint32_t *__restrict out, uint8_t bw, const uint32_t *__restrict a_base_p)
-{
-	 switch (bw)
-	{
-		case 0:
-				ffor_0bit_32ow(in, out, a_base_p);
-				return;
-		case 1:
-				ffor_1bit_32ow(in, out, a_base_p);
-				return;
-		case 2:
-				ffor_2bit_32ow(in, out, a_base_p);
-				return;
-		case 3:
-				ffor_3bit_32ow(in, out, a_base_p);
-				return;
-		case 4:
-				ffor_4bit_32ow(in, out, a_base_p);
-				return;
-		case 5:
-				ffor_5bit_32ow(in, out, a_base_p);
-				return;
-		case 6:
-				ffor_6bit_32ow(in, out, a_base_p);
-				return;
-		case 7:
-				ffor_7bit_32ow(in, out, a_base_p);
-				return;
-		case 8:
-				ffor_8bit_32ow(in, out, a_base_p);
-				return;
-		case 9:
-				ffor_9bit_32ow(in, out, a_base_p);
-				return;
-		case 10:
-				ffor_10bit_32ow(in, out, a_base_p);
-				return;
-		case 11:
-				ffor_11bit_32ow(in, out, a_base_p);
-				return;
-		case 12:
-				ffor_12bit_32ow(in, out, a_base_p);
-				return;
-		case 13:
-				ffor_13bit_32ow(in, out, a_base_p);
-				return;
-		case 14:
-				ffor_14bit_32ow(in, out, a_base_p);
-				return;
-		case 15:
-				ffor_15bit_32ow(in, out, a_base_p);
-				return;
-		case 16:
-				ffor_16bit_32ow(in, out, a_base_p);
-				return;
-		case 17:
-				ffor_17bit_32ow(in, out, a_base_p);
-				return;
-		case 18:
-				ffor_18bit_32ow(in, out, a_base_p);
-				return;
-		case 19:
-				ffor_19bit_32ow(in, out, a_base_p);
-				return;
-		case 20:
-				ffor_20bit_32ow(in, out, a_base_p);
-				return;
-		case 21:
-				ffor_21bit_32ow(in, out, a_base_p);
-				return;
-		case 22:
-				ffor_22bit_32ow(in, out, a_base_p);
-				return;
-		case 23:
-				ffor_23bit_32ow(in, out, a_base_p);
-				return;
-		case 24:
-				ffor_24bit_32ow(in, out, a_base_p);
-				return;
-		case 25:
-				ffor_25bit_32ow(in, out, a_base_p);
-				return;
-		case 26:
-				ffor_26bit_32ow(in, out, a_base_p);
-				return;
-		case 27:
-				ffor_27bit_32ow(in, out, a_base_p);
-				return;
-		case 28:
-				ffor_28bit_32ow(in, out, a_base_p);
-				return;
-		case 29:
-				ffor_29bit_32ow(in, out, a_base_p);
-				return;
-		case 30:
-				ffor_30bit_32ow(in, out, a_base_p);
-				return;
-		case 31:
-				ffor_31bit_32ow(in, out, a_base_p);
-				return;
-		case 32:
-				ffor_32bit_32ow(in, out, a_base_p);
-				return;
+void ffor(const uint32_t* __restrict in, uint32_t* __restrict out, uint8_t bw, const uint32_t* __restrict a_base_p) {
+	switch (bw) {
+	case 0:
+		ffor_0bit_32ow(in, out, a_base_p);
+		return;
+	case 1:
+		ffor_1bit_32ow(in, out, a_base_p);
+		return;
+	case 2:
+		ffor_2bit_32ow(in, out, a_base_p);
+		return;
+	case 3:
+		ffor_3bit_32ow(in, out, a_base_p);
+		return;
+	case 4:
+		ffor_4bit_32ow(in, out, a_base_p);
+		return;
+	case 5:
+		ffor_5bit_32ow(in, out, a_base_p);
+		return;
+	case 6:
+		ffor_6bit_32ow(in, out, a_base_p);
+		return;
+	case 7:
+		ffor_7bit_32ow(in, out, a_base_p);
+		return;
+	case 8:
+		ffor_8bit_32ow(in, out, a_base_p);
+		return;
+	case 9:
+		ffor_9bit_32ow(in, out, a_base_p);
+		return;
+	case 10:
+		ffor_10bit_32ow(in, out, a_base_p);
+		return;
+	case 11:
+		ffor_11bit_32ow(in, out, a_base_p);
+		return;
+	case 12:
+		ffor_12bit_32ow(in, out, a_base_p);
+		return;
+	case 13:
+		ffor_13bit_32ow(in, out, a_base_p);
+		return;
+	case 14:
+		ffor_14bit_32ow(in, out, a_base_p);
+		return;
+	case 15:
+		ffor_15bit_32ow(in, out, a_base_p);
+		return;
+	case 16:
+		ffor_16bit_32ow(in, out, a_base_p);
+		return;
+	case 17:
+		ffor_17bit_32ow(in, out, a_base_p);
+		return;
+	case 18:
+		ffor_18bit_32ow(in, out, a_base_p);
+		return;
+	case 19:
+		ffor_19bit_32ow(in, out, a_base_p);
+		return;
+	case 20:
+		ffor_20bit_32ow(in, out, a_base_p);
+		return;
+	case 21:
+		ffor_21bit_32ow(in, out, a_base_p);
+		return;
+	case 22:
+		ffor_22bit_32ow(in, out, a_base_p);
+		return;
+	case 23:
+		ffor_23bit_32ow(in, out, a_base_p);
+		return;
+	case 24:
+		ffor_24bit_32ow(in, out, a_base_p);
+		return;
+	case 25:
+		ffor_25bit_32ow(in, out, a_base_p);
+		return;
+	case 26:
+		ffor_26bit_32ow(in, out, a_base_p);
+		return;
+	case 27:
+		ffor_27bit_32ow(in, out, a_base_p);
+		return;
+	case 28:
+		ffor_28bit_32ow(in, out, a_base_p);
+		return;
+	case 29:
+		ffor_29bit_32ow(in, out, a_base_p);
+		return;
+	case 30:
+		ffor_30bit_32ow(in, out, a_base_p);
+		return;
+	case 31:
+		ffor_31bit_32ow(in, out, a_base_p);
+		return;
+	case 32:
+		ffor_32bit_32ow(in, out, a_base_p);
+		return;
 	}
 }
-void ffor(const uint64_t *__restrict in, uint64_t *__restrict out, uint8_t bw, const uint64_t *__restrict a_base_p)
-{
-	 switch (bw)
-	{
-		case 0:
-				ffor_0bit_64ow(in, out, a_base_p);
-				return;
-		case 1:
-				ffor_1bit_64ow(in, out, a_base_p);
-				return;
-		case 2:
-				ffor_2bit_64ow(in, out, a_base_p);
-				return;
-		case 3:
-				ffor_3bit_64ow(in, out, a_base_p);
-				return;
-		case 4:
-				ffor_4bit_64ow(in, out, a_base_p);
-				return;
-		case 5:
-				ffor_5bit_64ow(in, out, a_base_p);
-				return;
-		case 6:
-				ffor_6bit_64ow(in, out, a_base_p);
-				return;
-		case 7:
-				ffor_7bit_64ow(in, out, a_base_p);
-				return;
-		case 8:
-				ffor_8bit_64ow(in, out, a_base_p);
-				return;
-		case 9:
-				ffor_9bit_64ow(in, out, a_base_p);
-				return;
-		case 10:
-				ffor_10bit_64ow(in, out, a_base_p);
-				return;
-		case 11:
-				ffor_11bit_64ow(in, out, a_base_p);
-				return;
-		case 12:
-				ffor_12bit_64ow(in, out, a_base_p);
-				return;
-		case 13:
-				ffor_13bit_64ow(in, out, a_base_p);
-				return;
-		case 14:
-				ffor_14bit_64ow(in, out, a_base_p);
-				return;
-		case 15:
-				ffor_15bit_64ow(in, out, a_base_p);
-				return;
-		case 16:
-				ffor_16bit_64ow(in, out, a_base_p);
-				return;
-		case 17:
-				ffor_17bit_64ow(in, out, a_base_p);
-				return;
-		case 18:
-				ffor_18bit_64ow(in, out, a_base_p);
-				return;
-		case 19:
-				ffor_19bit_64ow(in, out, a_base_p);
-				return;
-		case 20:
-				ffor_20bit_64ow(in, out, a_base_p);
-				return;
-		case 21:
-				ffor_21bit_64ow(in, out, a_base_p);
-				return;
-		case 22:
-				ffor_22bit_64ow(in, out, a_base_p);
-				return;
-		case 23:
-				ffor_23bit_64ow(in, out, a_base_p);
-				return;
-		case 24:
-				ffor_24bit_64ow(in, out, a_base_p);
-				return;
-		case 25:
-				ffor_25bit_64ow(in, out, a_base_p);
-				return;
-		case 26:
-				ffor_26bit_64ow(in, out, a_base_p);
-				return;
-		case 27:
-				ffor_27bit_64ow(in, out, a_base_p);
-				return;
-		case 28:
-				ffor_28bit_64ow(in, out, a_base_p);
-				return;
-		case 29:
-				ffor_29bit_64ow(in, out, a_base_p);
-				return;
-		case 30:
-				ffor_30bit_64ow(in, out, a_base_p);
-				return;
-		case 31:
-				ffor_31bit_64ow(in, out, a_base_p);
-				return;
-		case 32:
-				ffor_32bit_64ow(in, out, a_base_p);
-				return;
-		case 33:
-				ffor_33bit_64ow(in, out, a_base_p);
-				return;
-		case 34:
-				ffor_34bit_64ow(in, out, a_base_p);
-				return;
-		case 35:
-				ffor_35bit_64ow(in, out, a_base_p);
-				return;
-		case 36:
-				ffor_36bit_64ow(in, out, a_base_p);
-				return;
-		case 37:
-				ffor_37bit_64ow(in, out, a_base_p);
-				return;
-		case 38:
-				ffor_38bit_64ow(in, out, a_base_p);
-				return;
-		case 39:
-				ffor_39bit_64ow(in, out, a_base_p);
-				return;
-		case 40:
-				ffor_40bit_64ow(in, out, a_base_p);
-				return;
-		case 41:
-				ffor_41bit_64ow(in, out, a_base_p);
-				return;
-		case 42:
-				ffor_42bit_64ow(in, out, a_base_p);
-				return;
-		case 43:
-				ffor_43bit_64ow(in, out, a_base_p);
-				return;
-		case 44:
-				ffor_44bit_64ow(in, out, a_base_p);
-				return;
-		case 45:
-				ffor_45bit_64ow(in, out, a_base_p);
-				return;
-		case 46:
-				ffor_46bit_64ow(in, out, a_base_p);
-				return;
-		case 47:
-				ffor_47bit_64ow(in, out, a_base_p);
-				return;
-		case 48:
-				ffor_48bit_64ow(in, out, a_base_p);
-				return;
-		case 49:
-				ffor_49bit_64ow(in, out, a_base_p);
-				return;
-		case 50:
-				ffor_50bit_64ow(in, out, a_base_p);
-				return;
-		case 51:
-				ffor_51bit_64ow(in, out, a_base_p);
-				return;
-		case 52:
-				ffor_52bit_64ow(in, out, a_base_p);
-				return;
-		case 53:
-				ffor_53bit_64ow(in, out, a_base_p);
-				return;
-		case 54:
-				ffor_54bit_64ow(in, out, a_base_p);
-				return;
-		case 55:
-				ffor_55bit_64ow(in, out, a_base_p);
-				return;
-		case 56:
-				ffor_56bit_64ow(in, out, a_base_p);
-				return;
-		case 57:
-				ffor_57bit_64ow(in, out, a_base_p);
-				return;
-		case 58:
-				ffor_58bit_64ow(in, out, a_base_p);
-				return;
-		case 59:
-				ffor_59bit_64ow(in, out, a_base_p);
-				return;
-		case 60:
-				ffor_60bit_64ow(in, out, a_base_p);
-				return;
-		case 61:
-				ffor_61bit_64ow(in, out, a_base_p);
-				return;
-		case 62:
-				ffor_62bit_64ow(in, out, a_base_p);
-				return;
-		case 63:
-				ffor_63bit_64ow(in, out, a_base_p);
-				return;
-		case 64:
-				ffor_64bit_64ow(in, out, a_base_p);
-				return;
+void ffor(const uint64_t* __restrict in, uint64_t* __restrict out, uint8_t bw, const uint64_t* __restrict a_base_p) {
+	switch (bw) {
+	case 0:
+		ffor_0bit_64ow(in, out, a_base_p);
+		return;
+	case 1:
+		ffor_1bit_64ow(in, out, a_base_p);
+		return;
+	case 2:
+		ffor_2bit_64ow(in, out, a_base_p);
+		return;
+	case 3:
+		ffor_3bit_64ow(in, out, a_base_p);
+		return;
+	case 4:
+		ffor_4bit_64ow(in, out, a_base_p);
+		return;
+	case 5:
+		ffor_5bit_64ow(in, out, a_base_p);
+		return;
+	case 6:
+		ffor_6bit_64ow(in, out, a_base_p);
+		return;
+	case 7:
+		ffor_7bit_64ow(in, out, a_base_p);
+		return;
+	case 8:
+		ffor_8bit_64ow(in, out, a_base_p);
+		return;
+	case 9:
+		ffor_9bit_64ow(in, out, a_base_p);
+		return;
+	case 10:
+		ffor_10bit_64ow(in, out, a_base_p);
+		return;
+	case 11:
+		ffor_11bit_64ow(in, out, a_base_p);
+		return;
+	case 12:
+		ffor_12bit_64ow(in, out, a_base_p);
+		return;
+	case 13:
+		ffor_13bit_64ow(in, out, a_base_p);
+		return;
+	case 14:
+		ffor_14bit_64ow(in, out, a_base_p);
+		return;
+	case 15:
+		ffor_15bit_64ow(in, out, a_base_p);
+		return;
+	case 16:
+		ffor_16bit_64ow(in, out, a_base_p);
+		return;
+	case 17:
+		ffor_17bit_64ow(in, out, a_base_p);
+		return;
+	case 18:
+		ffor_18bit_64ow(in, out, a_base_p);
+		return;
+	case 19:
+		ffor_19bit_64ow(in, out, a_base_p);
+		return;
+	case 20:
+		ffor_20bit_64ow(in, out, a_base_p);
+		return;
+	case 21:
+		ffor_21bit_64ow(in, out, a_base_p);
+		return;
+	case 22:
+		ffor_22bit_64ow(in, out, a_base_p);
+		return;
+	case 23:
+		ffor_23bit_64ow(in, out, a_base_p);
+		return;
+	case 24:
+		ffor_24bit_64ow(in, out, a_base_p);
+		return;
+	case 25:
+		ffor_25bit_64ow(in, out, a_base_p);
+		return;
+	case 26:
+		ffor_26bit_64ow(in, out, a_base_p);
+		return;
+	case 27:
+		ffor_27bit_64ow(in, out, a_base_p);
+		return;
+	case 28:
+		ffor_28bit_64ow(in, out, a_base_p);
+		return;
+	case 29:
+		ffor_29bit_64ow(in, out, a_base_p);
+		return;
+	case 30:
+		ffor_30bit_64ow(in, out, a_base_p);
+		return;
+	case 31:
+		ffor_31bit_64ow(in, out, a_base_p);
+		return;
+	case 32:
+		ffor_32bit_64ow(in, out, a_base_p);
+		return;
+	case 33:
+		ffor_33bit_64ow(in, out, a_base_p);
+		return;
+	case 34:
+		ffor_34bit_64ow(in, out, a_base_p);
+		return;
+	case 35:
+		ffor_35bit_64ow(in, out, a_base_p);
+		return;
+	case 36:
+		ffor_36bit_64ow(in, out, a_base_p);
+		return;
+	case 37:
+		ffor_37bit_64ow(in, out, a_base_p);
+		return;
+	case 38:
+		ffor_38bit_64ow(in, out, a_base_p);
+		return;
+	case 39:
+		ffor_39bit_64ow(in, out, a_base_p);
+		return;
+	case 40:
+		ffor_40bit_64ow(in, out, a_base_p);
+		return;
+	case 41:
+		ffor_41bit_64ow(in, out, a_base_p);
+		return;
+	case 42:
+		ffor_42bit_64ow(in, out, a_base_p);
+		return;
+	case 43:
+		ffor_43bit_64ow(in, out, a_base_p);
+		return;
+	case 44:
+		ffor_44bit_64ow(in, out, a_base_p);
+		return;
+	case 45:
+		ffor_45bit_64ow(in, out, a_base_p);
+		return;
+	case 46:
+		ffor_46bit_64ow(in, out, a_base_p);
+		return;
+	case 47:
+		ffor_47bit_64ow(in, out, a_base_p);
+		return;
+	case 48:
+		ffor_48bit_64ow(in, out, a_base_p);
+		return;
+	case 49:
+		ffor_49bit_64ow(in, out, a_base_p);
+		return;
+	case 50:
+		ffor_50bit_64ow(in, out, a_base_p);
+		return;
+	case 51:
+		ffor_51bit_64ow(in, out, a_base_p);
+		return;
+	case 52:
+		ffor_52bit_64ow(in, out, a_base_p);
+		return;
+	case 53:
+		ffor_53bit_64ow(in, out, a_base_p);
+		return;
+	case 54:
+		ffor_54bit_64ow(in, out, a_base_p);
+		return;
+	case 55:
+		ffor_55bit_64ow(in, out, a_base_p);
+		return;
+	case 56:
+		ffor_56bit_64ow(in, out, a_base_p);
+		return;
+	case 57:
+		ffor_57bit_64ow(in, out, a_base_p);
+		return;
+	case 58:
+		ffor_58bit_64ow(in, out, a_base_p);
+		return;
+	case 59:
+		ffor_59bit_64ow(in, out, a_base_p);
+		return;
+	case 60:
+		ffor_60bit_64ow(in, out, a_base_p);
+		return;
+	case 61:
+		ffor_61bit_64ow(in, out, a_base_p);
+		return;
+	case 62:
+		ffor_62bit_64ow(in, out, a_base_p);
+		return;
+	case 63:
+		ffor_63bit_64ow(in, out, a_base_p);
+		return;
+	case 64:
+		ffor_64bit_64ow(in, out, a_base_p);
+		return;
 	}
 }
-
 
 void ffor(const int64_t* __restrict in, int64_t* __restrict out, uint8_t bw, const int64_t* __restrict a_base_p) {
 	auto const* in_u   = reinterpret_cast<const uint64_t*>(in);
@@ -30198,5 +30174,4 @@ void ffor(const int8_t* __restrict in, int8_t* __restrict out, uint8_t bw, const
 	ffor(in_u, out_u, bw, base_u);
 }
 
-}
-;
+}; // namespace fls
