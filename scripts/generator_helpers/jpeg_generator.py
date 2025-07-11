@@ -42,15 +42,23 @@ logger = logging.getLogger(__name__)
 # Internal helpers
 # ---------------------------------------------------------------------------
 
+
 def _natural_key(path: Path):
     """Return a list key implementing JetBrains ‘natural’ filename ordering."""
     name = path.name.lower()  # case‑insensitive like JetBrains
     return [int(part) if part.isdigit() else part for part in re.split(r"(\d+)", name)]
 
 
+# --- Path resolution fix ----------------------------------------------------
+# Resolve repo_root as two levels up from this file (…/scripts/generator_helpers
+# → …/scripts → **repo root**).  This is stable regardless of CWD.
+repo_root: Path = Path(__file__).resolve().parents[2]
+
+
 def _collect_jpeg_paths() -> List[Path]:
     """Collect *.jpg / *.jpeg files and sort them with natural ordering."""
-    root = Path.cwd() / ".." / "data" / "flower_photos" / "daisy"
+    root = repo_root / "data" / "flower_photos" / "daisy"
+
     paths = list(root.glob("*.jpg")) + list(root.glob("*.jpeg"))
     if not paths:
         raise FileNotFoundError(f"No JPEG files found under {root.resolve()}")
@@ -63,6 +71,7 @@ _JPEG_PATHS: List[Path] = _collect_jpeg_paths()  # cache
 # ---------------------------------------------------------------------------
 # Public API
 # ---------------------------------------------------------------------------
+
 
 def generate_row(_faker: Faker, row_id: int) -> Tuple[int, str, str]:  # noqa: D401
     """Return ``(id, filename, base64_string)`` cycling through images."""
@@ -77,14 +86,7 @@ def generate_row(_faker: Faker, row_id: int) -> Tuple[int, str, str]:  # noqa: D
 
 def jpeg_data() -> None:
     """Materialise the pipe‑delimited CSV + schema under the generated folder."""
-    out_dir = (
-            Path.cwd()
-            / ".."
-            / "data"
-            / "generated"
-            / "single_columns"
-            / "jpeg"
-    )
+    out_dir = repo_root / "data" / "generated" / "single_columns" / "jpeg"
     out_dir.mkdir(parents=True, exist_ok=True)
 
     csv_path = out_dir / "data.csv"
