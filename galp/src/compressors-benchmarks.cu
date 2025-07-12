@@ -114,7 +114,7 @@ int main(int argc, char* argv[]) {
 	// (0) Generate new binaries + discover directories
 	// -------------------------------------------------------------------------
 	const size_t TOTAL = 25'600 * 1'024;
-	const size_t HEAD  = 1'024;
+	const size_t HEAD  = 0;
 
 	const std::filesystem::path floats_dir  = FLS_GALP_SOURCE_DIR "/data/floats";
 	const std::filesystem::path doubles_dir = FLS_GALP_SOURCE_DIR "/data/doubles";

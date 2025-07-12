@@ -64,7 +64,7 @@ public:
 };
 
 struct BenchmarkResult {
-	bool   found_value;
+	bool   results_match;
 	double execution_time_ms;
 	double compression_ratio;
 
@@ -72,11 +72,14 @@ struct BenchmarkResult {
 	                const enums_nvcomp::CompressionType compression_type,
 	                const size_t                        n_bytes,
 	                const std::string                   data_name) const {
-		printf("%s,%s,%s,%d,%lu,%f,%f\n",
+
+		const char* is_valid = results_match ? "valid" : "wrong";
+
+		printf("%s,%s,%s,%s,%lu,%f,%f\n",
 		       enums_nvcomp::comparison_type_to_string(comparison_type).c_str(),
 		       enums_nvcomp::compression_type_to_string(compression_type).c_str(),
 		       data_name.c_str(),
-		       found_value,
+		       is_valid,
 		       n_bytes,
 		       execution_time_ms,
 		       compression_ratio);

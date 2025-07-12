@@ -95,7 +95,7 @@ inline GenResult generate_write_and_scan(const std::filesystem::path& floats_dir
 	GenResult res;
 
 	// (1) produce "1.bin" in each directory
-	res.head = generate_and_write((floats_dir / "1.bin").string(), (doubles_dir / "1.bin").string(), total, head_count);
+	res.head = generate_and_write((floats_dir / "random.bin").string(), (doubles_dir / "random.bin").string(), total, head_count);
 
 	// (2) collect existing *.bin files
 	auto collect = [](const std::filesystem::path& dir, std::vector<std::string>& out) {
