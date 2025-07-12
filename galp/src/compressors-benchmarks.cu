@@ -1,14 +1,25 @@
-// benchmark_runner.cpp – self‑contained driver that replicates the shell script logic
-// Compile with C++17 or newer, e.g.:
+// =============================================================================
+// benchmark_runner.cpp  —  single-file driver that mirrors test-scripts/run.sh
+//
+// * Builds with any C++17+ host compiler + NVCC.
+// * Host-only code (filesystem, main, etc.) is hidden from the device pass
+//   via `#if !defined(__CUDA_ARCH__)` guards, so NVCC no longer chokes.
+//
+// Compile example:
 //   g++ -std=c++17 benchmark_runner.cpp -o compressors-benchmarks $(CUDA_LIBS) ...
-// -----------------------------------------------------------------------------
+// =============================================================================
 #include "engine/data.cuh"
 #include "engine/enums.cuh"
 #include "flsgpu/consts.cuh"
+#include "generator/generate_binaries.hpp"
 #include "nvcomp/benchmark-compressors.cuh"
 #include <algorithm>
 #include <cstdint>
-#include <filesystem>
+#include <cstdio>
+#include <cstdlib>
+#if !defined(__CUDA_ARCH__)
+#include <filesystem> // host-only
+#endif
 #include <fstream>
 #include <iostream>
 #include <memory>
@@ -17,13 +28,13 @@
 #include <vector>
 
 // -----------------------------------------------------------------------------
-// Utility helpers (unchanged from the original source)
+// Utility helpers (shared by host + device passes)
 // -----------------------------------------------------------------------------
-std::string extract_filename(const std::string& path) {
-	const std::size_t pos      = path.find_last_of("/");
-	std::string       filename = (pos == std::string::npos) ? path : path.substr(pos + 1);
-	const std::size_t extPos   = filename.find_last_of('.');
-	return (extPos == std::string::npos) ? filename : filename.substr(0, extPos);
+inline std::string extract_filename(const std::string& path) {
+	const std::size_t pos = path.find_last_of('/');
+	std::string       fn  = (pos == std::string::npos) ? path : path.substr(pos + 1);
+	const std::size_t ext = fn.find_last_of('.');
+	return (ext == std::string::npos) ? fn : fn.substr(0, ext);
 }
 
 struct CLIArgs {
@@ -34,14 +45,15 @@ struct CLIArgs {
 	int                           n_values;
 };
 
-CLIArgs parse_cli_args(int argc, char* argv[]) {
+inline CLIArgs parse_cli_args(int argc, char* argv[]) {
 	if (argc != 6) {
 		std::cerr << "Usage: " << argv[0]
-		          << " <data_type> <comparison_enum:string> <decompressor_enum:string> <data_path> <vector_count>\n";
+		          << " <data_type> <comparison_enum:string> <decompressor_enum:string> "
+		             "<data_path> <vector_count>\n";
 		throw std::invalid_argument("Incorrect CLI argument count");
 	}
 
-	int32_t idx = 0;
+	int     idx = 0;
 	CLIArgs args;
 	args.data_type         = enums::string_to_data_type(argv[++idx]);
 	args.comparison_type   = enums_nvcomp::string_to_comparison_type(argv[++idx]);
@@ -51,13 +63,12 @@ CLIArgs parse_cli_args(int argc, char* argv[]) {
 	return args;
 }
 
-// Template benchmark launcher (unchanged)
+// Template benchmark launcher (host-only code but harmless for device pass)
 template <typename T>
-void execute_benchmark(const CLIArgs& args) {
+inline void execute_benchmark(const CLIArgs& args) {
 	auto [data, count] = data::arrays::read_file_as<T>(args.file_path, args.n_values);
 
-	// Deterministic but arbitrary search value (matches shell script)
-	uint32_t u                   = 0x4100f9db;
+	uint32_t u                   = 0x4100f9db; // deterministic test value
 	const T  value_to_search_for = *reinterpret_cast<T*>(&u);
 
 	BenchmarkResult result;
@@ -79,68 +90,93 @@ void execute_benchmark(const CLIArgs& args) {
 }
 
 // -----------------------------------------------------------------------------
-// Hard‑coded benchmark matrix (replicates test‑scripts/run.sh logic)
+// Main driver  (host-only; skipped entirely for the device pass)
 // -----------------------------------------------------------------------------
+#if !defined(__CUDA_ARCH__)
 int main(int argc, char* argv[]) {
-	constexpr int VECTOR_COUNT = 25'600; // matches the shell script constant
+	constexpr int VECTOR_COUNT = 25'600; // matches shell-script constant
 
-	// ---------------------------------------------------------------------------
-	// Fallback: keep original single‑case CLI if exactly 5 user arguments present
-	// ---------------------------------------------------------------------------
+	// -------------------------------------------------------------------------
+	// Single-case CLI fallback (exactly 5 user args)
+	// -------------------------------------------------------------------------
 	if (argc == 6) {
 		CLIArgs args = parse_cli_args(argc, argv);
-		switch (args.data_type) {
-		case enums::DataType::F32:
+		if (args.data_type == enums::DataType::F32)
 			execute_benchmark<float>(args);
-			break;
-		case enums::DataType::F64:
+		else if (args.data_type == enums::DataType::F64)
 			execute_benchmark<double>(args);
-			break;
-		default:
+		else
 			throw std::invalid_argument("Unsupported data type");
-		}
 		return 0;
 	}
 
-	// ---------------------------------------------------------------------------
-	// Automatic discovery of .bin files inside data/float and data/double
-	// ---------------------------------------------------------------------------
-	std::vector<std::string> float_files, double_files;
-	std::filesystem::path    float_path = FLS_GALP_SOURCE_DIR "/data/floats";
-	for (const auto& entry : std::filesystem::directory_iterator(float_path)) {
-		if (entry.is_regular_file() && entry.path().extension() == ".bin")
-			float_files.push_back(entry.path().string());
-	}
-	std::filesystem::path double_path = FLS_GALP_SOURCE_DIR "/data/doubles";
-	for (const auto& entry : std::filesystem::directory_iterator(double_path)) {
-		if (entry.is_regular_file() && entry.path().extension() == ".bin")
-			double_files.push_back(entry.path().string());
-	}
+	// -------------------------------------------------------------------------
+	// (0) Generate new binaries + discover directories
+	// -------------------------------------------------------------------------
+	const size_t TOTAL = 25'600 * 1'024;
+	const size_t HEAD  = 1'024;
 
-	if (float_files.empty() && double_files.empty()) {
-		std::cerr << "No .bin test files found. Please populate data/float and data/double." << std::endl;
+	const std::filesystem::path floats_dir  = FLS_GALP_SOURCE_DIR "/data/floats";
+	const std::filesystem::path doubles_dir = FLS_GALP_SOURCE_DIR "/data/doubles";
+
+	bin::GenResult gen = bin::generate_write_and_scan(floats_dir, doubles_dir, TOTAL, HEAD);
+
+	std::cout << "First " << HEAD << " values:\n";
+	for (double v : gen.head)
+		std::cout << v << '\n';
+
+	if (gen.float_files.empty() && gen.double_files.empty()) {
+		std::cerr << "No .bin test files found. Populate data/floats and data/doubles.\n";
 		return 1;
 	}
 
-	// ---------------------------------------------------------------------------
-	// Enumerations matching the shell‑script variables
-	// ---------------------------------------------------------------------------
+	// -------------------------------------------------------------------------
+	// Benchmark matrix settings (mirrors test-scripts/run.sh)
+	// -------------------------------------------------------------------------
 	const std::vector<enums_nvcomp::ComparisonType> COMPARISONS = {enums_nvcomp::ComparisonType::DECOMPRESSION,
 	                                                               enums_nvcomp::ComparisonType::DECOMPRESSION_QUERY};
 
-	const std::vector<enums_nvcomp::CompressionType> COMPRESSORS = {enums_nvcomp::ALP,
-	                                                                enums_nvcomp::GALP,
-	                                                                enums_nvcomp::BITCOMP,
-	                                                                enums_nvcomp::BITCOMP_SPARSE,
-	                                                                enums_nvcomp::LZ4,
-	                                                                enums_nvcomp::ZSTD,
-	                                                                enums_nvcomp::DEFLATE,
-	                                                                enums_nvcomp::GDEFLATE,
-	                                                                enums_nvcomp::SNAPPY};
+	const std::vector<enums_nvcomp::CompressionType> COMPRESSORS = {
+	    //
+	    // enums_nvcomp::ALP,
+	    enums_nvcomp::GALP,
+	    enums_nvcomp::BITCOMP,
+	    enums_nvcomp::BITCOMP_SPARSE,
+	    enums_nvcomp::LZ4,
+	    enums_nvcomp::ZSTD,
+	    enums_nvcomp::DEFLATE,
+	    enums_nvcomp::GDEFLATE,
+	    enums_nvcomp::SNAPPY
+	    //
+	};
 
-	// ---------------------------------------------------------------------------
-	// (1) Thrust path – only DECOMPRESSION_QUERY variant, both F32 and F64
-	// ---------------------------------------------------------------------------
+	// CSV header
+	std::printf("comparison_type,compression_type,data_name,found_value,"
+	            "n_bytes,execution_time_ms,compression_ratio\n");
+
+	// -------------------------------------------------------------------------
+	// (1) Full matrix — Floats (F32)
+	// -------------------------------------------------------------------------
+	for (auto cmp : COMPARISONS)
+		for (auto decomp : COMPRESSORS)
+			for (const auto& path : gen.float_files) {
+				CLIArgs args {enums::DataType::F32, cmp, decomp, path, VECTOR_COUNT * consts::VALUES_PER_VECTOR};
+				execute_benchmark<float>(args);
+			}
+
+	// -------------------------------------------------------------------------
+	// (2) Full matrix — Doubles (F64)
+	// -------------------------------------------------------------------------
+	for (auto cmp : COMPARISONS)
+		for (auto decomp : COMPRESSORS)
+			for (const auto& path : gen.double_files) {
+				CLIArgs args {enums::DataType::F64, cmp, decomp, path, VECTOR_COUNT * consts::VALUES_PER_VECTOR};
+				execute_benchmark<double>(args);
+			}
+
+	// -------------------------------------------------------------------------
+	// (3) Thrust path — only DECOMPRESSION_QUERY
+	// -------------------------------------------------------------------------
 	auto run_thrust = [&](enums::DataType dtype, const std::vector<std::string>& files) {
 		for (const auto& path : files) {
 			CLIArgs args;
@@ -157,32 +193,9 @@ int main(int argc, char* argv[]) {
 		}
 	};
 
-	run_thrust(enums::DataType::F32, float_files);
-	run_thrust(enums::DataType::F64, double_files);
-
-	// ---------------------------------------------------------------------------
-	// (2) Full matrix for Floats (F32)
-	// ---------------------------------------------------------------------------
-	for (auto cmp : COMPARISONS) {
-		for (auto decomp : COMPRESSORS) {
-			for (const auto& path : float_files) {
-				CLIArgs args {enums::DataType::F32, cmp, decomp, path, VECTOR_COUNT * consts::VALUES_PER_VECTOR};
-				execute_benchmark<float>(args);
-			}
-		}
-	}
-
-	// ---------------------------------------------------------------------------
-	// (3) Full matrix for Doubles (F64)
-	// ---------------------------------------------------------------------------
-	for (auto cmp : COMPARISONS) {
-		for (auto decomp : COMPRESSORS) {
-			for (const auto& path : double_files) {
-				CLIArgs args {enums::DataType::F64, cmp, decomp, path, VECTOR_COUNT * consts::VALUES_PER_VECTOR};
-				execute_benchmark<double>(args);
-			}
-		}
-	}
+	run_thrust(enums::DataType::F32, gen.float_files);
+	run_thrust(enums::DataType::F64, gen.double_files);
 
 	return 0;
 }
+#endif // !__CUDA_ARCH__
