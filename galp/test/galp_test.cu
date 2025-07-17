@@ -106,7 +106,32 @@ inline void test_alp(const std::filesystem::path& path) {
 	flsgpu::host::free_column(column);
 }
 
-TEST(ThrustCore, TEST_GALP) {
+struct CLIArgs;
+template <typename T>
+inline void test_galp(const std::filesystem::path& path) {
+	auto data_vec = read_file<T>(path);
+
+	flsgpu::host::ALPColumn<T>           column          = alp::encode(data_vec.data(), data_vec.size(), true);
+	flsgpu::host::ALPExtendedColumn<T>   column_extended = column.create_extended_column();
+	flsgpu::device::ALPExtendedColumn<T> d_column        = column_extended.copy_to_device();
+	GPUArray<T>                          d_decompression_result(data_vec.size());
+	constexpr int32_t                    UNPACK_N_VECTORS = 1;
+	const ThreadblockMapping<T>          mapping(UNPACK_N_VECTORS, column.get_n_vecs());
+	kernels::device::decompress_column<T,
+	                                   UNPACK_N_VECTORS,
+	                                   1,
+	                                   ALPExtendedDecompressor<T, UNPACK_N_VECTORS>,
+	                                   flsgpu::device::ALPExtendedColumn<T>>
+	    <<<mapping.n_blocks, mapping.N_THREADS_PER_BLOCK>>>(d_column, d_decompression_result.get());
+
+	CUDA_SAFE_CALL(cudaDeviceSynchronize());
+	double compression_ratio = column_extended.get_compression_ratio();
+	std::cout << "compression_ratio : " << compression_ratio << std::endl;
+	flsgpu::host::free_column(column_extended);
+	flsgpu::host::free_column(d_column);
+}
+
+TEST(ALP, TEST_ALP) {
 	// -------------------------------------------------------------------------
 	// (0) Generate new binaries + discover directories
 	// -------------------------------------------------------------------------
@@ -119,5 +144,21 @@ TEST(ThrustCore, TEST_GALP) {
 	bin::GenResult gen = bin::generate_write_and_scan(floats_dir, doubles_dir, TOTAL, HEAD);
 	for (const auto& path : gen.float_files) {
 		test_alp<float>(path);
+	}
+}
+
+TEST(GALP, TEST_GALP) {
+	// -------------------------------------------------------------------------
+	// (0) Generate new binaries + discover directories
+	// -------------------------------------------------------------------------
+	const size_t TOTAL = 25'600 * 1'024;
+	const size_t HEAD  = 0;
+
+	const std::filesystem::path floats_dir  = FLS_GALP_SOURCE_DIR "/data/floats";
+	const std::filesystem::path doubles_dir = FLS_GALP_SOURCE_DIR "/data/doubles";
+
+	bin::GenResult gen = bin::generate_write_and_scan(floats_dir, doubles_dir, TOTAL, HEAD);
+	for (const auto& path : gen.float_files) {
+		test_galp<float>(path);
 	}
 }
