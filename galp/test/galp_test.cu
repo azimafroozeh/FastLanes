@@ -79,11 +79,11 @@ using ALPExtendedDecompressor = typename flsgpu::device::ALPDecompressor<
 
 struct CLIArgs;
 template <typename T>
-inline void test_alp(std::filesystem::path path) {
+inline void test_alp(const std::filesystem::path& path) {
 	auto data_vec = read_file<T>(path);
 
 	flsgpu::host::ALPColumn<T>  column = alp::encode(data_vec.data(), data_vec.size(), true);
-	GPUArray<T>                 d_decompression_result(column.get_n_values());
+	GPUArray<T>                 d_decompression_result(data_vec.size());
 	constexpr int32_t           UNPACK_N_VECTORS = 1;
 	const ThreadblockMapping<T> mapping(UNPACK_N_VECTORS, column.get_n_vecs());
 
@@ -96,7 +96,7 @@ inline void test_alp(std::filesystem::path path) {
 	flsgpu::host::free_column(d_column);
 
 	bool        kernel_successful = false;
-	GPUArray<T> d_input(column.get_n_values(), data_vec.data());
+	GPUArray<T> d_input(data_vec.size(), data_vec.data());
 
 	kernel_successful =
 	    check_if_device_buffers_are_equal<T>(d_decompression_result.get(), d_input.get(), column.get_n_values());
