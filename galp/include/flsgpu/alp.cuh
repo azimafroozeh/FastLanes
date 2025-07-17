@@ -1,4 +1,4 @@
-#include "../alp/constants.hpp"
+#include "alp/constants.hpp"
 #include "alp/config.hpp"
 #include "fls.cuh"
 #include "structs.cuh"

@@ -6,6 +6,7 @@ project(GALP LANGUAGES CXX CUDA)
 set(CMAKE_CUDA_STANDARD_REQUIRED ON)
 set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 set(CMAKE_CUDA_SEPARABLE_COMPILATION ON)
+set(CMAKE_CUDA_FLAGS "${CMAKE_CUDA_FLAGS} --expt-relaxed-constexpr") #todo FIX ME
 
 # ────────────────────────────────────────────────
 # 1. CUDA Toolkit
