@@ -1,3 +1,4 @@
+#include "data/fastlanes_data.hpp"
 #include "engine/data.cuh"
 #include "engine/device-utils.cuh"
 #include "engine/kernels.cuh"
@@ -46,6 +47,30 @@ std::vector<T> read_file(const std::string& path) {
 		throw std::runtime_error("Error reading file: " + path);
 	}
 
+	return data;
+}
+
+// -----------------------------------------------------------------------------
+// CSV loader – light‑weight, header‑only
+// -----------------------------------------------------------------------------
+template <typename T>
+std::vector<T> read_csv(const std::filesystem::path& path) {
+	std::ifstream file(path);
+	if (!file) {
+		throw std::runtime_error("Could not open csv file: " + path.string());
+	}
+
+	std::vector<T> data;
+	std::string    line;
+	while (std::getline(file, line)) {
+		std::stringstream ss(line);
+		std::string       cell;
+		while (std::getline(ss, cell, ',')) {
+			if (!cell.empty()) {
+				data.push_back(static_cast<T>(std::stod(cell)));
+			}
+		}
+	}
 	return data;
 }
 
@@ -131,6 +156,36 @@ inline void test_galp(const std::filesystem::path& path) {
 	flsgpu::host::free_column(d_column);
 }
 
+// -----------------------------------------------------------------------------
+// Exact copy of test_galp<…>, but uses read_csv instead of read_file
+// -----------------------------------------------------------------------------
+template <typename T>
+inline void test_galp_csv(const std::filesystem::path& path) {
+	auto data_vec = read_csv<T>(path);
+
+	flsgpu::host::ALPColumn<T>           column          = alp::encode(data_vec.data(), data_vec.size(), true);
+	flsgpu::host::ALPExtendedColumn<T>   column_extended = column.create_extended_column();
+	flsgpu::device::ALPExtendedColumn<T> d_column        = column_extended.copy_to_device();
+
+	GPUArray<T>                 d_decompression_result(data_vec.size());
+	constexpr int32_t           UNPACK_N_VECTORS = 1;
+	const ThreadblockMapping<T> mapping(UNPACK_N_VECTORS, column.get_n_vecs());
+
+	kernels::device::decompress_column<T,
+	                                   UNPACK_N_VECTORS,
+	                                   1,
+	                                   ALPExtendedDecompressor<T, UNPACK_N_VECTORS>,
+	                                   flsgpu::device::ALPExtendedColumn<T>>
+	    <<<mapping.n_blocks, mapping.N_THREADS_PER_BLOCK>>>(d_column, d_decompression_result.get());
+
+	CUDA_SAFE_CALL(cudaDeviceSynchronize());
+	double compression_ratio = column_extended.get_compression_ratio();
+	std::cout << "compression_ratio : " << compression_ratio << std::endl;
+
+	flsgpu::host::free_column(column_extended);
+	flsgpu::host::free_column(d_column);
+}
+
 TEST(ALP, TEST_ALP) {
 	// -------------------------------------------------------------------------
 	// (0) Generate new binaries + discover directories
@@ -160,5 +215,18 @@ TEST(GALP, TEST_GALP) {
 	bin::GenResult gen = bin::generate_write_and_scan(floats_dir, doubles_dir, TOTAL, HEAD);
 	for (const auto& path : gen.float_files) {
 		test_galp<float>(path);
+	}
+}
+
+TEST(GALP, TEST_GALP_BY_GALP_DATASET) {
+	namespace fs = std::filesystem;
+
+	for (const auto& [name, dir] : fastlanes::galp::dataset) {
+		for (const auto& entry : fs::directory_iterator(dir)) {
+			if (entry.is_regular_file() && entry.path().extension() == ".csv") {
+				std::cout << "Testing file: " << entry.path().string() << std::endl;
+				test_galp_csv<float>(entry.path());
+			}
+		}
 	}
 }

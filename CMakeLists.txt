@@ -183,7 +183,7 @@ if (true)
 endif ()
 
 # DATA : ---------------------------------------------------------------------------------------------------------------
-if (FLS_BUILD_TESTING OR FLS_BUILD_BENCHMARKING OR FLS_BUILD_EXAMPLES OR FLS_ENABLE_DATA)
+if (FLS_BUILD_TESTING OR FLS_BUILD_BENCHMARKING OR FLS_BUILD_EXAMPLES OR FLS_ENABLE_DATA OR FLS_ENABLE_GALP_TESTING_AND_BENCHMARKING OR FLS_ENABLE_FSST_TESTING_AND_BENCHMARKING)
     message("---------------------------------------------------------------------------------------------------------")
     message("-- FLS: Enabling Data.")
 
