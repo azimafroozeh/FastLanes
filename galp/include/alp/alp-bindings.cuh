@@ -5,7 +5,7 @@
 #include <exception>
 #include <type_traits>
 ;
-#include "../flsgpu/flsgpu-api.cuh"
+#include "flsgpu/flsgpu-api.cuh"
 
 // WARNING The original ALP repo contains code that triggers warnings if all
 // warnings are turned off. To make sure these warnings do not show up when the

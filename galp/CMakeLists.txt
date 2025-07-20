@@ -146,6 +146,6 @@ set_target_properties(generated-bindings PROPERTIES CUDA_SEPARABLE_COMPILATION O
 add_subdirectory(benchmark)
 
 # ────────────────────────────────────────────────
-# 8. Tests
+# 8. GALP
 # ────────────────────────────────────────────────
-add_subdirectory(test)
+add_subdirectory(galp)
