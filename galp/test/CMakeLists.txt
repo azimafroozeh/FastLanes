@@ -8,6 +8,7 @@ add_executable(run_tests
 target_link_libraries(run_tests PRIVATE
         galp_core
         GTest::gtest_main
+        FastLanes::core
 )
 
 apply_warnings(run_tests)

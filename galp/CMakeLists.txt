@@ -143,13 +143,7 @@ set_target_properties(generated-bindings PROPERTIES CUDA_SEPARABLE_COMPILATION O
 # ────────────────────────────────────────────────
 # 7. Benchmarks
 # ────────────────────────────────────────────────
-add_executable(compressors-benchmarks src/compressors-benchmarks.cu)
-apply_warnings(compressors-benchmarks)
-target_link_libraries(compressors-benchmarks PRIVATE galp_core)
-
-add_executable(micro-benchmarks src/micro-benchmarks.cu)
-apply_warnings(micro-benchmarks)
-target_link_libraries(micro-benchmarks PRIVATE galp_core generated-bindings)
+add_subdirectory(benchmark)
 
 # ────────────────────────────────────────────────
 # 8. Tests
