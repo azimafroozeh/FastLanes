@@ -1,7 +1,8 @@
 """
 Module: scripts/generate_helpers/galp_generator.py
-Description: Generates synthetic FLOAT(-like) data values—e.g. 10.23, 24.46—and
-             writes them to CSV files with accompanying schema definitions.
+Description: For two FLOAT columns—one random two‑decimal GALP and one constant 1.00—
+             writes each as its own single‑column CSV + schema.json, in both
+             ROW_GROUP_SIZE and VEC_SIZE variants.
 """
 
 import random
@@ -9,64 +10,50 @@ from decimal import Decimal, ROUND_HALF_UP
 from pathlib import Path
 import json
 
-from .write_helpers import *  # write_csv(...)
-from .common import *         # ROW_GROUP_SIZE, VEC_SIZE
+from .write_helpers import write_csv
+from .common import ROW_GROUP_SIZE, VEC_SIZE
 
 
-# ----------------------------------------------------------------------
-# 1) Wrap generate_galp() to match other “generate_fls_*” signatures
-# ----------------------------------------------------------------------
 def generate_fls_galp(_faker, row_id):
-    """Generates a list containing a single float-like (two-decimal) value."""
-    return generate_galp(_faker, row_id)
+    """Random FLOAT in [0.0,100.0], two decimals."""
+    raw = random.uniform(0.0, 100.0)
+    galp_val = float(
+        Decimal(str(raw))
+        .quantize(Decimal("0.01"), rounding=ROUND_HALF_UP)
+    )
+    return [galp_val]
 
 
-# ----------------------------------------------------------------------
-# 2) Writer for the GALP column (with schema.json)
-# ----------------------------------------------------------------------
+def generate_fls_constant(_faker, row_id):
+    """Constant FLOAT = 1.00."""
+    return [1.00]
+
+
 def fls_galp():
     """
-    Write a single-column CSV of FLOAT values (two decimal places).
-    Creates two outputs, each with a schema.json alongside generated.csv:
-      - data/generated/single_columns/galp/generated.csv   (ROW_GROUP_SIZE rows)
-      - data/generated/one_vector/galp/generated.csv       (VEC_SIZE rows)
+    For each of two fields—GALP and CONSTANT—write:
+
+      data/generated/galp/<field>/single_column/generated.csv   (ROW_GROUP_SIZE rows)
+      data/generated/galp/<field>/single_column/schema.json
+
+      data/generated/galp/<field>/one_vector/generated.csv     (VEC_SIZE rows)
+      data/generated/galp/<field>/one_vector/schema.json
     """
+    base_dir = Path.cwd() / 'data' / 'generated' / 'galp'
 
-    # Directory for the “rowgroup” version
-    dir_rowgroup = Path.cwd() / 'data' / 'generated' / 'galp' / 'single_column'
-    write_csv(dir_rowgroup, generate_fls_galp, ROW_GROUP_SIZE)
+    tasks = [
+        ('galp', 'SYNTHETIC_DATA_GALP', generate_fls_galp),
+        ('constant', 'SYNTHETIC_DATA_CONSTANT', generate_fls_constant),
+    ]
 
-    # Write schema.json in the same folder with trailing newline
-    schema_rg = {
-        "columns": [
-            {"name": "SYNTHETIC_DATA_GALP", "type": "FLOAT"}
-        ]
-    }
-    (dir_rowgroup / 'schema.json').write_text(json.dumps(schema_rg, indent=2) + "\n")
+    for folder_key, column_name, gen_fn in tasks:
+        # 1) Row‑group version
+        dir_rg = base_dir / folder_key / 'single_column'
+        write_csv(dir_rg, gen_fn, ROW_GROUP_SIZE)
+        schema = {"columns": [{"name": column_name, "type": "FLOAT"}]}
+        (dir_rg / 'schema.json').write_text(json.dumps(schema, indent=2) + "\n")
 
-    # Directory for the “one_vector” (VEC_SIZE rows) version
-    dir_onevec = Path.cwd() / 'data' / 'generated' / 'galp' / 'one_vector'
-    write_csv(dir_onevec, generate_fls_galp, VEC_SIZE)
-
-    # Write schema.json in that folder as well with trailing newline
-    schema_ov = {
-        "columns": [
-            {"name": "SYNTHETIC_DATA_GALP", "type": "FLOAT"}
-        ]
-    }
-    (dir_onevec / 'schema.json').write_text(json.dumps(schema_ov, indent=2) + "\n")
-
-
-# ----------------------------------------------------------------------
-# Core galp generator
-# ----------------------------------------------------------------------
-def generate_galp(_faker, row_id, *, low: float = 0.0, high: float = 100.0):
-    """
-    Generates a single random decimal number in [low, high] with exactly
-    two digits after the decimal point. Returned as a one-element list so it
-    works seamlessly with write_csv(...).
-    """
-    raw = random.uniform(low, high)
-    # Round to 2 decimal places using Decimal so CSVs stay nicely formatted
-    value = float(Decimal(str(raw)).quantize(Decimal("0.01"), rounding=ROUND_HALF_UP))
-    return [value]
+        # 2) One‑vector version
+        dir_ov = base_dir / folder_key / 'one_vector'
+        write_csv(dir_ov, gen_fn, VEC_SIZE)
+        (dir_ov / 'schema.json').write_text(json.dumps(schema, indent=2) + "\n")
