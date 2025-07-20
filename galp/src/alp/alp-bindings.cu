@@ -1,10 +1,5 @@
+#include "alp.hpp"
 #include "alp/alp-bindings.cuh"
-#include "alp/config.hpp"
-#include "alp/decoder.hpp"
-#include "alp/encoder.hpp"
-#include "alp/falp.hpp"
-#include "alp/rd.hpp"
-#include "fls/fls-bindings.hpp"
 #include <cstddef>
 #include <cstdint>
 #include <cstdio>
@@ -48,7 +43,7 @@ bool is_compressable(const T* input_array, const size_t count) {
 
 	bool is_possible = false;
 	for (int32_t attempts = 0; attempts < MAX_ATTEMPTS_TO_ENCODE; ++attempts) {
-		alp::encoder<T>::init(input_array, 0, count, sample_array, alpstate);
+		alp::encoder<T>::init(input_array, count, sample_array, alpstate);
 
 		if ((is_possible = alpstate.scheme == alp::Scheme::ALP)) {
 			break;
@@ -66,7 +61,7 @@ state<T> configure_alpstate(const T* input_array, const size_t n_values) {
 
 	bool successful_encoding = false;
 	for (int32_t attempts = 0; attempts < MAX_ATTEMPTS_TO_ENCODE; ++attempts) {
-		alp::encoder<T>::init(input_array, 0, n_values, sample_array, alpstate);
+		alp::encoder<T>::init(input_array, n_values, sample_array, alpstate);
 
 		if ((successful_encoding = alpstate.scheme == Scheme::ALP)) {
 			break;
@@ -112,11 +107,13 @@ flsgpu::host::ALPColumn<T> encode(const T* input_array, const size_t n_values, c
 
 	size_t bit_widths_sum = 0;
 	for (size_t vi {0}; vi < n_vecs; vi++) {
-		alp::encoder<T>::encode(input_array, exceptions, positions, &counts[vi], encoded_array, alpstate);
+		alp::encoder<T>::encode(input_array, exceptions, positions, encoded_array, alpstate, nullptr);
 		alp::encoder<T>::analyze_ffor(encoded_array, bit_widths[vi], reinterpret_cast<INT_T*>(&bases[vi]));
 
+		counts[vi] = alpstate.n_exceptions;
 		bit_widths_sum += bit_widths[vi];
-		fls::ffor(reinterpret_cast<UINT_T*>(encoded_array), packed_array, bit_widths[vi], &bases[vi]);
+		fastlanes::generated::ffor::fallback::scalar::ffor(
+		    reinterpret_cast<UINT_T*>(encoded_array), packed_array, bit_widths[vi], &bases[vi]);
 
 		input_array += consts::VALUES_PER_VECTOR;
 		size_t compressed_values_size = utils::get_compressed_vector_size<T>(bit_widths[vi]);
@@ -202,10 +199,13 @@ T* decode(const flsgpu::host::ALPColumn<T> column, T* output_array) {
 		                                        column.factor_indices[vi],
 		                                        column.fraction_indices[vi]);
 
+		alp::state<T> alpstate;
+		alpstate.n_exceptions = column.counts[vi];
+
 		alp::decoder<T>::patch_exceptions(c_output_array,
 		                                  column.exceptions + column.exceptions_offsets[vi],
 		                                  column.positions + column.exceptions_offsets[vi],
-		                                  &column.counts[vi]);
+		                                  alpstate);
 
 		c_output_array += consts::VALUES_PER_VECTOR;
 	}
@@ -233,10 +233,13 @@ T* decode(const flsgpu::host::ALPExtendedColumn<T> column, T* output_array) {
 			count += column.offsets_counts[vi * N_LANES + offset_count_i] >> 10;
 		}
 
+		alp::state<T> alpstate;
+		alpstate.n_exceptions = count; // fix me
+
 		alp::decoder<T>::patch_exceptions(c_output_array,
 		                                  column.exceptions + column.exceptions_offsets[vi],
 		                                  column.positions + column.exceptions_offsets[vi],
-		                                  &count);
+		                                  alpstate);
 
 		c_output_array += consts::VALUES_PER_VECTOR;
 	}

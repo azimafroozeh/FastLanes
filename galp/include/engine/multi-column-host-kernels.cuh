@@ -1,9 +1,9 @@
-#include "../generated-bindings/multi-column-device-kernels.cuh"
-#include "data.cuh"
-#include "device-utils.cuh"
-
 #ifndef MULTI_COLUMN_HOST_KERNELS_CUH
 #define MULTI_COLUMN_HOST_KERNELS_CUH
+
+#include "generated-bindings/multi-column-device-kernels.cuh"
+#include "data.cuh"
+#include "device-utils.cuh"
 
 namespace kernels { namespace host {
 

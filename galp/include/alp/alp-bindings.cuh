@@ -1,21 +1,13 @@
-#include "config.hpp"
-#include "constants.hpp"
+
+#ifndef ALP_BINDINGS_CUH
+#define ALP_BINDINGS_CUH
+
+#include "alp.hpp"
+#include "flsgpu/flsgpu-api.cuh"
 #include <cstddef>
 #include <cstdint>
 #include <exception>
 #include <type_traits>
-;
-#include "flsgpu/flsgpu-api.cuh"
-
-// WARNING The original ALP repo contains code that triggers warnings if all
-// warnings are turned off. To make sure these warnings do not show up when the
-// alp directory itself is not recompiled, I added this pragma to show it as a
-// system header. So be careful, warnings from the alp/* files do not show up
-// when compiling
-#pragma clang system_header
-
-#ifndef ALP_BINDINGS_CUH
-#define ALP_BINDINGS_CUH
 
 namespace alp {
 

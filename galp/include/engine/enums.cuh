@@ -1,8 +1,8 @@
-#include <stdexcept>
-#include <string>
-
 #ifndef ENUMS_CUH
 #define ENUMS_CUH
+
+#include <stdexcept>
+#include <string>
 
 namespace enums {
 enum class DataType {

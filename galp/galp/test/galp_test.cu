@@ -1,5 +1,5 @@
+#include "alp/alp-bindings.cuh"
 #include "data/fastlanes_data.hpp"
-#include "engine/data.cuh"
 #include "engine/device-utils.cuh"
 #include "engine/kernels.cuh"
 #include "flsgpu/alp.cuh"

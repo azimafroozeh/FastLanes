@@ -1,4 +1,4 @@
-#include "../flsgpu/flsgpu-api.cuh"
+#include "flsgpu/flsgpu-api.cuh"
 #include <algorithm>
 #include <cstdint>
 

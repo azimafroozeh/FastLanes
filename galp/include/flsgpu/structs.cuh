@@ -1,4 +1,4 @@
-#include "../alp/constants.hpp"
+#include "alp.hpp"
 #include "device-types.cuh"
 #include "host-utils.cuh"
 #include "utils.cuh"
@@ -177,8 +177,8 @@ struct ALPExtendedColumn {
 		return device::ALPExtendedColumn<T> {
 		    get_n_values(),
 		    ffor.copy_to_device(),
-		    GPUArray<INT_T>(consts::as<T>::FACT_ARR_COUNT, alp::Constants<T>::FACT_ARR).release(),
-		    GPUArray<T>(consts::as<T>::FRAC_ARR_COUNT, alp::Constants<T>::FRAC_ARR).release(),
+		    GPUArray<INT_T>(consts::as<T>::FACT_ARR_COUNT, alp::Constants<T>::FACT_ARR.data()).release(),
+		    GPUArray<T>(consts::as<T>::FRAC_ARR_COUNT, alp::Constants<T>::FRAC_ARR.data()).release(),
 		    GPUArray<uint8_t>(ffor.bp.get_n_vecs(), factor_indices).release(),
 		    GPUArray<uint8_t>(ffor.bp.get_n_vecs(), fraction_indices).release(),
 		    n_exceptions,
@@ -225,8 +225,8 @@ struct ALPColumn {
 		return device::ALPColumn<T> {
 		    get_n_values(),
 		    ffor.copy_to_device(),
-		    GPUArray<INT_T>(consts::as<T>::FACT_ARR_COUNT, alp::Constants<T>::FACT_ARR).release(),
-		    GPUArray<T>(consts::as<T>::FRAC_ARR_COUNT, alp::Constants<T>::FRAC_ARR).release(),
+		    GPUArray<INT_T>(consts::as<T>::FACT_ARR_COUNT, alp::Constants<T>::FACT_ARR.data()).release(),
+		    GPUArray<T>(consts::as<T>::FRAC_ARR_COUNT, alp::Constants<T>::FRAC_ARR.data()).release(),
 		    GPUArray<uint8_t>(ffor.bp.get_n_vecs(), factor_indices).release(),
 		    GPUArray<uint8_t>(ffor.bp.get_n_vecs(), fraction_indices).release(),
 		    n_exceptions,
