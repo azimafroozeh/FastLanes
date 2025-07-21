@@ -1,4 +1,4 @@
-project(GALP LANGUAGES CXX CUDA)
+enable_language(CUDA)
 
 # ────────────────────────────────────────────────
 # 0. Global settings
@@ -80,12 +80,13 @@ add_compile_definitions(FLS_GALP_SOURCE_DIR="${CMAKE_CURRENT_SOURCE_DIR}")
 # ────────────────────────────────────────────────
 add_subdirectory(src)
 
+# ────────────────────────────────────────────────
+# 8. tests
+# ────────────────────────────────────────────────
+add_subdirectory(test)
+
 ## ────────────────────────────────────────────────
 ## 7. Benchmarks
 ## ────────────────────────────────────────────────
 add_subdirectory(benchmark)
 
-# ────────────────────────────────────────────────
-# 8. tests
-# ────────────────────────────────────────────────
-add_subdirectory(test)

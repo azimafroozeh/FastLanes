@@ -13,28 +13,27 @@ permissions:
   contents: read
 
 jobs:
-  president-make-ci:
-    name: Makefile CI on president
+  president-build-test:
+    if: ${{ github.actor == 'azimafroozeh' }}
+    name: CMake CI on president
     runs-on:
       - self-hosted
       - Linux
       - X64
       - president
-    env:
-      # mirror your Makefile defaults
-      COMPUTE_CAPABILITY: 61
-      CUDA_LIBRARY_PATH: /usr/local/cuda-12.5
-      NVCOMP_INC: /usr/include/nvcomp_12/
-      NVCOMP_LIB: /usr/lib/x86_64-linux-gnu/nvcomp/12
-      CLANG_PATH: /usr/bin/clang++-14
-      GCC_PATH: /usr/bin/g++-12
 
     steps:
+      # ──────────────────────────────
+      # 0. Checkout
+      # ──────────────────────────────
       - name: Checkout source
         uses: actions/checkout@v3
         with:
           fetch-depth: 0
 
+      # ──────────────────────────────
+      # 1. Quick sanity of the runner
+      # ──────────────────────────────
       - name: 🔎 Env dump
         run: |
           set -x
@@ -47,34 +46,59 @@ jobs:
           which nvcc       || true
           which $CLANG_PATH || true
           which $GCC_PATH   || true
-          which make       || true
+          which cmake      || true
+          which ninja      || true
 
       - name: ✅ Verify tools
         run: |
-          for cmd in nvidia-smi nvcc $CLANG_PATH $GCC_PATH make; do
+          for cmd in nvidia-smi nvcc $CLANG_PATH $GCC_PATH cmake ninja; do
             command -v "$cmd" >/dev/null || { echo "::error::$cmd missing"; exit 127; }
           done
           nvidia-smi
           nvcc   --version
           $CLANG_PATH --version
           $GCC_PATH   --version
-          make --version
+          cmake  --version
+          ninja  --version
 
-      - name: 🔄 Generate code
-        run: make generate
+      # ──────────────────────────────
+      # 2. Configure with CMake
+      # ──────────────────────────────
+      - name: 🔄 CMake configure
+        run: |
+          cmake -S . -B build \
+            -G Ninja \
+            -DCMAKE_BUILD_TYPE=Release \
+            -DCMAKE_BUILD_GALP=ON
 
-      - name: 🏗️ Build binaries
-        run: make all
+      # ──────────────────────────────
+      # 3. Build (all targets)
+      # ──────────────────────────────
+      - name: 🏗️ Build
+        run: |
+          cmake --build build --parallel
 
+      # ──────────────────────────────
+      # 4. Run unit tests
+      # ──────────────────────────────
       - name: 🧪 Run tests
-        run: make test
+        run: |
+          cd build
+          ctest --output-on-failure
 
+      # ──────────────────────────────
+      # 5. Run benchmarks
+      #    (benchmarks are tagged with LABEL "benchmark")
+      # ──────────────────────────────
       - name: ⚡ Run benchmarks
         run: |
-          make benchmark-all
-          make benchmark-compressors
+          cd build
+          ctest
 
-      - name: 🚀 Smoke-test binaries
+      # ──────────────────────────────
+      # 6. Smoke‑test helper binaries
+      # ──────────────────────────────
+      - name: 🚀 Smoke‑test binaries
         run: |
-          ./bin/micro-benchmarks --help
-          ./bin/compressors-benchmarks --help
+          ./build/bin/micro-benchmarks       --help
+          ./build/bin/compressors-benchmarks --help
