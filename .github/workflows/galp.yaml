@@ -109,5 +109,5 @@ jobs:
       # ────────────────────────────────────────────────
       - name: 🚀 Smoke‑test binaries
         run: |
-          ./build/galp/micro-benchmarks
-          ./build/galp/compressors-benchmarks
+          ./build/galp/benchmark/micro-benchmarks
+          ./build/galp/benchmark/compressors-benchmarks
