@@ -39,7 +39,7 @@ def fls_galp():
       data/generated/galp/<field>/one_vector/generated.csv     (VEC_SIZE rows)
       data/generated/galp/<field>/one_vector/schema.json
     """
-    base_dir = Path.cwd() / 'data' / 'generated' / 'galp'
+    base_dir = Path.cwd() / '../data' / 'generated' / 'galp'
 
     tasks = [
         ('galp', 'SYNTHETIC_DATA_GALP', generate_fls_galp),
