@@ -23,83 +23,78 @@ jobs:
       - president
 
     steps:
-      # ──────────────────────────────
+      # ────────────────────────────────────────────────
       # 0. Checkout
-      # ──────────────────────────────
+      # ────────────────────────────────────────────────
       - name: Checkout source
         uses: actions/checkout@v3
         with:
           fetch-depth: 0
 
-      # ──────────────────────────────
+      # ────────────────────────────────────────────────
       # 1. Quick sanity of the runner
-      # ──────────────────────────────
+      # ────────────────────────────────────────────────
       - name: 🔎 Env dump
         run: |
           set -x
           hostname
           echo "Runner label: president"
-          echo "CUDA path: $CUDA_LIBRARY_PATH"
-          echo "NVCOMP_INC: $NVCOMP_INC"
-          echo "NVCOMP_LIB: $NVCOMP_LIB"
           which nvidia-smi || true
           which nvcc       || true
           which clang++    || true
           which g++        || true
           which cmake      || true
+          which make       || true
 
-      # ──────────────────────────────
+      # ────────────────────────────────────────────────
       # 2. Verify required tools
-      # ──────────────────────────────
+      # ────────────────────────────────────────────────
       - name: ✅ Verify tools
         run: |
-          for cmd in nvidia-smi nvcc clang++ g++ cmake; do
+          for cmd in nvidia-smi nvcc clang++ g++ cmake make; do
             command -v "$cmd" >/dev/null || { echo "::error::$cmd missing"; exit 127; }
           done
-
-      - name: Version outputs
-        run: |
           nvidia-smi
           nvcc     --version
           clang++  --version
           g++      --version
           cmake    --version
+          make     --version
 
-      # ──────────────────────────────
+      # ────────────────────────────────────────────────
       # 3. Configure with CMake
-      # ──────────────────────────────
+      # ────────────────────────────────────────────────
       - name: 🔄 CMake configure
         run: |
           cmake -S . -B build \
-            -G Ninja \
             -DCMAKE_BUILD_TYPE=Release \
             -DCMAKE_BUILD_GALP=ON
 
-      # ──────────────────────────────
+      # ────────────────────────────────────────────────
       # 4. Build (all targets)
-      # ──────────────────────────────
+      # ────────────────────────────────────────────────
       - name: 🏗️ Build
         run: cmake --build build --parallel
 
-      # ──────────────────────────────
+      # ────────────────────────────────────────────────
       # 5. Run unit tests
-      # ──────────────────────────────
+      # ────────────────────────────────────────────────
       - name: 🧪 Run tests
         run: |
           cd build
           ctest --output-on-failure
 
-      # ──────────────────────────────
-      # 6. Run benchmarks
-      # ──────────────────────────────
+      # ────────────────────────────────────────────────
+      # 6. Run benchmarks (labelled "benchmark")
+      # ────────────────────────────────────────────────
       - name: ⚡ Run benchmarks
         run: |
           cd build
           ctest -L benchmark || true
 
-      # ──────────────────────────────
+      # ────────────────────────────────────────────────
       # 7. Smoke‑test helper binaries
-      # ──────────────────────────────
+      # ────────────────────────────────────────────────
       - name: 🚀 Smoke‑test binaries
         run: |
           ./build/bin/micro-benchmarks       --help
