@@ -12,7 +12,7 @@ permissions:
 # ──────────────────────────────────────────────────────────────
 jobs:
   # 1️⃣ Native matrix build (president + ttt)
-  native-build:
+  build:
     strategy:
       fail-fast: false
       matrix:
@@ -47,38 +47,6 @@ jobs:
           nvidia-smi
           nvcc   --version
           cmake  --version
-
-      - name: ⚙️ Configure
-        run: cmake -S . -B build -DFLS_BUILD_GPU=ON
-
-      - name: 🛠️ Build
-        run: cmake --build build -- -j"$(nproc)"
-
-      - name: 🚀 Smoke-test
-        run: ./build/cuda_info_dummy
-
-  # 2️⃣ Docker build (president only, runs in parallel)
-  docker-build-president:
-    runs-on:
-      - self-hosted
-      - Linux
-      - X64
-      - president          # custom label for that runner
-
-    name: Docker build on president
-
-    container:
-      image: nvidia/cuda:11.8.0-devel-ubuntu22.04
-      options: --gpus all   # host must have NVIDIA Container Toolkit
-
-    steps:
-      - uses: actions/checkout@v3
-        with: { fetch-depth: 0 }
-
-      - name: 🔎 CUDA inside container
-        run: |
-          nvidia-smi
-          nvcc --version
 
       - name: ⚙️ Configure
         run: cmake -S . -B build -DFLS_BUILD_GPU=ON
