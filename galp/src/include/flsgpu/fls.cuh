@@ -1,3 +1,6 @@
+#ifndef FLS_CUH
+#define FLS_CUH
+
 #include "device-types.cuh"
 #include "old-fls.cuh"
 #include "structs.cuh"
@@ -6,9 +9,6 @@
 #include <cstdint>
 #include <cstdio>
 #include <type_traits>
-
-#ifndef FLS_CUH
-#define FLS_CUH
 
 namespace flsgpu { namespace device {
 

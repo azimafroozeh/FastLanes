@@ -78,68 +78,14 @@ add_compile_definitions(FLS_GALP_SOURCE_DIR="${CMAKE_CURRENT_SOURCE_DIR}")
 # ────────────────────────────────────────────────
 # 5. GALP core static library
 # ────────────────────────────────────────────────
-set(GALP_CORE_SOURCES
-        # alp
-        src/alp/alp-bindings.cu
-        # engine
-        src/engine/enums.cu
-        # nvcomp helpers
-#        src/nvcomp/benchmark-compressors.cu
-        #        src/nvcomp/nvcomp-compressors.cu
-)
-add_library(galp_core STATIC ${GALP_CORE_SOURCES})
-target_compile_options(galp_core PRIVATE $<$<COMPILE_LANGUAGE:CUDA>:-expt-relaxed-constexpr>)
-target_include_directories(galp_core PUBLIC
-        ${CMAKE_CURRENT_SOURCE_DIR}/include
-        ${CUDAToolkit_INCLUDE_DIRS})
-target_link_libraries(galp_core PUBLIC CUDA::cudart nvcomp::nvcomp Thrust::Thrust FastLanes::core)
-apply_warnings(galp_core)
-set_target_properties(galp_core PROPERTIES CUDA_SEPARABLE_COMPILATION ON)
+add_subdirectory(src)
 
-## ────────────────────────────────────────────────
-## 6. Generated-bindings library
-## ────────────────────────────────────────────────
-#set(GALP_GENERATED_BINDINGS_SOURCES
-#        src/generated-bindings/alp-double-decompress_column-bindings.cu
-#        src/generated-bindings/alp-double-query_column-bindings.cu
-#        src/generated-bindings/alp-double-query_multi_column-bindings.cu
-#        src/generated-bindings/alp-float-decompress_column-bindings.cu
-#        src/generated-bindings/alp-float-query_column-bindings.cu
-#        src/generated-bindings/alp-float-query_multi_column-bindings.cu
-#        src/generated-bindings/alpextended-double-decompress_column-bindings.cu
-#        src/generated-bindings/alpextended-double-query_column-bindings.cu
-#        src/generated-bindings/alpextended-double-query_multi_column-bindings.cu
-#        src/generated-bindings/alpextended-float-decompress_column-bindings.cu
-#        src/generated-bindings/alpextended-float-query_column-bindings.cu
-#        src/generated-bindings/alpextended-float-query_multi_column-bindings.cu
-#        src/generated-bindings/bp-uint32_t-decompress_column-bindings.cu
-#        src/generated-bindings/bp-uint32_t-query_column-bindings.cu
-#        src/generated-bindings/bp-uint64_t-decompress_column-bindings.cu
-#        src/generated-bindings/bp-uint64_t-query_column-bindings.cu
-#        src/generated-bindings/ffor-uint32_t-compute_column-bindings.cu
-#        src/generated-bindings/ffor-uint32_t-decompress_column-bindings.cu
-#        src/generated-bindings/ffor-uint32_t-query_column-bindings.cu
-#        src/generated-bindings/ffor-uint32_t-query_multi_column-bindings.cu
-#        src/generated-bindings/ffor-uint64_t-compute_column-bindings.cu
-#        src/generated-bindings/ffor-uint64_t-decompress_column-bindings.cu
-#        src/generated-bindings/ffor-uint64_t-query_column-bindings.cu
-#        src/generated-bindings/ffor-uint64_t-query_multi_column-bindings.cu
-#)
-#add_library(generated-bindings STATIC ${GALP_GENERATED_BINDINGS_SOURCES})
-#target_compile_options(generated-bindings PRIVATE $<$<COMPILE_LANGUAGE:CUDA>:-expt-relaxed-constexpr>)
-#target_include_directories(generated-bindings PUBLIC
-#        ${CMAKE_CURRENT_SOURCE_DIR}/include
-#        ${CUDAToolkit_INCLUDE_DIRS})
-#target_link_libraries(generated-bindings PUBLIC CUDA::cudart nvcomp::nvcomp Thrust::Thrust)
-#apply_warnings(generated-bindings)
-#set_target_properties(generated-bindings PROPERTIES CUDA_SEPARABLE_COMPILATION ON)
-#
 ## ────────────────────────────────────────────────
 ## 7. Benchmarks
 ## ────────────────────────────────────────────────
-#add_subdirectory(benchmark)
+add_subdirectory(benchmark)
 
 # ────────────────────────────────────────────────
-# 8. GALP
+# 8. tests
 # ────────────────────────────────────────────────
-add_subdirectory(galp)
+add_subdirectory(test)

@@ -1,4 +1,3 @@
-
 #ifndef ALP_BINDINGS_CUH
 #define ALP_BINDINGS_CUH
 

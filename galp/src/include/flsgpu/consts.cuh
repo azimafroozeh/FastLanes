@@ -1,7 +1,7 @@
-#include <cstdint>
-
 #ifndef CONSTS_H
 #define CONSTS_H
+
+#include <cstdint>
 
 namespace consts {
 

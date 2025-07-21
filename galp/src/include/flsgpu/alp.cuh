@@ -1,13 +1,11 @@
-#include "alp/constants.hpp"
-#include "alp/config.hpp"
+#ifndef ALP_CUH
+#define ALP_CUH
+
 #include "fls.cuh"
 #include "structs.cuh"
 #include <cstdint>
 #include <cstdio>
 #include <type_traits>
-
-#ifndef ALP_CUH
-#define ALP_CUH
 
 namespace flsgpu { namespace device {
 
@@ -459,5 +457,5 @@ struct ALPDecompressor : DecompressorBase<T> {
 	}
 };
 
-}}     // namespace flsgpu::device
+}} // namespace flsgpu::device
 #endif // ALP_CUH

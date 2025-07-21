@@ -1,3 +1,7 @@
+
+#ifndef STRUCTS_CUH
+#define STRUCTS_CUH
+
 #include "alp.hpp"
 #include "device-types.cuh"
 #include "host-utils.cuh"
@@ -5,9 +9,6 @@
 #include <cstddef>
 #include <cstdint>
 #include <tuple>
-
-#ifndef STRUCTS_CUH
-#define STRUCTS_CUH
 
 namespace flsgpu {
 

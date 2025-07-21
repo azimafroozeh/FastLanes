@@ -1,7 +1,7 @@
-#include "fls.cuh"
-
 #ifndef FLS_SWITCH_CASE_CUH
 #define FLS_SWITCH_CASE_CUH
+
+#include "fls.cuh"
 
 namespace flsgpu { namespace device {
 

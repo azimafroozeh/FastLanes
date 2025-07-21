@@ -1,7 +1,7 @@
-#include <cstdint>
-
 #ifndef GPU_DEVICE_TYPES_CUH
 #define GPU_DEVICE_TYPES_CUH
+
+#include <cstdint>
 
 using vbw_t  = uint8_t;
 using lane_t = uint16_t;

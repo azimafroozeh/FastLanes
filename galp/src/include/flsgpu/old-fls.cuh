@@ -1,11 +1,7 @@
-#include <cstdint>
-
 #ifndef OLD_FLS_KERNELS_H
 #define OLD_FLS_KERNELS_H
 
-// generated!
-#pragma once
-
+#include <cstdint>
 #include <cuda.h>
 #include <cuda_runtime.h>
 

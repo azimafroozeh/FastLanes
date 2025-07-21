@@ -1,12 +1,12 @@
+#ifndef FASTLANES_UTILS_H
+#define FASTLANES_UTILS_H
+
 #include "consts.cuh"
 #include <cstddef>
 #include <cstdint>
 #include <cstring>
 #include <limits>
 #include <type_traits>
-
-#ifndef FASTLANES_UTILS_H
-#define FASTLANES_UTILS_H
 
 namespace utils { // internal functions
 	              //

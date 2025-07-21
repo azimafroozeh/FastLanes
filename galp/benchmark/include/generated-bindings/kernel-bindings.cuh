@@ -1,9 +1,9 @@
-#include "../engine/enums.cuh"
-#include "../flsgpu/flsgpu-api.cuh"
-#include <cstdint>
-
 #ifndef GENERATED_KERNEL_BINDINGS_CUH
 #define GENERATED_KERNEL_BINDINGS_CUH
+
+#include "engine/enums.cuh"
+#include "flsgpu/flsgpu-api.cuh"
+#include <cstdint>
 
 namespace bindings {
 

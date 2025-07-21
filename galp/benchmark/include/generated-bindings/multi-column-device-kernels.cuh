@@ -1,9 +1,10 @@
-
-#include "../engine/device-utils.cuh"
-#include "../flsgpu/flsgpu-api.cuh"
-
 #ifndef MULTI_COLUMN_DEVICE_KERNELS_CUH
 #define MULTI_COLUMN_DEVICE_KERNELS_CUH
+
+
+#include "engine/device-utils.cuh"
+#include "flsgpu/flsgpu-api.cuh"
+
 
 namespace multi_column {
 

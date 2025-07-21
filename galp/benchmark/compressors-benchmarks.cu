@@ -8,7 +8,6 @@
 // Compile example:
 //   g++ -std=c++17 benchmark_runner.cpp -o compressors-benchmarks $(CUDA_LIBS) ...
 // =============================================================================
-#include "engine/data.cuh"
 #include "engine/enums.cuh"
 #include "flsgpu/consts.cuh"
 #include "generator/generate_binaries.hpp"
@@ -62,6 +61,54 @@ inline CLIArgs parse_cli_args(int argc, char* argv[]) {
 	args.n_values          = std::atoi(argv[++idx]) * consts::VALUES_PER_VECTOR;
 	return args;
 }
+
+namespace data::arrays {
+template <typename T>
+std::pair<T*, size_t> read_file_as(const std::string path, const size_t input_count) {
+	// Open file
+	std::ifstream inputFile(path, std::ios::binary | std::ios::ate);
+	if (!inputFile) {
+		throw std::invalid_argument("Could not open the specified file.");
+	}
+	// Get file size
+	const std::streamsize file_size = inputFile.tellg();
+	inputFile.seekg(0, std::ios::beg);
+
+	// Check file size to contain right type of data
+	bool file_size_is_multiple_of_T_size = static_cast<size_t>(file_size) % static_cast<size_t>(sizeof(T)) != 0;
+	if (file_size_is_multiple_of_T_size) {
+		throw std::invalid_argument("File size is incorrect, it is not a multiple of the type's size.");
+	}
+
+	const size_t values_in_file = static_cast<size_t>(file_size) / sizeof(T);
+	size_t       count          = input_count == 0 ? values_in_file : input_count;
+	count                       = count - (count % consts::VALUES_PER_VECTOR);
+	auto column                 = new T[count];
+
+	// Read either the file size, or the total number of values needed,
+	// whichever is smaller
+	const std::streamsize read_size = std::min(file_size, static_cast<std::streamsize>((count * sizeof(T))));
+	if (!inputFile.read(reinterpret_cast<char*>(column), read_size)) {
+		throw std::invalid_argument("Failed to read file into column");
+	}
+
+	inputFile.close();
+
+	// Copy paste the values in file until the column is filled
+	if (values_in_file < count) {
+		size_t n_filled_values       = values_in_file;
+		size_t n_empty_values_column = count - n_filled_values;
+		while (n_empty_values_column != 0) {
+			size_t n_values_to_copy = std::min(n_empty_values_column, values_in_file);
+			std::memcpy(column + n_filled_values, column, n_values_to_copy * sizeof(T));
+			n_filled_values += n_values_to_copy;
+			n_empty_values_column -= n_values_to_copy;
+		}
+	}
+
+	return std::make_pair(column, count);
+}
+} // namespace data::arrays
 
 // Template benchmark launcher (host-only code but harmless for device pass)
 template <typename T>

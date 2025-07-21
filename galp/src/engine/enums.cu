@@ -1,4 +1,4 @@
-#include "../../include/engine/enums.cuh"
+#include "engine/enums.cuh"
 #include <unordered_map>
 
 namespace enums {
