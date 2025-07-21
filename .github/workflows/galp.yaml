@@ -32,6 +32,12 @@ jobs:
           fetch-depth: 0
 
       # ────────────────────────────────────────────────
+      # 0a. Generate synthetic dataset
+      # ────────────────────────────────────────────────
+      - name: Generate synthetic dataset
+        uses: ./.github/actions/generate-dataset
+
+      # ────────────────────────────────────────────────
       # 1. Quick sanity of the runner
       # ────────────────────────────────────────────────
       - name: 🔎 Env dump
