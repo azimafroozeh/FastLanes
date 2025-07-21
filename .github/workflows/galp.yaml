@@ -57,6 +57,9 @@ jobs:
           for cmd in nvidia-smi nvcc clang++ g++ cmake make; do
             command -v "$cmd" >/dev/null || { echo "::error::$cmd missing"; exit 127; }
           done
+
+      - name: Version outputs
+        run: |
           nvidia-smi
           nvcc     --version
           clang++  --version
@@ -88,12 +91,12 @@ jobs:
           ctest --output-on-failure
 
       # ────────────────────────────────────────────────
-      # 6. Run benchmarks (labelled "benchmark")
+      # 6. Run benchmarks (no label filter)
       # ────────────────────────────────────────────────
       - name: ⚡ Run benchmarks
         run: |
           cd build
-          ctest -L benchmark || true
+          ctest --output-on-failure || true
 
       # ────────────────────────────────────────────────
       # 7. Smoke‑test helper binaries
