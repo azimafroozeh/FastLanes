@@ -47,11 +47,10 @@ jobs:
           which $CLANG_PATH || true
           which $GCC_PATH   || true
           which cmake      || true
-          which ninja      || true
 
       - name: ✅ Verify tools
         run: |
-          for cmd in nvidia-smi nvcc $CLANG_PATH $GCC_PATH cmake ninja; do
+          for cmd in nvidia-smi nvcc $CLANG_PATH $GCC_PATH cmake; do
             command -v "$cmd" >/dev/null || { echo "::error::$cmd missing"; exit 127; }
           done
           nvidia-smi
@@ -59,7 +58,6 @@ jobs:
           $CLANG_PATH --version
           $GCC_PATH   --version
           cmake  --version
-          ninja  --version
 
       # ──────────────────────────────
       # 2. Configure with CMake
