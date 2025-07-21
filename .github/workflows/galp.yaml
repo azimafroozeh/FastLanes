@@ -39,6 +39,9 @@ jobs:
           set -x
           hostname
           echo "Runner label: president"
+          echo "CUDA path: $CUDA_LIBRARY_PATH"
+          echo "NVCOMP_INC: $NVCOMP_INC"
+          echo "NVCOMP_LIB: $NVCOMP_LIB"
           which nvidia-smi || true
           which nvcc       || true
           which clang++    || true
