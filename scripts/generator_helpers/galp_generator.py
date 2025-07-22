@@ -1,8 +1,8 @@
 """
 Module: scripts/generate_helpers/galp_generator.py
-Description: For two FLOAT columns—one random two‑decimal GALP and one constant 1.00—
-             writes each as its own single‑column CSV + schema.json, in both
-             ROW_GROUP_SIZE and VEC_SIZE variants.
+Description: For three FLOAT columns—one random two‑decimal GALP, one constant 1.00,
+             and one POSITIVE_INF—writes each as its own single‑column CSV + schema.json,
+             in both ROW_GROUP_SIZE and VEC_SIZE variants.
 """
 
 import random
@@ -29,9 +29,14 @@ def generate_fls_constant(_faker, row_id):
     return [1.00]
 
 
+def generate_fls_inf(_faker, row_id):
+    """Constant FLOAT = positive infinity."""
+    return [float('inf')]
+
+
 def fls_galp():
     """
-    For each of two fields—GALP and CONSTANT—write:
+    For each of three fields—GALP, CONSTANT, and POSITIVE_INF—write:
 
       data/generated/galp/<field>/single_column/generated.csv   (ROW_GROUP_SIZE rows)
       data/generated/galp/<field>/single_column/schema.json
@@ -44,6 +49,7 @@ def fls_galp():
     tasks = [
         ('galp', 'SYNTHETIC_DATA_GALP', generate_fls_galp),
         ('constant', 'SYNTHETIC_DATA_CONSTANT', generate_fls_constant),
+        ('positive_inf', 'SYNTHETIC_DATA_POSITIVE_INF', generate_fls_inf),
     ]
 
     for folder_key, column_name, gen_fn in tasks:

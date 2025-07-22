@@ -5,6 +5,7 @@
 #include "fls/expression/alp_expression.hpp"
 #include "fls/expression/analyze_operator.hpp"
 #include "fls/expression/cross_rle_operator.hpp"
+#include "fls/expression/data_parallelize_patch_operator.hpp"
 #include "fls/expression/decoding_operator.hpp"
 #include "fls/expression/dict_expression.hpp"
 #include "fls/expression/encoding_operator.hpp"
@@ -353,13 +354,15 @@ void make_enc_alp_expr(PhysicalExpr&      physical_expr,
 \*--------------------------------------------------------------------------------------------------------------------*/
 template <typename PT>
 void make_enc_galp_expr(PhysicalExpr&      physical_expr,
-                       const rowgroup_pt& rowgroup,
-                       ColumnDescriptorT& column_descriptor,
-                       InterpreterState&  state) {
+                        const rowgroup_pt& rowgroup,
+                        ColumnDescriptorT& column_descriptor,
+                        InterpreterState&  state) {
 	auto&       operators = physical_expr.operators;
 	const auto& column    = rowgroup[column_descriptor.idx];
 
 	operators.emplace_back(make_shared<enc_alp_opr<PT>>(physical_expr, column, column_descriptor, state));
+	operators.emplace_back(
+	    make_shared<enc_data_parallel_patch_opr<PT>>(physical_expr, column, column_descriptor, state));
 }
 
 /*--------------------------------------------------------------------------------------------------------------------*\
