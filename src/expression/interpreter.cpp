@@ -634,6 +634,10 @@ sp<PhysicalExpr> Interpreter::Encoding::Interpret(ColumnDescriptorT& column_desc
 			make_enc_galp_expr<flt_pt>(*physical_expr, physical_rowgroup, column_descriptor, state);
 			break;
 		}
+		case EXP_GALP_DBL: {
+			make_enc_galp_expr<dbl_pt>(*physical_expr, physical_rowgroup, column_descriptor, state);
+			break;
+		}
 		case EXP_ALP_RD_DBL: {
 			make_enc_alp_rd_expr<dbl_pt>(*physical_expr, physical_rowgroup, column_descriptor, state);
 			break;
@@ -1648,6 +1652,10 @@ void Interpreter::Decoding::Interpret(const ColumnDescriptorT& column_descriptor
 		}
 		case EXP_GALP_FLT: {
 			make_dec_galp_expr<flt_pt>(physical_expr, column_view, state);
+			break;
+		}
+		case EXP_GALP_DBL: {
+			make_dec_galp_expr<dbl_pt>(physical_expr, column_view, state);
 			break;
 		}
 		case EXP_ALP_RD_DBL: {

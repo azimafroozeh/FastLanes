@@ -208,4 +208,5 @@ enum OperatorToken : ushort {
   EXP_DELTA_U08                      = 153,
   EXP_RLE_U08_U16                    = 154,
   EXP_GALP_FLT                       = 155,
+  EXP_GALP_DBL                       = 156,
 }
