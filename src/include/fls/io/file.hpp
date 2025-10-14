@@ -20,17 +20,20 @@ public:
 	explicit File(const path& path);
 	~File();
 
+	File(const File&)            = delete;
+	File& operator=(const File&) = delete;
+
 public:
 	// write to file_path
 	void Write(const Buf& buf);
 	// write to file_path
-	void Read(Buf& buf);
+	void Read(const Buf& buf) const;
 	// write to file_path
 	void Append(const Buf& buf);
 	// Append
 	void Append(const char* pointer, n_t size);
 	//
-	void ReadRange(Buf& buf, n_t offset, n_t size);
+	void ReadRange(const Buf& buf, n_t offset, n_t size) const;
 	// get file size
 	[[nodiscard]] n_t Size() const;
 
@@ -43,9 +46,13 @@ public:
 	static void append(const path& file_path, const string& dump);
 
 private:
+	void ReadInternal(uint8_t* dst, n_t size, off_t offset = 0) const;
+
+private:
 	path              m_path;
 	up<std::ofstream> m_of_stream;
-	up<std::ifstream> m_if_stream;
+	int               m_fd {-1};
+	size_t            m_file_size {0};
 };
 } // namespace fastlanes
 
