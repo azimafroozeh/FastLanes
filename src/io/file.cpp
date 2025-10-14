@@ -9,15 +9,16 @@
 #include "fls/cor/lyt/buf.hpp"
 #include "fls/std/filesystem.hpp"
 #include "fls/std/string.hpp"
-#include <cstdint>    // for int64_t
-#include <filesystem> // for std::filesystem::file_size, std::filesystem::exists
-#include <fstream>    // for std::ifstream, std::ofstream
-#include <ios>        // for std::ios, std::streamoff, std::streamsize
-#include <memory>     // for std::make_unique
+#include <cerrno>  // for errno, EINTR
+#include <cstdint> // for int64_t
+#include <fcntl.h> // for ::open, O_RDONLY, O_CLOEXEC
+#include <fstream> // for std::ifstream, std::ofstream
+#include <ios>     // for std::ios, std::streamoff, std::streamsize
+#include <memory>  // for std::make_unique
 #include <sstream>
-#include <sys/fcntl.h>
-#include <sys/stat.h>
-#include <unistd.h> // for pread
+#include <sys/stat.h>  // for fstat, struct stat
+#include <sys/types.h> // for ssize_t, off_t
+#include <unistd.h>    // for ::pread, ::close
 
 namespace fastlanes {
 
