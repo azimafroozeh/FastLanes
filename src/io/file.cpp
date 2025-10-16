@@ -11,14 +11,19 @@
 #include "fls/std/string.hpp"
 #include <cerrno>  // for errno, EINTR
 #include <cstdint> // for int64_t
-#include <fcntl.h> // for ::open, O_RDONLY, O_CLOEXEC
 #include <fstream> // for std::ifstream, std::ofstream
 #include <ios>     // for std::ios, std::streamoff, std::streamsize
 #include <memory>  // for std::make_unique
 #include <sstream>
-#include <sys/stat.h>  // for fstat, struct stat
+#include <sys/stat.h> // for fstat, struct stat
+#include <unistd.h>   // for ::pread, ::close
+
+#if defined(__APPLE__)
+#include <sys/fcntl.h>
+#elif defined(__linux__)
+#include <fcntl.h>     // for ::open, O_RDONLY, O_CLOEXEC
 #include <sys/types.h> // for ssize_t, off_t
-#include <unistd.h>    // for ::pread, ::close
+#endif
 
 namespace fastlanes {
 
@@ -31,7 +36,7 @@ File::File(const path& path) // NOLINT
 	}
 	m_fd = fd;
 
-	struct stat st;
+	struct stat st{};
 	if (::fstat(fd, &st) != 0) {
 		::close(fd);
 		FLS_ABORT("Could not stat file in read-only mode")
