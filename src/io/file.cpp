@@ -36,7 +36,7 @@ File::File(const path& path) // NOLINT
 	}
 	m_fd = fd;
 
-	struct stat st{};
+	struct stat st {};
 	if (::fstat(fd, &st) != 0) {
 		::close(fd);
 		FLS_ABORT("Could not stat file in read-only mode")
