@@ -97,6 +97,19 @@ fn main() -> Result<()> {
 }
 ```
 
+### Cleaning includes with IWYU
+
+FastLanes integrates the [Include What You Use](https://include-what-you-use.org/) tool.
+Enable it during configuration to locate unnecessary headers:
+
+```bash
+cmake -S . -B build_iwyu -DFLS_ENABLE_IWYU=ON
+cmake --build build_iwyu
+```
+
+IWYU will suggest which `#include` directives can be removed or added.
+
+
 ### Coming Soon
 
 * **CUDA** support for FastLanes CUDA reader
