@@ -27,15 +27,15 @@ public:
 	// write to file_path
 	void Write(const Buf& buf);
 	// write to file_path
-	void Read(const Buf& buf) const;
+	void Read(const Buf& buf);
 	// write to file_path
 	void Append(const Buf& buf);
 	// Append
 	void Append(const char* pointer, n_t size);
 	//
-	void ReadRange(const Buf& buf, n_t offset, n_t size) const;
+	void ReadRange(const Buf& buf, n_t offset, n_t size);
 	// get file size
-	[[nodiscard]] n_t Size() const;
+	[[nodiscard]] n_t Size();
 
 public:
 	/// read from file_path and return string.
@@ -52,7 +52,7 @@ private:
 	path              m_path;
 	up<std::ofstream> m_of_stream;
 	int               m_fd {-1};
-	size_t            m_file_size {0};
+	off_t             m_file_size {-1};
 };
 } // namespace fastlanes
 

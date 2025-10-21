@@ -21,9 +21,7 @@
 #if defined(__APPLE__)
 #include <sys/_types/_off_t.h>
 #include <sys/_types/_ssize_t.h>
-#include <sys/fcntl.h>
 #elif defined(__linux__)
-#include <fcntl.h>     // for ::open, O_RDONLY, O_CLOEXEC
 #include <sys/types.h> // for ssize_t, off_t
 #endif
 
@@ -31,19 +29,6 @@ namespace fastlanes {
 
 File::File(const path& path) // NOLINT
     : m_path(path) {
-
-	const int fd = ::open(m_path.c_str(), O_RDONLY | O_CLOEXEC);
-	if (fd < 0) {
-		FLS_ABORT("Could not open file in read-only mode")
-	}
-	m_fd = fd;
-
-	struct stat st {};
-	if (::fstat(fd, &st) != 0) {
-		::close(fd);
-		FLS_ABORT("Could not stat file in read-only mode")
-	}
-	m_file_size = static_cast<n_t>(st.st_size);
 }
 
 File::~File() {
@@ -53,7 +38,7 @@ File::~File() {
 	}
 
 	if (m_fd >= 0) {
-		::close(m_fd);
+		FileSystem::close(m_fd);
 	}
 }
 
@@ -65,23 +50,38 @@ void File::Write(const Buf& buf) {
 	m_of_stream->write(reinterpret_cast<char*>(buf.data()), static_cast<int64_t>(buf.Size()));
 }
 
-void File::Read(const Buf& buf) const {
+void File::Read(const Buf& buf) {
+	if (m_fd == -1) {
+		m_fd = FileSystem::open_r_binary(m_path);
+	}
+	if (m_file_size == -1) {
+		m_file_size = FileSystem::read_file_size(m_fd);
+	}
+
 	FLS_ASSERT_LE(m_file_size, buf.Capacity());
 
-	uint8_t* dst = buf.mutable_data();
-	ReadInternal(dst, m_file_size);
+	ReadInternal(buf.mutable_data(), static_cast<n_t>(m_file_size));
 }
 
-void File::ReadRange(const Buf& buf, const n_t offset, const n_t size) const {
+void File::ReadRange(const Buf& buf, const n_t offset, const n_t size) {
+	if (m_fd == -1) {
+		m_fd = FileSystem::open_r_binary(m_path);
+	}
+	if (m_file_size == -1) {
+		m_file_size = FileSystem::read_file_size(m_fd);
+	}
+
 	FLS_ASSERT_LE(offset + size, m_file_size);
 	FLS_ASSERT_LE(size, buf.Capacity());
 
-	uint8_t* dst = buf.mutable_data();
-	ReadInternal(dst, size, static_cast<off_t>(offset));
+	ReadInternal(buf.mutable_data(), size, static_cast<off_t>(offset));
 }
 
-n_t File::Size() const {
-	return m_file_size;
+n_t File::Size() {
+	if (m_file_size == -1) {
+		m_file_size = FileSystem::read_file_size(m_fd);
+	}
+	return static_cast<n_t>(m_file_size);
 }
 
 void File::Append(const Buf& buf) {

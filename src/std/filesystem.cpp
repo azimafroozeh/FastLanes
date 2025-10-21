@@ -4,12 +4,22 @@
 // src/std/filesystem.cpp
 // ────────────────────────────────────────────────────────
 #include "fls/std/filesystem.hpp"
+#include "fls/common/assert.hpp"
 #include <cerrno>     // errno
 #include <filesystem> // std::filesystem::path, exists, is_directory, is_regular_file
 #include <fstream>
-#include <ios>          // std::ios::binary
-#include <stdexcept>    // std::runtime_error
+#include <ios>       // std::ios::binary
+#include <stdexcept> // std::runtime_error
+#include <sys/stat.h>
 #include <system_error> // NEW – std::system_error / std::error_code
+#include <unistd.h>     // for ::close
+
+#if defined(__APPLE__)
+#include <sys/_types/_off_t.h>
+#include <sys/fcntl.h>
+#elif defined(__linux__)
+#include <fcntl.h>
+#endif
 
 namespace fastlanes {
 
@@ -29,12 +39,12 @@ std::ifstream FileSystem::open_r(const path& file) {
 	return stream;
 }
 
-std::ifstream FileSystem::open_r_binary(const path& file) {
-	std::ifstream stream(file.c_str(), std::ios::binary);
-	if (!stream) {
-		throw_last_error(file);
+int FileSystem::open_r_binary(const path& file) {
+	const int fd = ::open(file.c_str(), O_RDONLY | O_CLOEXEC);
+	if (fd < 0) {
+		FLS_ABORT("Could not open file in read-only mode")
 	}
-	return stream;
+	return fd;
 }
 
 std::ofstream FileSystem::open_w(const path& file) {
@@ -74,9 +84,22 @@ void FileSystem::check_if_file_exists(const fs::path& file_path) {
 	}
 }
 
+off_t FileSystem::read_file_size(const int fd) {
+	struct stat st {};
+	if (::fstat(fd, &st) != 0) {
+		FileSystem::close(fd);
+		FLS_ABORT("Could not stat file in read-only mode")
+	}
+	return st.st_size;
+}
+
 template <typename STREAM>
 void FileSystem::close(STREAM& stream) {
 	stream.close();
+}
+
+void FileSystem::close(const int fd) {
+	::close(fd);
 }
 
 template void FileSystem::close(std::ifstream&);
