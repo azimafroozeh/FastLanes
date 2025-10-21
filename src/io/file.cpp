@@ -19,6 +19,8 @@
 #include <unistd.h>   // for ::pread, ::close
 
 #if defined(__APPLE__)
+#include <sys/_types/_off_t.h>
+#include <sys/_types/_ssize_t.h>
 #include <sys/fcntl.h>
 #elif defined(__linux__)
 #include <fcntl.h>     // for ::open, O_RDONLY, O_CLOEXEC
