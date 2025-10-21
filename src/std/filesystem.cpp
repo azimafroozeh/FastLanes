@@ -19,6 +19,7 @@
 #include <sys/fcntl.h>
 #elif defined(__linux__)
 #include <fcntl.h>
+#include <sys/types.h> // off_t
 #endif
 
 namespace fastlanes {
