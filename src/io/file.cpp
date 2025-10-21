@@ -15,7 +15,7 @@
 #include <ios>     // for std::ios, std::streamoff, std::streamsize
 #include <memory>  // for std::make_unique
 #include <sstream>
-#include <unistd.h>   // for ::pread, ::close
+#include <unistd.h> // for ::pread, ::close
 
 #if defined(__APPLE__)
 #include <sys/_types/_off_t.h>
