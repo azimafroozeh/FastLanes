@@ -15,7 +15,6 @@
 #include <ios>     // for std::ios, std::streamoff, std::streamsize
 #include <memory>  // for std::make_unique
 #include <sstream>
-#include <sys/stat.h> // for fstat, struct stat
 #include <unistd.h>   // for ::pread, ::close
 
 #if defined(__APPLE__)
