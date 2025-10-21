@@ -9,13 +9,20 @@
 #include "fls/cor/lyt/buf.hpp"
 #include "fls/std/filesystem.hpp"
 #include "fls/std/string.hpp"
-#include <cstdint>    // for int64_t
-#include <filesystem> // for std::filesystem::file_size, std::filesystem::exists
-#include <fstream>    // for std::ifstream, std::ofstream
-#include <ios>        // for std::ios, std::streamoff, std::streamsize
-#include <memory>     // for std::make_unique
+#include <cerrno>  // for errno, EINTR
+#include <cstdint> // for int64_t
+#include <fstream> // for std::ifstream, std::ofstream
+#include <ios>     // for std::ios, std::streamoff, std::streamsize
+#include <memory>  // for std::make_unique
 #include <sstream>
-#include <stdexcept> // for std::runtime_error
+#include <unistd.h> // for ::pread, ::close
+
+#if defined(__APPLE__)
+#include <sys/_types/_off_t.h>
+#include <sys/_types/_ssize_t.h>
+#elif defined(__linux__)
+#include <sys/types.h> // for ssize_t, off_t
+#endif
 
 namespace fastlanes {
 
@@ -29,8 +36,8 @@ File::~File() {
 		FileSystem::close(*m_of_stream);
 	}
 
-	if (m_if_stream != nullptr) {
-		FileSystem::close(*m_if_stream);
+	if (m_fd >= 0) {
+		FileSystem::close(m_fd);
 	}
 }
 
@@ -42,35 +49,38 @@ void File::Write(const Buf& buf) {
 	m_of_stream->write(reinterpret_cast<char*>(buf.data()), static_cast<int64_t>(buf.Size()));
 }
 
-void File::Read(Buf& buf) {
-	if (m_if_stream == nullptr) {
-		m_if_stream = make_unique<std::ifstream>(FileSystem::open_r_binary(m_path));
+void File::Read(const Buf& buf) {
+	if (m_fd == -1) {
+		m_fd = FileSystem::open_r_binary(m_path);
+	}
+	if (m_file_size == -1) {
+		m_file_size = FileSystem::read_file_size(m_fd);
 	}
 
-	auto file_size = fs::file_size(m_path);
-	FLS_ASSERT_LE(file_size, buf.Capacity())
+	FLS_ASSERT_LE(m_file_size, buf.Capacity());
 
-	m_if_stream->read(reinterpret_cast<char*>(buf.mutable_data()), static_cast<int64_t>(file_size));
+	ReadInternal(buf.mutable_data(), static_cast<n_t>(m_file_size));
 }
 
-void File::ReadRange(Buf& buf, const n_t offset, const n_t size) {
-	if (m_if_stream == nullptr) {
-		m_if_stream = make_unique<std::ifstream>(FileSystem::open_r_binary(m_path));
+void File::ReadRange(const Buf& buf, const n_t offset, const n_t size) {
+	if (m_fd == -1) {
+		m_fd = FileSystem::open_r_binary(m_path);
+	}
+	if (m_file_size == -1) {
+		m_file_size = FileSystem::read_file_size(m_fd);
 	}
 
-	[[maybe_unused]] auto file_size = fs::file_size(m_path);
-	FLS_ASSERT_LE(offset + size, file_size);
+	FLS_ASSERT_LE(offset + size, m_file_size);
 	FLS_ASSERT_LE(size, buf.Capacity());
 
-	m_if_stream->seekg(static_cast<std::streamoff>(offset), std::ios::beg);
-	m_if_stream->read(reinterpret_cast<char*>(buf.mutable_data()), static_cast<std::streamsize>(size));
+	ReadInternal(buf.mutable_data(), size, static_cast<off_t>(offset));
 }
 
-n_t File::Size() const {
-	if (!exists(m_path)) {
-		throw std::runtime_error("File does not exist");
+n_t File::Size() {
+	if (m_file_size == -1) {
+		m_file_size = FileSystem::read_file_size(m_fd);
 	}
-	return static_cast<n_t>(std::filesystem::file_size(m_path));
+	return static_cast<n_t>(m_file_size);
 }
 
 void File::Append(const Buf& buf) {
@@ -87,6 +97,21 @@ void File::Append(const char* pointer, n_t size) {
 		m_of_stream = std::make_unique<std::ofstream>(m_path, std::ios::binary | std::ios::app);
 	}
 	m_of_stream->write(pointer, static_cast<int64_t>(size));
+}
+
+void File::ReadInternal(uint8_t* dst, const n_t size, const off_t offset) const {
+	n_t done = 0;
+	while (done < size) {
+		const ssize_t n_bytes = ::pread(m_fd, dst + done, size - done, offset + static_cast<off_t>(done));
+		if (n_bytes < 0 && errno == EINTR) {
+			continue;
+		}
+		if (n_bytes <= 0) {
+			FLS_ABORT("Could not read from file in read-only mode")
+		}
+
+		done += static_cast<n_t>(n_bytes);
+	}
 }
 
 /*--------------------------------------------------------------------------------------------------------------------*\

@@ -19,7 +19,7 @@ public:
 	///! open read
 	static std::ifstream open_r(const path& file);
 	///! open read in binary
-	static std::ifstream open_r_binary(const path& file);
+	static int open_r_binary(const path& file);
 	///! open write
 	static std::ofstream open_w(const path& file);
 	///! open write in binary
@@ -29,9 +29,12 @@ public:
 	///! close
 	template <typename STREAM>
 	static void close(STREAM& stream);
+	static void close(int fd);
 	/// check if file system exist
 	static void check_if_dir_exists(const path& dir_path);
 	static void check_if_file_exists(const path& path);
+	/// read file size
+	static off_t read_file_size(int fd);
 };
 
 } // namespace fastlanes
